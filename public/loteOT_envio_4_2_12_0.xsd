@@ -1,0 +1,1353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Schema: loteOT_envio
+  Versão do Layout: 4.2.12
+  Fonte: Dicionário de dados NDD Cargo (Notion - nddtech)
+  Gerado em: 2026-05-12
+
+  Legenda (conforme dicionário):
+    A    → xs:attribute no elemento pai
+    E    → xs:element filho (dado simples)
+    Raiz → xs:element container com xs:complexType/xs:sequence
+
+  Ocorrências → minOccurs/maxOccurs:
+    1     → minOccurs="1" maxOccurs="1"
+    1-N   → minOccurs="1" maxOccurs="unbounded"
+    1-X   → minOccurs="1" maxOccurs="X"
+    2-N   → minOccurs="2" maxOccurs="unbounded"
+    0-1   → minOccurs="0" maxOccurs="1"
+    0-N   → minOccurs="0" maxOccurs="unbounded"
+    0     → minOccurs="0" maxOccurs="1"  (opcional, sem repetição)
+
+  Tipos:
+    S → xs:string
+    N → xs:decimal ou xs:integer conforme tamanho (X,2 = decimal; X = integer)
+    D → xs:string com pattern AAAA-MM-DD ou AAAA-MM-DD HH:MM:SS
+    B → xs:string "true"/"false"
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+           elementFormDefault="qualified">
+
+  <xs:import namespace="http://www.w3.org/2000/09/xmldsig#"
+             schemaLocation="http://www.w3.org/TR/xmldsig-core/xmldsig-core-schema.xsd"/>
+
+  <!-- ================================================================ -->
+  <!-- Tipos simples reutilizáveis                                        -->
+  <!-- ================================================================ -->
+
+  <!-- CNPJ: 14 dígitos -->
+  <xs:simpleType name="TCnpj">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{14}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- CPF: 11 dígitos -->
+  <xs:simpleType name="TCpf">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{11}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- CPF ou CNPJ: 11 ou 14 dígitos -->
+  <xs:simpleType name="TCpfCnpj">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{11}|[0-9]{14}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- CEP: 8 dígitos -->
+  <xs:simpleType name="TCep">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{8}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- UF: 2 letras maiúsculas -->
+  <xs:simpleType name="TUF">
+    <xs:restriction base="xs:string">
+      <xs:length value="2"/>
+      <xs:pattern value="[A-Z]{2}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- RNTRC: 9 dígitos -->
+  <xs:simpleType name="TRntrc">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{9}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Data: AAAA-MM-DD -->
+  <xs:simpleType name="TData">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- DateTime: AAAA-MM-DD HH:MM:SS -->
+  <xs:simpleType name="TDataHora">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Telefone: 10 ou 11 dígitos -->
+  <xs:simpleType name="TTelefone">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{10,11}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Valor monetário: até 15 dígitos inteiros + 2 decimais -->
+  <xs:simpleType name="TValor15v2">
+    <xs:restriction base="xs:decimal">
+      <xs:totalDigits value="17"/>
+      <xs:fractionDigits value="2"/>
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Valor monetário parcela/retencoes: até 12 dígitos + 2 decimais -->
+  <xs:simpleType name="TValor12v2">
+    <xs:restriction base="xs:decimal">
+      <xs:totalDigits value="14"/>
+      <xs:fractionDigits value="2"/>
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Peso lotacao/fracionado: 7 inteiros + 2 decimais -->
+  <xs:simpleType name="TPeso7v2">
+    <xs:restriction base="xs:decimal">
+      <xs:totalDigits value="9"/>
+      <xs:fractionDigits value="2"/>
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Quantidade parcela/carga: 9 dígitos + 2 decimais -->
+  <xs:simpleType name="TQtd9v2">
+    <xs:restriction base="xs:decimal">
+      <xs:totalDigits value="11"/>
+      <xs:fractionDigits value="2"/>
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- KM por litro: 4 dígitos + 2 decimais -->
+  <xs:simpleType name="TKmLitro4v2">
+    <xs:restriction base="xs:decimal">
+      <xs:totalDigits value="6"/>
+      <xs:fractionDigits value="2"/>
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Total KM rota: até 8 dígitos + 2 decimais, maior que zero -->
+  <xs:simpleType name="TTotalKm8v2">
+    <xs:restriction base="xs:decimal">
+      <xs:totalDigits value="10"/>
+      <xs:fractionDigits value="2"/>
+      <xs:minExclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Placa: exatamente 7 caracteres -->
+  <xs:simpleType name="TPlaca">
+    <xs:restriction base="xs:string">
+      <xs:length value="7"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Boolean string: "true" ou "false" (campos Ind*, ComposicaoVeicular) -->
+  <xs:simpleType name="TBoolStr">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="true"/>
+      <xs:enumeration value="false"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- ================================================================ -->
+  <!-- Tipo complexo: TEnderecoMunicipio                                 -->
+  <!-- Usado em: lotacao/remetente, lotacao/destinatario,               -->
+  <!--           fracionado/remetente, fracionado/destinatario,          -->
+  <!--           TACagregado/remetente*, consignatario, subcontratado    -->
+  <!-- * TACagregado usa numero 1-8 → inlined diretamente               -->
+  <!-- ================================================================ -->
+  <xs:complexType name="TEnderecoMunicipio">
+    <xs:sequence>
+      <xs:element name="UF" type="TUF"/>
+      <xs:element name="codigoMunicipio">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[0-9]{7}"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="bairro">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="logradouro">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <!-- numero: S, 1-60 -->
+      <xs:element name="numero">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="60"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="CEP" type="TCep"/>
+      <xs:element name="complemento" minOccurs="0">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ================================================================ -->
+  <!-- Tipo complexo: TEnderecoCidade                                    -->
+  <!-- Usado em: socio (ETC/CTC), infTransportador, condutor/informacoes -->
+  <!-- ================================================================ -->
+  <xs:complexType name="TEnderecoCidade">
+    <xs:sequence>
+      <xs:element name="UF" type="TUF"/>
+      <xs:element name="cidade">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="100"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="bairro">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="logradouro">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <!-- numero: N, 0-1, 1-8 -->
+      <xs:element name="numero" minOccurs="0">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="8"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <!-- CEP: N, 0-1, 8; informar 0 se exterior -->
+      <xs:element name="CEP" minOccurs="0">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[0-9]{8}|0"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="complemento" minOccurs="0">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ================================================================ -->
+  <!-- Tipo complexo: TPessoa                                            -->
+  <!-- Remetente / Destinatário de lotacao e fracionado                 -->
+  <!-- cnpj OU cpf (choice de ocorrência 1) + nome + endereco           -->
+  <!-- ================================================================ -->
+  <xs:complexType name="TPessoa">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="cnpj" type="TCnpj"/>
+        <xs:element name="cpf"  type="TCpf"/>
+      </xs:choice>
+      <xs:element name="nome">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="endereco" type="TEnderecoMunicipio"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ================================================================ -->
+  <!-- Tipo complexo: TSocio                                             -->
+  <!-- Reutilizado em etc/socio e ctc/socio                             -->
+  <!-- ================================================================ -->
+  <xs:complexType name="TSocio">
+    <xs:sequence>
+      <xs:element name="nomeCompleto">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="nomeMae">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="nomePai" minOccurs="0">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="dataNascimento" type="TData"/>
+      <xs:element name="cpf" type="TCpf"/>
+      <xs:element name="identidade">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="20"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="endereco" type="TEnderecoCidade"/>
+      <xs:element name="telefone" type="TTelefone"/>
+      <xs:element name="email" minOccurs="0">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ================================================================ -->
+  <!-- Tipo complexo: TDesconto                                          -->
+  <!-- Reutilizado em valores/descontos e parcela/descontos             -->
+  <!-- ================================================================ -->
+  <xs:complexType name="TDesconto">
+    <xs:sequence>
+      <xs:element name="nmDesc">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="50"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <!-- vlrDesc: N, 15,2 -->
+      <xs:element name="vlrDesc" type="TValor15v2"/>
+      <xs:element name="dsDesc" minOccurs="0">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ================================================================ -->
+  <!-- Tipo complexo: TDocumentoDependencias                             -->
+  <!-- Reutilizado em parcela/documentos/documento e quitacao/.../doc   -->
+  <!-- ================================================================ -->
+  <xs:complexType name="TDocumentoDependencias">
+    <xs:sequence>
+      <xs:element name="tipo">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="obrigatorio" minOccurs="0">
+        <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <!-- Raiz: dependencias (1) → dependencia (1-N) → descricao (E) -->
+      <xs:element name="dependencias">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="dependencia" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="descricao">
+                    <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ================================================================ -->
+  <!-- Tipo complexo: TPedagio                                           -->
+  <!-- Reutilizado em rota/pedagios e direcionamento/rota/pedagios      -->
+  <!-- valorPraca: N, 15,2                                              -->
+  <!-- ================================================================ -->
+  <xs:complexType name="TPedagio">
+    <xs:sequence>
+      <xs:element name="cnp">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="17"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="nomePraca">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="valorPraca" type="TValor15v2"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ================================================================ -->
+  <!-- Tipo complexo: TPontosParada                                      -->
+  <!-- Reutilizado em rota/informacoes e direcionamento/rota/informacoes -->
+  <!-- ================================================================ -->
+  <xs:complexType name="TPontosParada">
+    <xs:sequence>
+      <!-- pontoParada: Raiz, 2-N -->
+      <xs:element name="pontoParada" minOccurs="2" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <!-- codigoIBGE OU cep (choice) -->
+            <xs:choice>
+              <xs:element name="codigoIBGE">
+                <xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[0-9]{7}"/></xs:restriction></xs:simpleType>
+              </xs:element>
+              <xs:element name="cep" type="TCep"/>
+            </xs:choice>
+            <!-- tipoRotaEspecifico: E, 0-1 -->
+            <xs:element name="tipoRotaEspecifico" minOccurs="0">
+              <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ================================================================ -->
+  <!-- Tipo complexo: TInformacoesRota                                   -->
+  <!-- Reutilizado em transp/rota/informacoes e                         -->
+  <!--               direcionamento/rota/informacoes                    -->
+  <!-- ================================================================ -->
+  <xs:complexType name="TInformacoesRota">
+    <xs:sequence>
+      <xs:element name="nome">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="50"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="tipoRotaPadrao" minOccurs="0">
+        <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <!-- Raiz: pontosParada (1) -->
+      <xs:element name="pontosParada" type="TPontosParada"/>
+      <!-- Raiz: responsaveis (0-1) → responsavel (1-N) -->
+      <xs:element name="responsaveis" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="responsavel" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="nome">
+                    <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="50"/></xs:restriction></xs:simpleType>
+                  </xs:element>
+                  <xs:element name="email">
+                    <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <!-- utilizarRoteirizador: E, 0-1 -->
+      <xs:element name="utilizarRoteirizador" minOccurs="0">
+        <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <!-- totalKm: E, 0, N, 1-8 (casa decimal 2), maior que zero -->
+      <xs:element name="totalKm" type="TTotalKm8v2" minOccurs="0"/>
+      <!-- notificarRespContratante: E, 0-1 -->
+      <xs:element name="notificarRespContratante" minOccurs="0">
+        <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <!-- Raiz: pedagios (0-1) → pedagio (1-N) -->
+      <xs:element name="pedagios" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="pedagio" type="TPedagio" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ================================================================ -->
+  <!-- Tipo complexo: TInformacoesRotaDirecionamento                     -->
+  <!-- Igual a TInformacoesRota mas o bloco responsavel aqui tem campos -->
+  <!-- extras: utilizarRoteirizador, totalKm, notificarRespContratante, -->
+  <!-- pedagios (pai=responsavel, segundo o dicionário)                 -->
+  <!-- ================================================================ -->
+  <xs:complexType name="TInformacoesRotaDirecionamento">
+    <xs:sequence>
+      <xs:element name="nome">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="50"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="tipoRotaPadrao" minOccurs="0">
+        <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+      </xs:element>
+      <xs:element name="pontosParada" type="TPontosParada"/>
+      <!-- responsaveis (0-1) com campos extras conforme dicionário -->
+      <xs:element name="responsaveis" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="responsavel" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="nome">
+                    <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="50"/></xs:restriction></xs:simpleType>
+                  </xs:element>
+                  <xs:element name="email">
+                    <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+                  </xs:element>
+                  <xs:element name="utilizarRoteirizador" minOccurs="0">
+                    <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+                  </xs:element>
+                  <!-- totalKm: N, 0-1, 15,2 (casa decimal 2) -->
+                  <xs:element name="totalKm" type="TValor15v2" minOccurs="0"/>
+                  <xs:element name="notificarRespContratante" minOccurs="0">
+                    <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+                  </xs:element>
+                  <!-- Raiz: pedagios (0-1) → pedagio (1-N) -->
+                  <xs:element name="pedagios" minOccurs="0">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element name="pedagio" type="TPedagio" maxOccurs="unbounded"/>
+                      </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ================================================================ -->
+  <!-- ELEMENTO RAIZ: loteOT_envio                                       -->
+  <!--   ATRIBUTOS (A): versao, tms, token                              -->
+  <!--   FILHO Raiz:    operacoes                                        -->
+  <!-- ================================================================ -->
+  <xs:element name="loteOT_envio">
+    <xs:complexType>
+      <xs:sequence>
+
+        <!-- Raiz: operacoes (1) -->
+        <xs:element name="operacoes">
+          <xs:complexType>
+            <xs:sequence>
+
+              <!-- Raiz: OT (1-N) -->
+              <xs:element name="OT" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+
+                    <!-- ================================================== -->
+                    <!-- Raiz: infOT (1)                                     -->
+                    <!--   ATRIBUTOS (A): ID, gerPgtoFin, gerPgtoPedagio,   -->
+                    <!--   impAuto, utilizaDirecionamentoPedagio, integrarANTT -->
+                    <!-- ================================================== -->
+                    <xs:element name="infOT">
+                      <xs:complexType>
+                        <xs:sequence>
+
+                          <!-- ============================================ -->
+                          <!-- Raiz: ide (1)                                -->
+                          <!-- ============================================ -->
+                          <xs:element name="ide">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <!-- E: cnpj, N, 1, 14 -->
+                                <xs:element name="cnpj" type="TCnpj"/>
+                                <!-- E: numero, N, 1, 1-9 -->
+                                <xs:element name="numero">
+                                  <xs:simpleType><xs:restriction base="xs:integer"><xs:totalDigits value="9"/><xs:minInclusive value="1"/></xs:restriction></xs:simpleType>
+                                </xs:element>
+                                <!-- E: serie, N, 1, 1-4 -->
+                                <xs:element name="serie">
+                                  <xs:simpleType><xs:restriction base="xs:integer"><xs:minInclusive value="1"/><xs:maxInclusive value="9999"/></xs:restriction></xs:simpleType>
+                                </xs:element>
+                                <!-- E: ptEmissor, S, 1, 1-30 -->
+                                <xs:element name="ptEmissor">
+                                  <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="30"/></xs:restriction></xs:simpleType>
+                                </xs:element>
+                                <!-- E: dtInicio, D, 0-1 — obrigatório para lotacao/fracionado -->
+                                <xs:element name="dtInicio" type="TData" minOccurs="0"/>
+                                <!-- E: dtFim, D, 0-1 — default: dtInicio +30d -->
+                                <xs:element name="dtFim" type="TData" minOccurs="0"/>
+                                <!-- E: contrato, S, 0-1, 1-50 -->
+                                <xs:element name="contrato" minOccurs="0">
+                                  <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="50"/></xs:restriction></xs:simpleType>
+                                </xs:element>
+
+                                <!-- ====================================== -->
+                                <!-- Raiz: carga (1)                        -->
+                                <!-- ====================================== -->
+                                <xs:element name="carga">
+                                  <xs:complexType>
+                                    <xs:sequence>
+
+                                      <!-- Choice: lotacao | fracionado | TACagregado -->
+                                      <xs:choice>
+
+                                        <!-- Raiz: lotacao (1) -->
+                                        <xs:element name="lotacao">
+                                          <xs:complexType>
+                                            <xs:sequence>
+                                              <!-- E: codigoSH, N, 1, 4 -->
+                                              <xs:element name="codigoSH">
+                                                <xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[0-9]{4}"/></xs:restriction></xs:simpleType>
+                                              </xs:element>
+                                              <!-- E: CodigoTipoCarga, N, 0-1, 1-2 -->
+                                              <xs:element name="CodigoTipoCarga" minOccurs="0">
+                                                <xs:simpleType><xs:restriction base="xs:integer"><xs:minInclusive value="1"/><xs:maxInclusive value="12"/></xs:restriction></xs:simpleType>
+                                              </xs:element>
+                                              <!-- E: quantidade, N, 1, 7 (casa decimal 2) -->
+                                              <xs:element name="quantidade" type="TPeso7v2"/>
+                                              <!-- E: IndAltoDesempenho, B, 0-1 -->
+                                              <xs:element name="IndAltoDesempenho" type="TBoolStr" minOccurs="0"/>
+                                              <!-- E: IndRetornoVazio, B, 0-1 -->
+                                              <xs:element name="IndRetornoVazio" type="TBoolStr" minOccurs="0"/>
+                                              <!-- Raiz: remetente (1) -->
+                                              <xs:element name="remetente" type="TPessoa"/>
+                                              <!-- Raiz: destinatario (1) -->
+                                              <xs:element name="destinatario" type="TPessoa"/>
+                                            </xs:sequence>
+                                          </xs:complexType>
+                                        </xs:element>
+
+                                        <!-- Raiz: fracionado (1) [NOVO] -->
+                                        <xs:element name="fracionado">
+                                          <xs:complexType>
+                                            <xs:sequence>
+                                              <!-- E: codigoSH, N, 1, 4 -->
+                                              <xs:element name="codigoSH">
+                                                <xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[0-9]{4}"/></xs:restriction></xs:simpleType>
+                                              </xs:element>
+                                              <!-- E: CodigoTipoCarga, N, 1, 2 — obrigatório em fracionado -->
+                                              <xs:element name="CodigoTipoCarga">
+                                                <xs:simpleType><xs:restriction base="xs:integer"><xs:minInclusive value="1"/><xs:maxInclusive value="12"/></xs:restriction></xs:simpleType>
+                                              </xs:element>
+                                              <!-- Raiz: ContratantesCargaFrac (1) → ContratanteF (1-N) → cpfCnpj (E) -->
+                                              <xs:element name="ContratantesCargaFrac">
+                                                <xs:complexType>
+                                                  <xs:sequence>
+                                                    <xs:element name="ContratanteF" maxOccurs="unbounded">
+                                                      <xs:complexType>
+                                                        <xs:sequence>
+                                                          <xs:element name="cpfCnpj" type="TCpfCnpj"/>
+                                                        </xs:sequence>
+                                                      </xs:complexType>
+                                                    </xs:element>
+                                                  </xs:sequence>
+                                                </xs:complexType>
+                                              </xs:element>
+                                              <!-- E: quantidade, N, 1, 7,2 -->
+                                              <xs:element name="quantidade" type="TPeso7v2"/>
+                                              <!-- Raiz: remetente (1) -->
+                                              <xs:element name="remetente" type="TPessoa"/>
+                                              <!-- Raiz: destinatario (1) -->
+                                              <xs:element name="destinatario" type="TPessoa"/>
+                                            </xs:sequence>
+                                          </xs:complexType>
+                                        </xs:element>
+
+                                        <!-- Raiz: TACagregado (1) -->
+                                        <xs:element name="TACagregado">
+                                          <xs:complexType>
+                                            <xs:sequence>
+                                              <!-- Raiz: remetente (1) — usa numero N 1-8 -->
+                                              <xs:element name="remetente">
+                                                <xs:complexType>
+                                                  <xs:sequence>
+                                                    <xs:choice>
+                                                      <xs:element name="cnpj" type="TCnpj"/>
+                                                      <xs:element name="cpf"  type="TCpf"/>
+                                                    </xs:choice>
+                                                    <xs:element name="nome">
+                                                      <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element name="endereco">
+                                                      <xs:complexType>
+                                                        <xs:sequence>
+                                                          <xs:element name="UF" type="TUF"/>
+                                                          <xs:element name="codigoMunicipio">
+                                                            <xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[0-9]{7}"/></xs:restriction></xs:simpleType>
+                                                          </xs:element>
+                                                          <xs:element name="bairro">
+                                                            <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+                                                          </xs:element>
+                                                          <xs:element name="logradouro">
+                                                            <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+                                                          </xs:element>
+                                                          <!-- numero: N, 1, 1-8 (TAC usa máx 8, não 60) -->
+                                                          <xs:element name="numero">
+                                                            <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="8"/></xs:restriction></xs:simpleType>
+                                                          </xs:element>
+                                                          <xs:element name="CEP" type="TCep"/>
+                                                          <xs:element name="complemento" minOccurs="0">
+                                                            <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+                                                          </xs:element>
+                                                        </xs:sequence>
+                                                      </xs:complexType>
+                                                    </xs:element>
+                                                  </xs:sequence>
+                                                </xs:complexType>
+                                              </xs:element>
+                                            </xs:sequence>
+                                          </xs:complexType>
+                                        </xs:element>
+
+                                      </xs:choice><!-- fim choice lotacao|fracionado|TACagregado -->
+
+                                      <!-- Raiz: consignatario (0-1) -->
+                                      <xs:element name="consignatario" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:choice>
+                                              <xs:element name="cnpj" type="TCnpj"/>
+                                              <xs:element name="cpf"  type="TCpf"/>
+                                            </xs:choice>
+                                            <xs:element name="nome">
+                                              <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+                                            </xs:element>
+                                            <xs:element name="endereco" type="TEnderecoMunicipio"/>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+
+                                      <!-- E: proprietarioCarga, N, 1, 1 -->
+                                      <xs:element name="proprietarioCarga">
+                                        <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/><xs:enumeration value="3"/><xs:enumeration value="4"/></xs:restriction></xs:simpleType>
+                                      </xs:element>
+
+                                      <!-- Raiz: documentosOriginarios (0-1) → documentoOriginario (1-N) -->
+                                      <xs:element name="documentosOriginarios" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="documentoOriginario" maxOccurs="unbounded">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="tipo">
+                                                    <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="40"/></xs:restriction></xs:simpleType>
+                                                  </xs:element>
+                                                  <xs:element name="numero">
+                                                    <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="44"/></xs:restriction></xs:simpleType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element><!-- fim Raiz: carga -->
+
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element><!-- fim Raiz: ide -->
+
+                          <!-- ============================================ -->
+                          <!-- Raiz: contatos (0-1) → contato (1-N)        -->
+                          <!-- ============================================ -->
+                          <xs:element name="contatos" minOccurs="0">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="contato" maxOccurs="unbounded">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="nome">
+                                        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+                                      </xs:element>
+                                      <xs:element name="contato">
+                                        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+
+                          <!-- ============================================ -->
+                          <!-- Raiz: transp (1)                             -->
+                          <!-- ============================================ -->
+                          <xs:element name="transp">
+                            <xs:complexType>
+                              <xs:sequence>
+
+                                <!-- E: rntrc, N, 1, 9 -->
+                                <xs:element name="rntrc" type="TRntrc"/>
+
+                                <!--
+                                  cpfTransportador e cnpjTransportador: Ocor.=0 individualmente,
+                                  mas o dicionário diz "informar este ou o outro" → choice 0-1
+                                  (pelo menos um deve ser enviado na prática; XSD modela como opcional)
+                                -->
+                                <xs:element name="cpfTransportador" type="TCpf" minOccurs="0"/>
+                                <xs:element name="cnpjTransportador" type="TCnpj" minOccurs="0"/>
+
+                                <!-- Raiz: infTransportador (0-1) -->
+                                <xs:element name="infTransportador" minOccurs="0">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <!-- Raiz: ide (1) → choice: tac | etc | ctc -->
+                                      <xs:element name="ide">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:choice>
+
+                                              <!-- Raiz: tac (0-1) -->
+                                              <xs:element name="tac" minOccurs="0">
+                                                <xs:complexType>
+                                                  <xs:sequence>
+                                                    <xs:element name="nomeCompleto"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <xs:element name="nomeMae"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <xs:element name="nomePai" minOccurs="0"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <xs:element name="dataNascimento" type="TData"/>
+                                                    <xs:element name="identidade"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="20"/></xs:restriction></xs:simpleType></xs:element>
+                                                  </xs:sequence>
+                                                </xs:complexType>
+                                              </xs:element>
+
+                                              <!-- Raiz: etc (1 quando escolhido) -->
+                                              <xs:element name="etc">
+                                                <xs:complexType>
+                                                  <xs:sequence>
+                                                    <xs:element name="razaoSocial"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <xs:element name="nomeFantasia"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <xs:element name="inscEstadual"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="14"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <xs:element name="atividadePrincipal"><xs:simpleType><xs:restriction base="xs:string"><xs:maxLength value="2"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <xs:element name="formaConstituicao"><xs:simpleType><xs:restriction base="xs:string"><xs:maxLength value="5"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <xs:element name="dataConstituicao" type="TData"/>
+                                                    <xs:element name="socio" type="TSocio"/>
+                                                  </xs:sequence>
+                                                </xs:complexType>
+                                              </xs:element>
+
+                                              <!-- Raiz: ctc (1 quando escolhido) -->
+                                              <xs:element name="ctc">
+                                                <xs:complexType>
+                                                  <xs:sequence>
+                                                    <xs:element name="razaoSocial"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <xs:element name="nomeFantasia"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <xs:element name="inscEstadual"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="14"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <xs:element name="atividadePrincipal"><xs:simpleType><xs:restriction base="xs:string"><xs:maxLength value="2"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <xs:element name="formaConstituicao"><xs:simpleType><xs:restriction base="xs:string"><xs:maxLength value="5"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <xs:element name="dataConstituicao" type="TData"/>
+                                                    <xs:element name="socio" type="TSocio"/>
+                                                  </xs:sequence>
+                                                </xs:complexType>
+                                              </xs:element>
+
+                                            </xs:choice>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element><!-- fim Raiz: ide (infTransportador) -->
+
+                                      <!-- Raiz: endereco (0-1) — TEnderecoCidade -->
+                                      <xs:element name="endereco" type="TEnderecoCidade" minOccurs="0"/>
+                                      <!-- E: telefone, N, 1, 10-11 -->
+                                      <xs:element name="telefone" type="TTelefone"/>
+                                      <!-- E: cartaoId, N, 0-1, 1-15 -->
+                                      <xs:element name="cartaoId" minOccurs="0">
+                                        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="15"/></xs:restriction></xs:simpleType>
+                                      </xs:element>
+                                      <!-- E: email, S, 0-1, 1-255 -->
+                                      <xs:element name="email" minOccurs="0">
+                                        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element><!-- fim Raiz: infTransportador -->
+
+                                <!-- E: gestoraCartao, N, 0-1, 3 -->
+                                <xs:element name="gestoraCartao" minOccurs="0">
+                                  <xs:simpleType><xs:restriction base="xs:string"><xs:maxLength value="3"/></xs:restriction></xs:simpleType>
+                                </xs:element>
+
+                                <!-- Raiz: subcontratado (0-1) -->
+                                <xs:element name="subcontratado" minOccurs="0">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <!--
+                                        cnpj e cpf: Ocor.=0-1 individualmente (ambos opcionais),
+                                        mas dicionário diz "informar este ou o outro"
+                                      -->
+                                      <xs:element name="cnpj" type="TCnpj" minOccurs="0"/>
+                                      <xs:element name="cpf"  type="TCpf"  minOccurs="0"/>
+                                      <!-- E: nome, S, 1, 1-150 -->
+                                      <xs:element name="nome">
+                                        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType>
+                                      </xs:element>
+                                      <!-- Raiz: endereco (1) — TEnderecoMunicipio -->
+                                      <xs:element name="endereco" type="TEnderecoMunicipio"/>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+
+                                <!-- Raiz: rota (0-1) — obrigatória para lotacao/fracionado -->
+                                <xs:element name="rota" minOccurs="0">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <!-- E: rotaERP, S, 1, 1-30 -->
+                                      <xs:element name="rotaERP">
+                                        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="30"/></xs:restriction></xs:simpleType>
+                                      </xs:element>
+                                      <!-- Raiz: informacoes (0-1) -->
+                                      <xs:element name="informacoes" type="TInformacoesRota" minOccurs="0"/>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+
+                                <!-- Raiz: condutores (0-1) → condutor (1-N) -->
+                                <xs:element name="condutores" minOccurs="0">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="condutor" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <!-- E: cpf, N, 1, 11 -->
+                                            <xs:element name="cpf" type="TCpf"/>
+                                            <!-- Raiz: informacoes (0-1) -->
+                                            <xs:element name="informacoes" minOccurs="0">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="nomeCompleto"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType></xs:element>
+                                                  <xs:element name="nomeMae"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType></xs:element>
+                                                  <xs:element name="nomePai" minOccurs="0"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="150"/></xs:restriction></xs:simpleType></xs:element>
+                                                  <xs:element name="dataNascimento" type="TData"/>
+                                                  <xs:element name="identidade"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="20"/></xs:restriction></xs:simpleType></xs:element>
+                                                  <!-- E: RNTRCTransportador, N, 0-1, 9 -->
+                                                  <xs:element name="RNTRCTransportador" type="TRntrc" minOccurs="0"/>
+                                                  <!--
+                                                    cpfTransportador e cnpjTransportador: 0-1 cada
+                                                    (informar um ou outro)
+                                                  -->
+                                                  <xs:element name="cpfTransportador"  type="TCpf"  minOccurs="0"/>
+                                                  <xs:element name="cnpjTransportador" type="TCnpj" minOccurs="0"/>
+                                                  <!-- Raiz: endereco (1) — TEnderecoCidade -->
+                                                  <xs:element name="endereco" type="TEnderecoCidade"/>
+                                                  <!-- E: CNH, N, 0-1, 1-15 -->
+                                                  <xs:element name="CNH" minOccurs="0">
+                                                    <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="15"/></xs:restriction></xs:simpleType>
+                                                  </xs:element>
+                                                  <xs:element name="dataEmissaoCNH"   type="TData" minOccurs="0"/>
+                                                  <xs:element name="dataRenovacaoCNH" type="TData" minOccurs="0"/>
+                                                  <!-- E: telefone, N, 1, 10-11 -->
+                                                  <xs:element name="telefone" type="TTelefone"/>
+                                                  <!-- E: cartaoId, N, 0-1, 1-15 -->
+                                                  <xs:element name="cartaoId" minOccurs="0">
+                                                    <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="15"/></xs:restriction></xs:simpleType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element><!-- fim Raiz: condutores -->
+
+                                <!-- Raiz: veiculos (1) → veiculo (1-5) -->
+                                <xs:element name="veiculos">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="veiculo" minOccurs="1" maxOccurs="5">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <!-- E: placa, S, 1, 7 -->
+                                            <xs:element name="placa" type="TPlaca"/>
+                                            <!-- Raiz: informacoes (1) [obrigatório no 4.2.12] -->
+                                            <xs:element name="informacoes">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <!-- E: modelo, S, 1, 1-100 -->
+                                                  <xs:element name="modelo"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="100"/></xs:restriction></xs:simpleType></xs:element>
+                                                  <!-- E: kmLitroModelo, N, 0-1, 4,2 -->
+                                                  <xs:element name="kmLitroModelo" type="TKmLitro4v2" minOccurs="0"/>
+                                                  <!-- E: tipo, N, 1, 1 -->
+                                                  <xs:element name="tipo">
+                                                    <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+                                                  </xs:element>
+                                                  <!-- E: kmLitroVeiculo, N, 0-1, 4,2 -->
+                                                  <xs:element name="kmLitroVeiculo" type="TKmLitro4v2" minOccurs="0"/>
+                                                  <!-- E: RNTRCTransportador, N, 1, 9 -->
+                                                  <xs:element name="RNTRCTransportador" type="TRntrc"/>
+                                                  <!-- E: qtdEixos, N, 1, 2 (tração 2-4; reboque 1-4) [NOVO] -->
+                                                  <xs:element name="qtdEixos">
+                                                    <xs:simpleType><xs:restriction base="xs:integer"><xs:minInclusive value="1"/><xs:maxInclusive value="4"/></xs:restriction></xs:simpleType>
+                                                  </xs:element>
+                                                  <!-- E: ComposicaoVeicular, B, 0-1 [NOVO] (pai=veiculo no dicionário) -->
+                                                  <xs:element name="ComposicaoVeicular" type="TBoolStr" minOccurs="0"/>
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element><!-- fim Raiz: veiculos -->
+
+                                <!-- ====================================== -->
+                                <!-- Raiz: valores (1)                      -->
+                                <!-- ====================================== -->
+                                <xs:element name="valores">
+                                  <xs:complexType>
+                                    <xs:sequence>
+
+                                      <!-- E: vlrFrete, N, 1, 15,2 -->
+                                      <xs:element name="vlrFrete" type="TValor15v2"/>
+
+                                      <!-- Raiz: despesas (0-1) -->
+                                      <xs:element name="despesas" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <!-- E: vlrDespesas, N, 1, 15,2 -->
+                                            <xs:element name="vlrDespesas" type="TValor15v2"/>
+                                            <xs:element name="descricao"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="2000"/></xs:restriction></xs:simpleType></xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+
+                                      <!-- Raiz: parcelamento (0-1) -->
+                                      <xs:element name="parcelamento" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:choice>
+                                            <!-- E: regraERP, S, 0, 1-30 -->
+                                            <xs:element name="regraERP">
+                                              <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="30"/></xs:restriction></xs:simpleType>
+                                            </xs:element>
+                                            <!-- Raiz: informacoes (0) → parcelas (1) → parcela (1-N) -->
+                                            <xs:element name="informacoes">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="parcelas">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="parcela" maxOccurs="unbounded">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+
+                                                              <!-- E: nome, S, 1, 1-50 -->
+                                                              <xs:element name="nome"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="50"/></xs:restriction></xs:simpleType></xs:element>
+
+                                                              <!-- Raiz: tipoPgto (1) → choice: manual | automatico | imediato -->
+                                                              <xs:element name="tipoPgto">
+                                                                <xs:complexType>
+                                                                  <xs:choice>
+                                                                    <!-- Raiz: manual -->
+                                                                    <xs:element name="manual">
+                                                                      <xs:complexType>
+                                                                        <xs:sequence>
+                                                                          <xs:element name="dataPrevisao" type="TData"/>
+                                                                          <xs:element name="efetivacao" minOccurs="0">
+                                                                            <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/><xs:enumeration value="3"/><xs:enumeration value="4"/></xs:restriction></xs:simpleType>
+                                                                          </xs:element>
+                                                                          <xs:element name="cnpjPostoCredenciado" type="TCnpj" minOccurs="0"/>
+                                                                        </xs:sequence>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                    <!-- Raiz: automatico -->
+                                                                    <xs:element name="automatico">
+                                                                      <xs:complexType>
+                                                                        <xs:sequence>
+                                                                          <xs:element name="dataHora" type="TDataHora"/>
+                                                                        </xs:sequence>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                    <!-- E: imediato, N, 1, 1 — valor fixo 2 -->
+                                                                    <xs:element name="imediato">
+                                                                      <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+                                                                    </xs:element>
+                                                                  </xs:choice>
+                                                                </xs:complexType>
+                                                              </xs:element>
+
+                                                              <!-- E: valorAplicado, N, 1, 12,2 -->
+                                                              <xs:element name="valorAplicado" type="TValor12v2"/>
+                                                              <!-- E: valorReal, N, 0-1, 12,2 -->
+                                                              <xs:element name="valorReal" type="TValor12v2" minOccurs="0"/>
+
+                                                              <!-- Raiz: documentos (0-1) → documento (1-N) -->
+                                                              <xs:element name="documentos" minOccurs="0">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="documento" type="TDocumentoDependencias" maxOccurs="unbounded"/>
+                                                                  </xs:sequence>
+                                                                </xs:complexType>
+                                                              </xs:element>
+
+                                                              <!-- Raiz: descontos (0-1) → desconto (1-N) -->
+                                                              <xs:element name="descontos" minOccurs="0">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="desconto" type="TDesconto" maxOccurs="unbounded"/>
+                                                                  </xs:sequence>
+                                                                </xs:complexType>
+                                                              </xs:element>
+
+                                                              <!-- Raiz: restricoes (0-1) → restricao (1-N) -->
+                                                              <xs:element name="restricoes" minOccurs="0">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="restricao" maxOccurs="unbounded">
+                                                                      <xs:complexType>
+                                                                        <xs:sequence>
+                                                                          <xs:element name="campo"><xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType></xs:element>
+                                                                          <xs:element name="valor"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="15"/></xs:restriction></xs:simpleType></xs:element>
+                                                                          <xs:element name="criterio" minOccurs="0"><xs:simpleType><xs:restriction base="xs:integer"><xs:minInclusive value="1"/><xs:maxInclusive value="6"/></xs:restriction></xs:simpleType></xs:element>
+                                                                          <xs:element name="conector" minOccurs="0"><xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType></xs:element>
+                                                                        </xs:sequence>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                  </xs:sequence>
+                                                                </xs:complexType>
+                                                              </xs:element>
+
+                                                              <!-- E: prazoMinimo, N, 0-1, 1 -->
+                                                              <xs:element name="prazoMinimo" minOccurs="0">
+                                                                <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/><xs:enumeration value="3"/></xs:restriction></xs:simpleType>
+                                                              </xs:element>
+
+                                                              <!-- Raiz: carga (0-1) — dados de carga da parcela -->
+                                                              <xs:element name="carga" minOccurs="0">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <!-- E: quantidade, N, 1, 9,2 -->
+                                                                    <xs:element name="quantidade" type="TQtd9v2"/>
+                                                                    <xs:element name="unidadeMedida"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="20"/></xs:restriction></xs:simpleType></xs:element>
+                                                                    <xs:element name="dataPrevisaoEntrega" type="TData"/>
+                                                                  </xs:sequence>
+                                                                </xs:complexType>
+                                                              </xs:element>
+
+                                                              <!-- E: confirmarPgto, N, 0-1 -->
+                                                              <xs:element name="confirmarPgto" minOccurs="0">
+                                                                <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+                                                              </xs:element>
+
+                                                              <!-- Raiz: transferenciaAutomatica (0-1) -->
+                                                              <xs:element name="transferenciaAutomatica" minOccurs="0">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="cpfCondutor" type="TCpf"/>
+                                                                    <xs:element name="finalidadeParcela"><xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType></xs:element>
+                                                                  </xs:sequence>
+                                                                </xs:complexType>
+                                                              </xs:element>
+
+                                                              <!-- Raiz: retencoes (1) — IRRF + INSS + SEST/SENAT -->
+                                                              <xs:element name="retencoes">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <!-- irrf, inss, sestsenat: N, 1, 15,2 -->
+                                                                    <xs:element name="irrf"      type="TValor15v2"/>
+                                                                    <xs:element name="inss"      type="TValor15v2"/>
+                                                                    <xs:element name="sestsenat" type="TValor15v2"/>
+                                                                  </xs:sequence>
+                                                                </xs:complexType>
+                                                              </xs:element>
+
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element><!-- fim Raiz: parcela -->
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element><!-- fim Raiz: parcelas -->
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element><!-- fim Raiz: informacoes (parcelamento) -->
+                                          </xs:choice>
+                                        </xs:complexType>
+                                      </xs:element><!-- fim Raiz: parcelamento -->
+
+                                      <!-- E: tipoRateio, N, 1, 1 -->
+                                      <xs:element name="tipoRateio">
+                                        <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/><xs:enumeration value="3"/><xs:enumeration value="4"/><xs:enumeration value="5"/></xs:restriction></xs:simpleType>
+                                      </xs:element>
+
+                                      <!-- Raiz: descontos (0-1) → desconto (1-N) — descontos globais da OT -->
+                                      <xs:element name="descontos" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="desconto" type="TDesconto" maxOccurs="unbounded"/>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+
+                                      <!-- E: vlrCombustivel, N, 0-1, 15,2 -->
+                                      <xs:element name="vlrCombustivel" type="TValor15v2" minOccurs="0"/>
+
+                                      <!--
+                                        vlrPedagio OU direcionamentosPedagio (0-1 cada, mutuamente exclusivos)
+                                        Modelado como choice opcional
+                                      -->
+                                      <xs:choice minOccurs="0">
+                                        <!-- E: vlrPedagio, N, 0-1, 15,2 -->
+                                        <xs:element name="vlrPedagio" type="TValor15v2"/>
+                                        <!-- Raiz: direcionamentosPedagio (0-1) → direcionamento (1-N) -->
+                                        <xs:element name="direcionamentosPedagio">
+                                          <xs:complexType>
+                                            <xs:sequence>
+                                              <xs:element name="direcionamento" maxOccurs="unbounded">
+                                                <xs:complexType>
+                                                  <xs:sequence>
+                                                    <!-- E: pedagioERP, S, 1, 1-30 -->
+                                                    <xs:element name="pedagioERP"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="30"/></xs:restriction></xs:simpleType></xs:element>
+                                                    <!-- E: cpf, N, 1, 11 -->
+                                                    <xs:element name="cpf" type="TCpf"/>
+                                                    <!-- E: valor, N, 0-1, 15,2 -->
+                                                    <xs:element name="valor" type="TValor15v2" minOccurs="0"/>
+                                                    <!-- Raiz: rota (1) → rotaERP (E) + informacoes (Raiz, 0-1) -->
+                                                    <xs:element name="rota">
+                                                      <xs:complexType>
+                                                        <xs:sequence>
+                                                          <xs:element name="rotaERP"><xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="30"/></xs:restriction></xs:simpleType></xs:element>
+                                                          <xs:element name="informacoes" type="TInformacoesRotaDirecionamento" minOccurs="0"/>
+                                                        </xs:sequence>
+                                                      </xs:complexType>
+                                                    </xs:element>
+                                                  </xs:sequence>
+                                                </xs:complexType>
+                                              </xs:element>
+                                              <!-- E: categoriaPedagio, N, 1, 1-2 (filho de direcionamentosPedagio) -->
+                                              <xs:element name="categoriaPedagio">
+                                                <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="2"/></xs:restriction></xs:simpleType>
+                                              </xs:element>
+                                            </xs:sequence>
+                                          </xs:complexType>
+                                        </xs:element>
+                                      </xs:choice>
+
+                                      <!-- Raiz: dadosBancarios (0-1) -->
+                                      <xs:element name="dadosBancarios" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <!-- E: codigoInstituicaoFinanceira, N, 0-1, 1-3 -->
+                                            <xs:element name="codigoInstituicaoFinanceira" minOccurs="0">
+                                              <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="3"/></xs:restriction></xs:simpleType>
+                                            </xs:element>
+                                            <!-- E: numeroAgencia, S, 0-1, 1-6 -->
+                                            <xs:element name="numeroAgencia" minOccurs="0">
+                                              <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="6"/></xs:restriction></xs:simpleType>
+                                            </xs:element>
+                                            <!-- E: numeroConta, S, 0-1, 1-20 -->
+                                            <xs:element name="numeroConta" minOccurs="0">
+                                              <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="20"/></xs:restriction></xs:simpleType>
+                                            </xs:element>
+                                            <!-- E: digitoConta, N, 0-1, 1 -->
+                                            <xs:element name="digitoConta" minOccurs="0">
+                                              <xs:simpleType><xs:restriction base="xs:string"><xs:maxLength value="1"/></xs:restriction></xs:simpleType>
+                                            </xs:element>
+                                            <!-- E: chavePix, S, 0-1, 1-64 — somente gerPgtoFin=6 e tipoChave≠5 -->
+                                            <xs:element name="chavePix" minOccurs="0">
+                                              <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="64"/></xs:restriction></xs:simpleType>
+                                            </xs:element>
+                                            <!-- E: cpfCnpjFavorecido, N, 0-1, 11/14 -->
+                                            <xs:element name="cpfCnpjFavorecido" type="TCpfCnpj" minOccurs="0"/>
+                                            <!-- E: tipoChave, N, 0-1, 1 — somente gerPgtoFin=6 -->
+                                            <xs:element name="tipoChave" minOccurs="0">
+                                              <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/><xs:enumeration value="3"/><xs:enumeration value="4"/><xs:enumeration value="5"/></xs:restriction></xs:simpleType>
+                                            </xs:element>
+                                            <!-- E: tipoPagamento, N, 0-1, 1 — TED descontinuado; apenas PIX (2) -->
+                                            <xs:element name="tipoPagamento" minOccurs="0">
+                                              <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element><!-- fim Raiz: dadosBancarios -->
+
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element><!-- fim Raiz: valores -->
+
+                                <!-- E: categoriaPedagio, N, 0-1, 1-2 (filho de transp) -->
+                                <xs:element name="categoriaPedagio" minOccurs="0">
+                                  <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="2"/></xs:restriction></xs:simpleType>
+                                </xs:element>
+
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element><!-- fim Raiz: transp -->
+
+                          <!-- ============================================ -->
+                          <!-- Raiz: quitacao (0-1)                         -->
+                          <!-- ============================================ -->
+                          <xs:element name="quitacao" minOccurs="0">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <!-- Raiz: documentos (0-1) → documento (1-N) -->
+                                <xs:element name="documentos" minOccurs="0">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="documento" type="TDocumentoDependencias" maxOccurs="unbounded"/>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                                <!-- E: entrega, N, 0-1, 14 — CNPJ -->
+                                <xs:element name="entrega" type="TCnpj" minOccurs="0"/>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+
+                          <!-- ============================================ -->
+                          <!-- Raiz: adicionais (0-1) → campo (1-N)        -->
+                          <!-- campo é Raiz (container) com E: nome + valor -->
+                          <!-- ============================================ -->
+                          <xs:element name="adicionais" minOccurs="0">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="campo" maxOccurs="unbounded">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <!-- E: nome, S, 1, 1-255 -->
+                                      <xs:element name="nome">
+                                        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType>
+                                      </xs:element>
+                                      <!-- E: valor, S, 1, 1-2000 -->
+                                      <xs:element name="valor">
+                                        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="2000"/></xs:restriction></xs:simpleType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+
+                          <!-- ============================================ -->
+                          <!-- Raiz: confirmador (0-1)                      -->
+                          <!-- ============================================ -->
+                          <xs:element name="confirmador" minOccurs="0">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <!-- cnpj OU cpf (choice) -->
+                                <xs:choice>
+                                  <xs:element name="cnpj" type="TCnpj"/>
+                                  <xs:element name="cpf"  type="TCpf"/>
+                                </xs:choice>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+
+                        </xs:sequence>
+
+                        <!-- ================================================ -->
+                        <!-- ATRIBUTOS de infOT (Elem = A)                     -->
+                        <!-- ================================================ -->
+                        <!-- ID: A, S, 0-1 — GUID para assinatura -->
+                        <xs:attribute name="ID" type="xs:string" use="optional"/>
+                        <!-- gerPgtoFin: A, N, 0-1, 1 -->
+                        <xs:attribute name="gerPgtoFin" use="optional">
+                          <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/><xs:enumeration value="3"/><xs:enumeration value="4"/><xs:enumeration value="5"/><xs:enumeration value="6"/></xs:restriction></xs:simpleType>
+                        </xs:attribute>
+                        <!-- gerPgtoPedagio: A, N, 0-1, 1 -->
+                        <xs:attribute name="gerPgtoPedagio" use="optional">
+                          <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+                        </xs:attribute>
+                        <!-- impAuto: A, N, 0-1, 1 -->
+                        <xs:attribute name="impAuto" use="optional">
+                          <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+                        </xs:attribute>
+                        <!-- utilizaDirecionamentoPedagio: A, N, 0-1, 1 -->
+                        <xs:attribute name="utilizaDirecionamentoPedagio" use="optional">
+                          <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+                        </xs:attribute>
+                        <!-- integrarANTT: A, N, 0-1, 1; default 1 -->
+                        <xs:attribute name="integrarANTT" use="optional">
+                          <xs:simpleType><xs:restriction base="xs:integer"><xs:enumeration value="1"/><xs:enumeration value="2"/></xs:restriction></xs:simpleType>
+                        </xs:attribute>
+
+                      </xs:complexType>
+                    </xs:element><!-- fim Raiz: infOT -->
+
+                    <!-- Raiz: ds:Signature (1) — assinatura digital XML-DSig -->
+                    <xs:element ref="ds:Signature"/>
+
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element><!-- fim Raiz: OT -->
+
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element><!-- fim Raiz: operacoes -->
+
+      </xs:sequence>
+
+      <!-- ================================================================ -->
+      <!-- ATRIBUTOS de loteOT_envio (Elem = A)                             -->
+      <!-- ================================================================ -->
+      <!-- versao: A, S, 1, 7 — enviar "4.2.12" -->
+      <xs:attribute name="versao" use="required">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="7"/></xs:restriction></xs:simpleType>
+      </xs:attribute>
+      <!-- tms: A, S, 0, 1-20 — nome do TMS/sistema de origem [NOVO] -->
+      <xs:attribute name="tms" use="optional">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="20"/></xs:restriction></xs:simpleType>
+      </xs:attribute>
+      <!-- token: A, S, 1, 24 -->
+      <xs:attribute name="token" use="required">
+        <xs:simpleType><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="24"/></xs:restriction></xs:simpleType>
+      </xs:attribute>
+
+    </xs:complexType>
+  </xs:element><!-- fim Raiz: loteOT_envio -->
+
+</xs:schema>

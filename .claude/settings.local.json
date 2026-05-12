@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)",
+      "Bash(ls /Users/icarowares/xml-validator/public/ 2>&1 && find /Users/icarowares/Downloads -name \"*.xsd\" 2>/dev/null)",
+      "Read(//Users/icarowares/Downloads/**)",
+      "Bash(cp /Users/icarowares/Downloads/loteOT_envio_4_2_12.xsd /Users/icarowares/xml-validator/public/loteOT_envio_4_2_12_0.xsd)",
+      "Bash(git -C /Users/icarowares/xml-validator status)",
+      "Bash(git -C /Users/icarowares/xml-validator remote -v)",
+      "Bash(gh auth *)",
+      "Bash(git -C /Users/icarowares/xml-validator add src/validator/businessRules.ts src/validator/validate.ts .claude/settings.local.json)",
+      "Bash(git -C /Users/icarowares/xml-validator remote add origin https://github.com/icarowares/validador-xml-nddcargo.git)"
+    ],
+    "additionalDirectories": [
+      "/Users/icarowares/Downloads"
+    ]
+  }
+}
