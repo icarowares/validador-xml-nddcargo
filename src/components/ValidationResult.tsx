@@ -1,7 +1,11 @@
+import { useMemo } from 'react';
 import type { ValidationResult } from '../validator/types';
+import { findLineForPath } from '../utils/xmlLineLocator';
 
 interface Props {
   result: ValidationResult | null;
+  xml?: string;
+  onErrorClick?: (line: number) => void;
 }
 
 function PathBreadcrumb({ path }: { path: string }) {
@@ -20,7 +24,12 @@ function PathBreadcrumb({ path }: { path: string }) {
   );
 }
 
-export function ValidationResult({ result }: Props) {
+export function ValidationResult({ result, xml, onErrorClick }: Props) {
+  const errorLines = useMemo(() => {
+    if (!xml || !result) return [];
+    return result.errors.map(err => findLineForPath(xml, err.path));
+  }, [xml, result]);
+
   if (!result) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4 text-gray-400 py-16">
@@ -68,21 +77,43 @@ export function ValidationResult({ result }: Props) {
         <StatusBanner
           type="error"
           title={`${result.errors.length} erro${result.errors.length !== 1 ? 's' : ''} encontrado${result.errors.length !== 1 ? 's' : ''}`}
-          subtitle="Corrija os problemas abaixo e valide novamente"
+          subtitle="Clique em um erro para localizar no XML"
         />
       )}
 
       {result.errors.length > 0 && (
-        <div className="flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-320px)]">
-          {result.errors.map((err, i) => (
-            <div
-              key={i}
-              className="p-3 bg-white border border-red-100 rounded-lg hover:border-red-200 transition-colors"
-            >
-              <PathBreadcrumb path={err.path} />
-              <p className="text-sm text-gray-800 leading-snug">{err.message}</p>
-            </div>
-          ))}
+        <div className="flex flex-col gap-2">
+          {result.errors.map((err, i) => {
+            const line = errorLines[i] ?? null;
+            const clickable = line !== null && !!onErrorClick;
+            return (
+              <div
+                key={i}
+                onClick={() => { if (clickable) onErrorClick!(line!); }}
+                className={`p-3 bg-white border border-red-100 rounded-lg transition-colors ${
+                  clickable
+                    ? 'cursor-pointer hover:border-red-300 hover:bg-red-50/40'
+                    : ''
+                }`}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <PathBreadcrumb path={err.path} />
+                    <p className="text-sm text-gray-800 leading-snug">{err.message}</p>
+                  </div>
+                  {line !== null && (
+                    <span className="shrink-0 mt-0.5 inline-flex items-center gap-1 text-[10px] font-mono bg-gray-100 text-gray-500 rounded px-1.5 py-0.5 leading-none">
+                      <svg className="w-2.5 h-2.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      L{line}
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

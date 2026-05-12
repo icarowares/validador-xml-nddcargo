@@ -12,7 +12,16 @@
       "Bash(git -C /Users/icarowares/xml-validator remote -v)",
       "Bash(gh auth *)",
       "Bash(git -C /Users/icarowares/xml-validator add src/validator/businessRules.ts src/validator/validate.ts .claude/settings.local.json)",
-      "Bash(git -C /Users/icarowares/xml-validator remote add origin https://github.com/icarowares/validador-xml-nddcargo.git)"
+      "Bash(git -C /Users/icarowares/xml-validator remote add origin https://github.com/icarowares/validador-xml-nddcargo.git)",
+      "Bash(git -C /Users/icarowares/xml-validator commit -m ' *)",
+      "Bash(git -C /Users/icarowares/xml-validator push -u origin main)",
+      "Bash(git -C /Users/icarowares/xml-validator pull origin main --allow-unrelated-histories --no-edit)",
+      "Bash(git -C /Users/icarowares/xml-validator pull origin main --allow-unrelated-histories --no-rebase --no-edit)",
+      "Bash(git -C /Users/icarowares/xml-validator checkout --ours README.md)",
+      "Bash(git -C /Users/icarowares/xml-validator add README.md)",
+      "Bash(git -C /Users/icarowares/xml-validator commit --no-edit)",
+      "Bash(python3)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)"
     ],
     "additionalDirectories": [
       "/Users/icarowares/Downloads"
