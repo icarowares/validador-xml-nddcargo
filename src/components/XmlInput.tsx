@@ -125,7 +125,7 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
             : '2.25rem';
 
     return (
-      <div className="flex flex-col h-full gap-3">
+      <div className="flex flex-col flex-1 min-h-0 gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
             {isXml ? 'XML de Entrada' : isJson ? 'JSON de Entrada' : 'TXT de Entrada'}
@@ -242,7 +242,7 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
           />
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between shrink-0">
           <span className="text-xs text-gray-400 dark:text-gray-500">
             {value
               ? `${lineCount.toLocaleString('pt-BR')} linhas · ${charCount.toLocaleString('pt-BR')} caracteres`
