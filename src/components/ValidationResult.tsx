@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import type { ValidationResult } from '../validator/types';
 import { findLineForPath } from '../utils/xmlLineLocator';
+import { findLineForJsonPath } from '../utils/jsonLineLocator';
 
 interface Props {
   result: ValidationResult | null;
@@ -31,9 +32,10 @@ export function ValidationResult({ result, xml, fileType = 'xml', onErrorClick }
     return result.errors.map(err => {
       if (err.lineNumber !== undefined) return err.lineNumber;
       if (!xml) return null;
+      if (fileType === 'json') return findLineForJsonPath(xml, err.path);
       return findLineForPath(xml, err.path);
     });
-  }, [xml, result]);
+  }, [xml, result, fileType]);
 
   if (!result) {
     return (
