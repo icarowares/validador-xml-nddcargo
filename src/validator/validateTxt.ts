@@ -36,9 +36,6 @@ function makeCtx(lineNumber: number, regCode: string): Ctx {
 
 // ─── Per-field validators ─────────────────────────────────────────────────────
 
-function reqN(v: string, label: string, ctx: Ctx): void {
-  if (!isDigits(v)) ctx.err(`"${v}" deve conter apenas dígitos numéricos`, label);
-}
 
 function reqDate(v: string, label: string, ctx: Ctx): void {
   if (!isDate(v)) ctx.err(`"${v}" deve estar no formato AAAA-MM-DD`, label);
@@ -1054,6 +1051,7 @@ interface OTState {
   has2510: boolean;
   has4000: boolean;
   has4010: boolean;
+  has4011: boolean;
   has4020: boolean;
   has4030: boolean;
   has4021: boolean;
@@ -1094,7 +1092,7 @@ function newOTState(line1000: number): OTState {
   return {
     tipo: null, has2000: false, has2100: false, has2200: false, has2210: false,
     has2300: false, has2310: false, has2500: false, has2510: false,
-    has4000: false, has4010: false, has4020: false, has4030: false,
+    has4000: false, has4010: false, has4011: false, has4020: false, has4030: false,
     has4021: false, has4022: false, has4023: false,
     has4031: false, has4032: false, has4033: false,
     has4300: false, has4330: false,
@@ -1302,7 +1300,7 @@ export function validateTxt(content: string): ValidationResult {
       case '4010': currentOT.has4010 = true; errors.push(...val4010(line)); break;
       case '4011':
         if (!currentOT.has4010) errors.push(parentErr(line, '4010'));
-        errors.push(...val4011(line)); break;
+        currentOT.has4011 = true; errors.push(...val4011(line)); break;
       case '4020': currentOT.has4020 = true; errors.push(...val4020(line)); break;
       case '4021':
         if (!currentOT.has4020) errors.push(parentErr(line, '4020'));
