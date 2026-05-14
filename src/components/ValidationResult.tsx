@@ -5,6 +5,7 @@ import { findLineForPath } from '../utils/xmlLineLocator';
 interface Props {
   result: ValidationResult | null;
   xml?: string;
+  fileType?: 'xml' | 'txt';
   onErrorClick?: (line: number) => void;
 }
 
@@ -24,10 +25,14 @@ function PathBreadcrumb({ path }: { path: string }) {
   );
 }
 
-export function ValidationResult({ result, xml, onErrorClick }: Props) {
+export function ValidationResult({ result, xml, fileType = 'xml', onErrorClick }: Props) {
   const errorLines = useMemo(() => {
-    if (!xml || !result) return [];
-    return result.errors.map(err => findLineForPath(xml, err.path));
+    if (!result) return [];
+    return result.errors.map(err => {
+      if (err.lineNumber !== undefined) return err.lineNumber;
+      if (!xml) return null;
+      return findLineForPath(xml, err.path);
+    });
   }, [xml, result]);
 
   if (!result) {
@@ -42,7 +47,8 @@ export function ValidationResult({ result, xml, onErrorClick }: Props) {
           />
         </svg>
         <p className="text-sm text-center max-w-xs">
-          Cole ou faça upload de um XML e clique em <strong>Validar XML</strong>
+          Cole ou faça upload de um {fileType === 'xml' ? 'XML' : 'TXT'} e clique em{' '}
+          <strong>{fileType === 'xml' ? 'Validar XML' : 'Validar TXT'}</strong>
         </p>
       </div>
     );
@@ -53,8 +59,8 @@ export function ValidationResult({ result, xml, onErrorClick }: Props) {
       <div className="flex flex-col gap-3">
         <StatusBanner
           type="error"
-          title="XML malformado"
-          subtitle="Corrija a sintaxe do documento antes de prosseguir"
+          title={fileType === 'xml' ? 'XML malformado' : 'Arquivo TXT inválido'}
+          subtitle="Corrija os erros antes de prosseguir"
         />
         <div className="p-3 bg-red-50 border border-red-100 rounded-lg">
           <p className="text-xs font-mono text-red-700 whitespace-pre-wrap break-all leading-relaxed">
@@ -70,8 +76,8 @@ export function ValidationResult({ result, xml, onErrorClick }: Props) {
       {result.valid ? (
         <StatusBanner
           type="success"
-          title="XML válido!"
-          subtitle={`${result.otCount} OT${result.otCount !== 1 ? 's' : ''} validada${result.otCount !== 1 ? 's' : ''} com sucesso · Schema loteOT_envio v4.2.12.0`}
+          title={fileType === 'xml' ? 'XML válido!' : 'TXT válido!'}
+          subtitle={`${result.otCount} OT${result.otCount !== 1 ? 's' : ''} validada${result.otCount !== 1 ? 's' : ''} com sucesso · ${fileType === 'xml' ? 'Schema loteOT_envio v4.2.12.0' : 'Layout TXT loteOT_envio'}`}
         />
       ) : (
         <StatusBanner

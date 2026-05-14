@@ -5,6 +5,7 @@ export interface XmlInputHandle {
 }
 
 interface Props {
+  fileType: 'xml' | 'txt';
   value: string;
   onChange: (value: string) => void;
   onValidate: () => void;
@@ -12,13 +13,15 @@ interface Props {
 }
 
 export const XmlInput = forwardRef<XmlInputHandle, Props>(
-  function XmlInput({ value, onChange, onValidate, isValidating }, ref) {
+  function XmlInput({ fileType, value, onChange, onValidate, isValidating }, ref) {
     const fileRef = useRef<HTMLInputElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const gutterRef = useRef<HTMLDivElement>(null);
     const validateBtnRef = useRef<HTMLButtonElement>(null);
     const [activeLine, setActiveLine] = useState<number | null>(null);
     const [btnGlow, setBtnGlow] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const dragCounterRef = useRef(0);
     const prevValueRef = useRef(value);
 
     useEffect(() => {
@@ -61,15 +64,12 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
       },
     }));
 
+    const isXml = fileType === 'xml';
+
     function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
       const file = e.target.files?.[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = ev => {
-        onChange((ev.target?.result as string) ?? '');
-        setActiveLine(null);
-      };
-      reader.readAsText(file, 'UTF-8');
+      loadFile(file);
       e.target.value = '';
     }
 
@@ -77,6 +77,39 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
       if (gutterRef.current && textareaRef.current) {
         gutterRef.current.scrollTop = textareaRef.current.scrollTop;
       }
+    }
+
+    function loadFile(file: File) {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        onChange((ev.target?.result as string) ?? '');
+        setActiveLine(null);
+      };
+      reader.readAsText(file, 'UTF-8');
+    }
+
+    function handleDragEnter(e: React.DragEvent) {
+      e.preventDefault();
+      dragCounterRef.current++;
+      if (dragCounterRef.current === 1) setIsDragging(true);
+    }
+
+    function handleDragLeave(e: React.DragEvent) {
+      e.preventDefault();
+      dragCounterRef.current--;
+      if (dragCounterRef.current === 0) setIsDragging(false);
+    }
+
+    function handleDragOver(e: React.DragEvent) {
+      e.preventDefault();
+    }
+
+    function handleDrop(e: React.DragEvent) {
+      e.preventDefault();
+      dragCounterRef.current = 0;
+      setIsDragging(false);
+      const file = e.dataTransfer.files[0];
+      if (file) loadFile(file);
     }
 
     const lines = value ? value.split('\n') : [];
@@ -95,7 +128,7 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
       <div className="flex flex-col h-full gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wider">
-            XML de Entrada
+            {isXml ? 'XML de Entrada' : 'TXT de Entrada'}
           </h2>
           <div className="flex gap-2">
             <button
@@ -116,12 +149,12 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
                 />
               </svg>
-              Upload .xml
+              {isXml ? 'Upload .xml' : 'Upload .txt'}
             </button>
             <input
               ref={fileRef}
               type="file"
-              accept=".xml,text/xml,application/xml"
+              accept={isXml ? '.xml,text/xml,application/xml' : '.txt,text/plain'}
               className="hidden"
               onChange={handleFile}
             />
@@ -139,7 +172,29 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
           </div>
         </div>
 
-        <div className="flex flex-1 min-h-96 lg:min-h-0 rounded-lg border border-gray-200 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent bg-gray-50">
+        <div
+          className={`relative flex flex-1 min-h-96 lg:min-h-0 rounded-lg border overflow-hidden focus-within:ring-2 focus-within:border-transparent bg-gray-50 transition-colors ${
+            isDragging
+              ? isXml
+                ? 'border-blue-400 ring-2 ring-blue-300 bg-blue-50/40'
+                : 'border-violet-400 ring-2 ring-violet-300 bg-violet-50/40'
+              : 'border-gray-200 focus-within:ring-blue-500'
+          }`}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
+          {isDragging && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 pointer-events-none">
+              <svg className={`w-10 h-10 ${isXml ? 'text-blue-400' : 'text-violet-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <span className={`text-sm font-medium ${isXml ? 'text-blue-500' : 'text-violet-500'}`}>
+                Solte o arquivo aqui
+              </span>
+            </div>
+          )}
           {value && (
             <div
               ref={gutterRef}
@@ -171,7 +226,9 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
             }}
             onScroll={handleScroll}
             placeholder={
-              'Cole ou arraste um XML aqui...\n\n<loteOT_envio>\n  <versao>4.2.12.0</versao>\n  ...\n</loteOT_envio>'
+              isXml
+                ? 'Cole ou arraste um XML aqui...\n\n<loteOT_envio>\n  <versao>4.2.12.0</versao>\n  ...\n</loteOT_envio>'
+                : 'Cole ou arraste um arquivo TXT aqui...\n\nLOTEOT|VERSAO|...'
             }
             wrap="off"
             className="flex-1 py-3 px-3 font-mono text-xs leading-relaxed resize-none focus:outline-none bg-transparent text-gray-800 placeholder-gray-300"
@@ -192,9 +249,11 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
             type="button"
             onClick={onValidate}
             disabled={!value.trim() || isValidating}
-            className={`inline-flex items-center gap-2 px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm ${
-              btnGlow ? 'ring-4 ring-blue-300 ring-offset-1' : ''
-            }`}
+            className={`inline-flex items-center gap-2 px-5 py-2 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm ${
+              isXml
+                ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
+                : 'bg-violet-600 hover:bg-violet-700 active:bg-violet-800'
+            } ${btnGlow ? (isXml ? 'ring-4 ring-blue-300 ring-offset-1' : 'ring-4 ring-violet-300 ring-offset-1') : ''}`}
           >
             {isValidating ? (
               <>
@@ -234,7 +293,7 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                Validar XML
+                {isXml ? 'Validar XML' : 'Validar TXT'}
               </>
             )}
           </button>

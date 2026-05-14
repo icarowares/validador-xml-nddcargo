@@ -1,6 +1,7 @@
 export interface ValidationError {
   path: string;
   message: string;
+  lineNumber?: number;
 }
 
 export interface ValidationResult {
