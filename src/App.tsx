@@ -237,8 +237,7 @@ export default function App() {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { label: 'OT única',   file: 'ex_emissao_single.json' },
-                    { label: 'Lote de OTs', file: 'ex_emissao_lote.json'  },
+                    { label: 'Exemplo de payload', file: 'ex_emissao_single.json' },
                   ].map(({ label, file }) => (
                     <a
                       key={file}

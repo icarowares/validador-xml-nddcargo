@@ -522,20 +522,8 @@ export function validateJson(content: string): ValidationResult {
 
   const errors: ValidationError[] = [];
 
-  if (Array.isArray(parsed)) {
-    if (parsed.length === 0)
-      return { valid: false, errors: [], parseError: 'O array não contém nenhuma OT', otCount: 0 };
-    parsed.forEach((item, i) => {
-      if (!isObj(item)) { errors.push({ path: `[${i}]`, message: 'Cada item deve ser um objeto JSON' }); return; }
-      const itemErrors: ValidationError[] = [];
-      validateSingleOT(item, itemErrors);
-      itemErrors.forEach(err => errors.push({ ...err, path: `[${i}].${err.path}` }));
-    });
-    return { valid: errors.length === 0, errors, otCount: parsed.length };
-  }
-
   if (!isObj(parsed))
-    return { valid: false, errors: [], parseError: 'O payload deve ser um objeto JSON ou um array de objetos', otCount: 0 };
+    return { valid: false, errors: [], parseError: 'O payload deve ser um objeto JSON com uma única OT', otCount: 0 };
 
   validateSingleOT(parsed, errors);
   return { valid: errors.length === 0, errors, otCount: 1 };
