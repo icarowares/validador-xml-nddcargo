@@ -5,7 +5,7 @@ export interface XmlInputHandle {
 }
 
 interface Props {
-  fileType: 'xml' | 'txt';
+  fileType: 'xml' | 'txt' | 'json';
   value: string;
   onChange: (value: string) => void;
   onValidate: () => void;
@@ -64,6 +64,7 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
     }));
 
     const isXml = fileType === 'xml';
+    const isJson = fileType === 'json';
 
     function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
       const file = e.target.files?.[0];
@@ -127,7 +128,7 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
       <div className="flex flex-col h-full gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-            {isXml ? 'XML de Entrada' : 'TXT de Entrada'}
+            {isXml ? 'XML de Entrada' : isJson ? 'JSON de Entrada' : 'TXT de Entrada'}
           </h2>
           <div className="flex gap-2">
             <button
@@ -148,12 +149,12 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
                 />
               </svg>
-              {isXml ? 'Upload .xml' : 'Upload .txt'}
+              {isXml ? 'Upload .xml' : isJson ? 'Upload .json' : 'Upload .txt'}
             </button>
             <input
               ref={fileRef}
               type="file"
-              accept={isXml ? '.xml,text/xml,application/xml' : '.txt,text/plain'}
+              accept={isXml ? '.xml,text/xml,application/xml' : isJson ? '.json,application/json' : '.txt,text/plain'}
               className="hidden"
               onChange={handleFile}
             />
@@ -176,7 +177,9 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
             isDragging
               ? isXml
                 ? 'border-blue-400 ring-2 ring-blue-300 bg-blue-50/40 dark:bg-blue-950/20'
-                : 'border-violet-400 ring-2 ring-violet-300 bg-violet-50/40 dark:bg-violet-950/20'
+                : isJson
+                  ? 'border-emerald-400 ring-2 ring-emerald-300 bg-emerald-50/40 dark:bg-emerald-950/20'
+                  : 'border-violet-400 ring-2 ring-violet-300 bg-violet-50/40 dark:bg-violet-950/20'
               : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 focus-within:ring-blue-500'
           }`}
           onDragEnter={handleDragEnter}
@@ -186,10 +189,10 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
         >
           {isDragging && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 pointer-events-none">
-              <svg className={`w-10 h-10 ${isXml ? 'text-blue-400' : 'text-violet-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className={`w-10 h-10 ${isXml ? 'text-blue-400' : isJson ? 'text-emerald-400' : 'text-violet-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
               </svg>
-              <span className={`text-sm font-medium ${isXml ? 'text-blue-500' : 'text-violet-500'}`}>
+              <span className={`text-sm font-medium ${isXml ? 'text-blue-500' : isJson ? 'text-emerald-500' : 'text-violet-500'}`}>
                 Solte o arquivo aqui
               </span>
             </div>
@@ -227,7 +230,9 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
             placeholder={
               isXml
                 ? 'Cole ou arraste um XML aqui...\n\n<loteOT_envio>\n  <versao>4.2.12.0</versao>\n  ...\n</loteOT_envio>'
-                : 'Cole ou arraste um arquivo TXT aqui...\n\nLOTEOT|VERSAO|...'
+                : isJson
+                  ? 'Cole ou arraste um JSON aqui...\n\n{\n  "ide": { "cnpj": "...", "tipoOperacao": 1, ... },\n  "transp": { ... },\n  "veiculos": [ ... ],\n  "valores": { ... }\n}'
+                  : 'Cole ou arraste um arquivo TXT aqui...\n\nLOTEOT|VERSAO|...'
             }
             wrap="off"
             className="flex-1 py-3 px-3 font-mono text-xs leading-relaxed resize-none focus:outline-none bg-transparent text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600"
@@ -251,8 +256,10 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
             className={`inline-flex items-center gap-2 px-5 py-2 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm ${
               isXml
                 ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
-                : 'bg-violet-600 hover:bg-violet-700 active:bg-violet-800'
-            } ${btnGlow ? (isXml ? 'ring-4 ring-blue-300 ring-offset-1' : 'ring-4 ring-violet-300 ring-offset-1') : ''}`}
+                : isJson
+                  ? 'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800'
+                  : 'bg-violet-600 hover:bg-violet-700 active:bg-violet-800'
+            } ${btnGlow ? (isXml ? 'ring-4 ring-blue-300 ring-offset-1' : isJson ? 'ring-4 ring-emerald-300 ring-offset-1' : 'ring-4 ring-violet-300 ring-offset-1') : ''}`}
           >
             {isValidating ? (
               <>
@@ -292,7 +299,7 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                {isXml ? 'Validar XML' : 'Validar TXT'}
+                {isXml ? 'Validar XML' : isJson ? 'Validar JSON' : 'Validar TXT'}
               </>
             )}
           </button>

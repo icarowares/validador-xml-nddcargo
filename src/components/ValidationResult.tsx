@@ -5,7 +5,7 @@ import { findLineForPath } from '../utils/xmlLineLocator';
 interface Props {
   result: ValidationResult | null;
   xml?: string;
-  fileType?: 'xml' | 'txt';
+  fileType?: 'xml' | 'txt' | 'json';
   onErrorClick?: (line: number) => void;
 }
 
@@ -47,8 +47,8 @@ export function ValidationResult({ result, xml, fileType = 'xml', onErrorClick }
           />
         </svg>
         <p className="text-sm text-center max-w-xs">
-          Cole ou faça upload de um {fileType === 'xml' ? 'XML' : 'TXT'} e clique em{' '}
-          <strong>{fileType === 'xml' ? 'Validar XML' : 'Validar TXT'}</strong>
+          Cole ou faça upload de um {fileType === 'xml' ? 'XML' : fileType === 'json' ? 'JSON' : 'TXT'} e clique em{' '}
+          <strong>{fileType === 'xml' ? 'Validar XML' : fileType === 'json' ? 'Validar JSON' : 'Validar TXT'}</strong>
         </p>
       </div>
     );
@@ -59,7 +59,7 @@ export function ValidationResult({ result, xml, fileType = 'xml', onErrorClick }
       <div className="flex flex-col gap-3">
         <StatusBanner
           type="error"
-          title={fileType === 'xml' ? 'XML malformado' : 'Arquivo TXT inválido'}
+          title={fileType === 'xml' ? 'XML malformado' : fileType === 'json' ? 'JSON inválido' : 'Arquivo TXT inválido'}
           subtitle="Corrija os erros antes de prosseguir"
         />
         <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900 rounded-lg">
@@ -76,14 +76,14 @@ export function ValidationResult({ result, xml, fileType = 'xml', onErrorClick }
       {result.valid ? (
         <StatusBanner
           type="success"
-          title={fileType === 'xml' ? 'XML válido!' : 'TXT válido!'}
-          subtitle={`${result.otCount} OT${result.otCount !== 1 ? 's' : ''} validada${result.otCount !== 1 ? 's' : ''} com sucesso · ${fileType === 'xml' ? 'Schema loteOT_envio v4.2.12.0' : 'Layout TXT loteOT_envio'}`}
+          title={fileType === 'xml' ? 'XML válido!' : fileType === 'json' ? 'JSON válido!' : 'TXT válido!'}
+          subtitle={`${result.otCount} OT${result.otCount !== 1 ? 's' : ''} validada${result.otCount !== 1 ? 's' : ''} com sucesso · ${fileType === 'xml' ? 'Schema loteOT_envio v4.2.12.0' : fileType === 'json' ? 'API REST loteOT_envio · Novo layout' : 'Layout TXT loteOT_envio'}`}
         />
       ) : (
         <StatusBanner
           type="error"
           title={`${result.errors.length} erro${result.errors.length !== 1 ? 's' : ''} encontrado${result.errors.length !== 1 ? 's' : ''}`}
-          subtitle="Clique em um erro para localizar no XML"
+          subtitle={fileType === 'json' ? 'Corrija os campos abaixo no payload JSON' : 'Clique em um erro para localizar no arquivo'}
         />
       )}
 

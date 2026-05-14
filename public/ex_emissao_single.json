@@ -1,0 +1,72 @@
+{
+  "ide": {
+    "cnpj": "12345678000195",
+    "tipoOperacao": 1,
+    "numero": "000001",
+    "serie": "001",
+    "ptEmissor": "Filial SP",
+    "dtInicio": "2026-05-14",
+    "altoDesempenho": false,
+    "retornoVazio": false,
+    "composicaoVeicular": false
+  },
+  "carga": {
+    "codigoSH": "6203",
+    "quantidade": 1000,
+    "CodigoTipoCarga": 2,
+    "distanciaPercorrida": 450,
+    "remetente": {
+      "cpfCnpj": "12345678000195",
+      "nome": "Empresa Remetente Ltda",
+      "endereco": {
+        "UF": "SP",
+        "codigoMunicipio": "3550308",
+        "bairro": "Centro",
+        "logradouro": "Rua das Flores",
+        "numero": "100",
+        "CEP": "01310100"
+      }
+    },
+    "destinatario": {
+      "cpfCnpj": "98765432000199",
+      "nome": "Empresa Destinatária SA",
+      "endereco": {
+        "UF": "RJ",
+        "codigoMunicipio": "3304557",
+        "bairro": "Copacabana",
+        "logradouro": "Avenida Atlântica",
+        "numero": "500",
+        "CEP": "22010000"
+      }
+    }
+  },
+  "transp": {
+    "rntrc": "123456789",
+    "cpfCnpj": "11122233300",
+    "cadastro": {
+      "nomeRazao": "João Motorista",
+      "telefone": "11999990000",
+      "tipo": 1,
+      "dadosPF": {
+        "identidade": "1234567",
+        "nomeMae": "Maria Motorista",
+        "dataNascimento": "1985-03-20"
+      }
+    }
+  },
+  "veiculos": [
+    {
+      "placa": "ABC1D23",
+      "RNTRCTransportador": "123456789",
+      "eixos": 2,
+      "cadastro": {
+        "modelo": "Volkswagen Constellation",
+        "tipo": 1
+      }
+    }
+  ],
+  "valores": {
+    "vlrFrete": 2500.00,
+    "tipoRateio": 1
+  }
+}

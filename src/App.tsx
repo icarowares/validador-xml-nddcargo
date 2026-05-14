@@ -3,17 +3,18 @@ import { XmlInput, type XmlInputHandle } from './components/XmlInput';
 import { ValidationResult } from './components/ValidationResult';
 import { validate } from './validator/validate';
 import { validateTxt } from './validator/validateTxt';
+import { validateJson } from './validator/validateJson';
 import type { ValidationResult as ValidationResultType } from './validator/types';
 import './App.css';
 
-type FileType = 'xml' | 'txt';
+type FileType = 'xml' | 'txt' | 'json';
 type IntegrationType = 'emissao' | 'retificacao' | 'cancelamento' | 'encerramento';
 
 const INTEGRATION_TYPES: { id: IntegrationType; label: string; activeFor: FileType[] }[] = [
-  { id: 'emissao',      label: 'Emissão',      activeFor: ['xml', 'txt'] },
-  { id: 'retificacao',  label: 'Retificação',  activeFor: []             },
-  { id: 'cancelamento', label: 'Cancelamento', activeFor: []             },
-  { id: 'encerramento', label: 'Encerramento', activeFor: []             },
+  { id: 'emissao',      label: 'Emissão',      activeFor: ['xml', 'txt', 'json'] },
+  { id: 'retificacao',  label: 'Retificação',  activeFor: []                     },
+  { id: 'cancelamento', label: 'Cancelamento', activeFor: []                     },
+  { id: 'encerramento', label: 'Encerramento', activeFor: []                     },
 ];
 
 export default function App() {
@@ -45,7 +46,7 @@ export default function App() {
   function handleValidate() {
     setIsValidating(true);
     setTimeout(() => {
-      const res = fileType === 'txt' ? validateTxt(content) : validate(content);
+      const res = fileType === 'txt' ? validateTxt(content) : fileType === 'json' ? validateJson(content) : validate(content);
       setResult(res);
       setIsValidating(false);
       setTimeout(() => {
@@ -69,19 +70,21 @@ export default function App() {
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-3">
           <div
             className={`flex items-center justify-center w-9 h-9 rounded-lg text-white font-bold text-sm shrink-0 transition-colors ${
-              fileType === 'xml' ? 'bg-blue-600' : 'bg-violet-600'
+              fileType === 'xml' ? 'bg-blue-600' : fileType === 'txt' ? 'bg-violet-600' : 'bg-emerald-600'
             }`}
           >
-            {fileType === 'xml' ? 'XML' : 'TXT'}
+            {fileType === 'xml' ? 'XML' : fileType === 'txt' ? 'TXT' : 'JSON'}
           </div>
           <div>
             <h1 className="text-base font-bold text-gray-900 dark:text-white leading-tight">
-              Validador {fileType === 'xml' ? 'XML' : 'TXT'} · NDD Cargo
+              Validador {fileType === 'xml' ? 'XML' : fileType === 'txt' ? 'TXT' : 'JSON'} · NDD Cargo
             </h1>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               {fileType === 'xml'
                 ? 'loteOT_envio · Schema v4.2.12.0'
-                : 'Layout de arquivo TXT · loteOT_envio'}
+                : fileType === 'txt'
+                  ? 'Layout de arquivo TXT · loteOT_envio'
+                  : 'API REST loteOT_envio · Novo layout'}
             </p>
           </div>
 
@@ -119,7 +122,7 @@ export default function App() {
             Tipo de arquivo
           </span>
           <div className="flex rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-            {(['xml', 'txt'] as const).map(type => (
+            {(['xml', 'txt', 'json'] as const).map(type => (
               <button
                 key={type}
                 type="button"
@@ -128,7 +131,9 @@ export default function App() {
                   fileType === type
                     ? type === 'xml'
                       ? 'bg-blue-600 text-white'
-                      : 'bg-violet-600 text-white'
+                      : type === 'txt'
+                        ? 'bg-violet-600 text-white'
+                        : 'bg-emerald-600 text-white'
                     : 'bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }`}
               >
@@ -158,7 +163,9 @@ export default function App() {
                     ? integrationType === type.id
                       ? fileType === 'xml'
                         ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-violet-600 text-white shadow-sm'
+                        : fileType === 'txt'
+                          ? 'bg-violet-600 text-white shadow-sm'
+                          : 'bg-emerald-600 text-white shadow-sm'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                     : 'bg-gray-50 dark:bg-gray-900 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                 }`}
@@ -213,6 +220,31 @@ export default function App() {
                       href={`/${file}`}
                       download={file}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-violet-200 dark:border-violet-800 text-xs text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40 hover:bg-violet-100 dark:hover:bg-violet-900/40 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
+                    >
+                      <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      {label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+            {fileType === 'json' && integrationType === 'emissao' && (
+              <div className="mb-4 shrink-0">
+                <p className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                  Exemplos de payload
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: 'OT única',   file: 'ex_emissao_single.json' },
+                    { label: 'Lote de OTs', file: 'ex_emissao_lote.json'  },
+                  ].map(({ label, file }) => (
+                    <a
+                      key={file}
+                      href={`/${file}`}
+                      download={file}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
                     >
                       <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
