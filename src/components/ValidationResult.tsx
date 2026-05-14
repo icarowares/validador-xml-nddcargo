@@ -12,11 +12,11 @@ interface Props {
 function PathBreadcrumb({ path }: { path: string }) {
   const parts = path.split('.');
   return (
-    <div className="flex flex-wrap items-center gap-0.5 font-mono text-[10px] text-gray-400 mb-1">
+    <div className="flex flex-wrap items-center gap-0.5 font-mono text-[10px] text-gray-400 dark:text-gray-500 mb-1">
       {parts.map((part, i) => (
         <span key={i} className="flex items-center gap-0.5">
-          {i > 0 && <span className="text-gray-300">›</span>}
-          <span className={i === parts.length - 1 ? 'text-gray-500 font-semibold' : ''}>
+          {i > 0 && <span className="text-gray-300 dark:text-gray-600">›</span>}
+          <span className={i === parts.length - 1 ? 'text-gray-500 dark:text-gray-400 font-semibold' : ''}>
             {part}
           </span>
         </span>
@@ -37,7 +37,7 @@ export function ValidationResult({ result, xml, fileType = 'xml', onErrorClick }
 
   if (!result) {
     return (
-      <div className="flex flex-col items-center justify-center h-full gap-4 text-gray-400 py-16">
+      <div className="flex flex-col items-center justify-center h-full gap-4 text-gray-400 dark:text-gray-600 py-16">
         <svg className="w-14 h-14 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
@@ -62,8 +62,8 @@ export function ValidationResult({ result, xml, fileType = 'xml', onErrorClick }
           title={fileType === 'xml' ? 'XML malformado' : 'Arquivo TXT inválido'}
           subtitle="Corrija os erros antes de prosseguir"
         />
-        <div className="p-3 bg-red-50 border border-red-100 rounded-lg">
-          <p className="text-xs font-mono text-red-700 whitespace-pre-wrap break-all leading-relaxed">
+        <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900 rounded-lg">
+          <p className="text-xs font-mono text-red-700 dark:text-red-400 whitespace-pre-wrap break-all leading-relaxed">
             {result.parseError}
           </p>
         </div>
@@ -96,19 +96,19 @@ export function ValidationResult({ result, xml, fileType = 'xml', onErrorClick }
               <div
                 key={i}
                 onClick={() => { if (clickable) onErrorClick!(line!); }}
-                className={`p-3 bg-white border border-red-100 rounded-lg transition-colors ${
+                className={`p-3 bg-white dark:bg-gray-800 border border-red-100 dark:border-red-900/60 rounded-lg transition-colors ${
                   clickable
-                    ? 'cursor-pointer hover:border-red-300 hover:bg-red-50/40'
+                    ? 'cursor-pointer hover:border-red-300 dark:hover:border-red-700 hover:bg-red-50/40 dark:hover:bg-red-950/20'
                     : ''
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <PathBreadcrumb path={err.path} />
-                    <p className="text-sm text-gray-800 leading-snug">{err.message}</p>
+                    <p className="text-sm text-gray-800 dark:text-gray-200 leading-snug">{err.message}</p>
                   </div>
                   {line !== null && (
-                    <span className="shrink-0 mt-0.5 inline-flex items-center gap-1 text-[10px] font-mono bg-gray-100 text-gray-500 rounded px-1.5 py-0.5 leading-none">
+                    <span className="shrink-0 mt-0.5 inline-flex items-center gap-1 text-[10px] font-mono bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded px-1.5 py-0.5 leading-none">
                       <svg className="w-2.5 h-2.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -140,16 +140,16 @@ function StatusBanner({
     <div
       className={`flex items-start gap-3 p-4 rounded-lg border ${
         isSuccess
-          ? 'bg-green-50 border-green-200'
-          : 'bg-red-50 border-red-200'
+          ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800'
+          : 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800'
       }`}
     >
       <span className={`text-2xl leading-none mt-0.5 ${isSuccess ? 'text-green-500' : 'text-red-500'}`}>
         {isSuccess ? '✓' : '✗'}
       </span>
       <div>
-        <p className={`font-semibold ${isSuccess ? 'text-green-800' : 'text-red-800'}`}>{title}</p>
-        <p className={`text-sm mt-0.5 ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>{subtitle}</p>
+        <p className={`font-semibold ${isSuccess ? 'text-green-800 dark:text-green-300' : 'text-red-800 dark:text-red-300'}`}>{title}</p>
+        <p className={`text-sm mt-0.5 ${isSuccess ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>{subtitle}</p>
       </div>
     </div>
   );

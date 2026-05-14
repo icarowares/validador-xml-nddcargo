@@ -1,6 +1,5 @@
 /* Estilos globais complementares ao Tailwind */
 
-/* Scroll customizado para a lista de erros */
 .overflow-y-auto {
   scrollbar-width: thin;
   scrollbar-color: #e2e8f0 transparent;
@@ -17,4 +16,12 @@
 .overflow-y-auto::-webkit-scrollbar-thumb {
   background-color: #e2e8f0;
   border-radius: 4px;
+}
+
+.dark .overflow-y-auto {
+  scrollbar-color: #374151 transparent;
+}
+
+.dark .overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #374151;
 }

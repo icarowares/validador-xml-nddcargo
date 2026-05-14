@@ -30,7 +30,6 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
       prevValueRef.current = value;
 
       if (wasEmpty && isNowFilled) {
-        // On mobile (stacked layout) scroll the button into view
         validateBtnRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         setBtnGlow(true);
         const t = setTimeout(() => setBtnGlow(false), 1400);
@@ -127,14 +126,14 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
     return (
       <div className="flex flex-col h-full gap-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wider">
+          <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
             {isXml ? 'XML de Entrada' : 'TXT de Entrada'}
           </h2>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-gray-300 text-gray-600 bg-white hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <svg
                 className="w-3.5 h-3.5"
@@ -165,7 +164,7 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
                 setActiveLine(null);
               }}
               disabled={!value}
-              className="text-xs px-3 py-1.5 rounded-md border border-gray-300 text-gray-500 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="text-xs px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Limpar
             </button>
@@ -173,12 +172,12 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
         </div>
 
         <div
-          className={`relative flex flex-1 min-h-96 lg:min-h-0 rounded-lg border overflow-hidden focus-within:ring-2 focus-within:border-transparent bg-gray-50 transition-colors ${
+          className={`relative flex flex-1 min-h-96 lg:min-h-0 rounded-lg border overflow-hidden focus-within:ring-2 focus-within:border-transparent transition-colors ${
             isDragging
               ? isXml
-                ? 'border-blue-400 ring-2 ring-blue-300 bg-blue-50/40'
-                : 'border-violet-400 ring-2 ring-violet-300 bg-violet-50/40'
-              : 'border-gray-200 focus-within:ring-blue-500'
+                ? 'border-blue-400 ring-2 ring-blue-300 bg-blue-50/40 dark:bg-blue-950/20'
+                : 'border-violet-400 ring-2 ring-violet-300 bg-violet-50/40 dark:bg-violet-950/20'
+              : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 focus-within:ring-blue-500'
           }`}
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
@@ -198,7 +197,7 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
           {value && (
             <div
               ref={gutterRef}
-              className="py-3 font-mono text-xs leading-relaxed text-right select-none bg-gray-100 border-r border-gray-200 overflow-hidden shrink-0"
+              className="py-3 font-mono text-xs leading-relaxed text-right select-none bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-hidden shrink-0"
               style={{ width: gutterWidth }}
               aria-hidden="true"
             >
@@ -207,8 +206,8 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
                   key={i}
                   className={`px-2 ${
                     activeLine === i + 1
-                      ? 'bg-amber-200 text-amber-700 font-semibold'
-                      : 'text-gray-400'
+                      ? 'bg-amber-200 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 font-semibold'
+                      : 'text-gray-400 dark:text-gray-600'
                   }`}
                 >
                   {i + 1}
@@ -231,7 +230,7 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
                 : 'Cole ou arraste um arquivo TXT aqui...\n\nLOTEOT|VERSAO|...'
             }
             wrap="off"
-            className="flex-1 py-3 px-3 font-mono text-xs leading-relaxed resize-none focus:outline-none bg-transparent text-gray-800 placeholder-gray-300"
+            className="flex-1 py-3 px-3 font-mono text-xs leading-relaxed resize-none focus:outline-none bg-transparent text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600"
             spellCheck={false}
             autoCorrect="off"
             autoCapitalize="off"
@@ -239,7 +238,7 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-gray-400 dark:text-gray-500">
             {value
               ? `${lineCount.toLocaleString('pt-BR')} linhas · ${charCount.toLocaleString('pt-BR')} caracteres`
               : 'Nenhum conteúdo'}
