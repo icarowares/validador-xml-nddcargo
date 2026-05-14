@@ -75,18 +75,6 @@ export default function App() {
             </p>
           </div>
 
-          {fileType === 'xml' && (
-            <a
-              href="/loteOT_envio_4_2_12_0.xsd"
-              download="loteOT_envio_4_2_12_0.xsd"
-              className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-            >
-              <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
-              Baixar XSD
-            </a>
-          )}
         </div>
       </header>
 
@@ -157,6 +145,23 @@ export default function App() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:h-full">
           {/* Input panel */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex flex-col lg:min-h-0 lg:overflow-hidden">
+            {fileType === 'xml' && integrationType === 'emissao' && (
+              <div className="mb-4 shrink-0">
+                <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-2">
+                  Schema
+                </p>
+                <a
+                  href="/loteOT_envio_4_2_12_0.xsd"
+                  download="loteOT_envio_4_2_12_0.xsd"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 text-xs text-blue-600 bg-blue-50 hover:bg-blue-100 hover:border-blue-300 transition-colors"
+                >
+                  <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  loteOT_envio_4_2_12_0.xsd
+                </a>
+              </div>
+            )}
             {fileType === 'txt' && integrationType === 'emissao' && (
               <div className="mb-4 shrink-0">
                 <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-2">
