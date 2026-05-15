@@ -128,11 +128,6 @@ function valStrLen(value: string, min: number, max: number, path: string, ctx: C
     ctx.err(path, `Valor excede o limite de ${max} caractere(s) (${value.length} informados)`);
 }
 
-function valBoolStr(value: string, path: string, ctx: Ctx) {
-  if (!['true', 'false'].includes(value))
-    ctx.err(path, `Valor inválido: "${value}". Use "true" ou "false"`);
-}
-
 // ─── Endereços ────────────────────────────────────────────────────────────────
 
 function validateEnderecoMunicipio(el: Element, path: string, ctx: Ctx) {
@@ -219,10 +214,10 @@ function validateLotacao(el: Element, path: string, ctx: Ctx) {
   if (qtd) valQtd9v2(txt(qtd), `${path}.quantidade`, ctx);
 
   const indAD = child(el, 'IndAltoDesempenho');
-  if (indAD) valBoolStr(txt(indAD), `${path}.IndAltoDesempenho`, ctx);
+  if (indAD) valEnum(txt(indAD), [0, 1], `${path}.IndAltoDesempenho`, ctx);
 
   const indRV = child(el, 'IndRetornoVazio');
-  if (indRV) valBoolStr(txt(indRV), `${path}.IndRetornoVazio`, ctx);
+  if (indRV) valEnum(txt(indRV), [0, 1], `${path}.IndRetornoVazio`, ctx);
 
   const rem = requireChild(el, 'remetente', path, ctx);
   if (rem) validatePessoa(rem, `${path}.remetente`, ctx);
@@ -502,7 +497,7 @@ function validateVeiculos(el: Element, path: string, ctx: Ctx) {
     }
 
     const comp = child(info, 'ComposicaoVeicular');
-    if (comp) valBoolStr(txt(comp), `${ip}.ComposicaoVeicular`, ctx);
+    if (comp) valEnum(txt(comp), [0, 1], `${ip}.ComposicaoVeicular`, ctx);
   });
 }
 

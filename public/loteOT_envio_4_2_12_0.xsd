@@ -161,11 +161,19 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <!-- Boolean string: "true" ou "false" (campos Ind*, ComposicaoVeicular) -->
+  <!-- Indicador booleano: "0" (false) ou "1" (true) — IndAltoDesempenho, IndRetornoVazio, ComposicaoVeicular -->
   <xs:simpleType name="TBoolStr">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="true"/>
-      <xs:enumeration value="false"/>
+      <xs:enumeration value="0"/>
+      <xs:enumeration value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Latitude / Longitude: decimal com até 10 dígitos e 6 casas decimais (pode ser negativo) -->
+  <xs:simpleType name="TLatLon">
+    <xs:restriction base="xs:decimal">
+      <xs:totalDigits value="10"/>
+      <xs:fractionDigits value="6"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -350,12 +358,16 @@
       <xs:element name="pontoParada" minOccurs="2" maxOccurs="unbounded">
         <xs:complexType>
           <xs:sequence>
-            <!-- codigoIBGE OU cep (choice) -->
+            <!-- codigoIBGE OU cep OU (latitude + longitude) — mutuamente exclusivos -->
             <xs:choice>
               <xs:element name="codigoIBGE">
                 <xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[0-9]{7}"/></xs:restriction></xs:simpleType>
               </xs:element>
               <xs:element name="cep" type="TCep"/>
+              <xs:sequence>
+                <xs:element name="latitude"  type="TLatLon"/>
+                <xs:element name="longitude" type="TLatLon"/>
+              </xs:sequence>
             </xs:choice>
             <!-- tipoRotaEspecifico: E, 0-1 -->
             <xs:element name="tipoRotaEspecifico" minOccurs="0">

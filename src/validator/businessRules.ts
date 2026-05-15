@@ -253,6 +253,13 @@ export function applyBusinessRules(doc: Document): ValidationError[] {
       });
     }
 
+    // ── RN-44 ─────────────────────────────────────────────────────────────────
+    if (isLotFrac && transp) {
+      const rotaInf = child(child(transp, 'rota'), 'informacoes');
+      if (rotaInf && !child(rotaInf, 'totalKm'))
+        err(`${tp}.rota.informacoes.totalKm`, '[RN-44] "totalKm" é obrigatório para operações de lotação ou fracionado quando "informacoes" da rota é informado');
+    }
+
     // ── RN-46 ─────────────────────────────────────────────────────────────────
     {
       const rota   = child(transp, 'rota');
@@ -261,11 +268,18 @@ export function applyBusinessRules(doc: Document): ValidationError[] {
         if (pontos.length < 2)
           err(`${tp}.rota.informacoes.pontosParada`, `[RN-46] A rota deve ter no mínimo 2 pontos de parada (${pontos.length} informado(s))`);
         pontos.forEach((pp, pi) => {
-          if (child(pp, 'codigoIBGE') && child(pp, 'cep'))
-            err(
-              `${tp}.rota.informacoes.pontosParada.pontoParada[${pi + 1}]`,
-              '[RN-46] "codigoIBGE" e "cep" são mutuamente exclusivos no mesmo pontoParada',
-            );
+          const pPath = `${tp}.rota.informacoes.pontosParada.pontoParada[${pi + 1}]`;
+          const hasIBGE = !!child(pp, 'codigoIBGE');
+          const hasCep  = !!child(pp, 'cep');
+          const hasLat  = !!child(pp, 'latitude');
+          const hasLon  = !!child(pp, 'longitude');
+          const methods = [hasIBGE, hasCep, hasLat || hasLon].filter(Boolean).length;
+          if (methods > 1)
+            err(pPath, '[RN-46] "codigoIBGE", "cep" e "latitude/longitude" são mutuamente exclusivos no mesmo pontoParada');
+          if (hasLat && !hasLon)
+            err(`${pPath}.longitude`, '[RN-46] "longitude" é obrigatória quando "latitude" é informada');
+          if (hasLon && !hasLat)
+            err(`${pPath}.latitude`, '[RN-46] "latitude" é obrigatória quando "longitude" é informada');
         });
       }
     }
