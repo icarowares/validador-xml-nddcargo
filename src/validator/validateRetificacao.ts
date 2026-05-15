@@ -448,7 +448,7 @@ function validateAlteracao(el: Element, path: string, ctx: Ctx) {
   if (adicionais) validateAdicionais(adicionais, `${path}.adicionais`, ctx);
   if (semMF)      validateSemMF(semMF, `${path}.semMF`, ctx);
 
-  const docOrig = requireChild(el, 'documentoOriginario', path, ctx);
+  const docOrig = child(el, 'documentoOriginario');
   if (docOrig) {
     const dp = `${path}.documentoOriginario`;
     const tipo = requireChild(docOrig, 'tipo', dp, ctx);

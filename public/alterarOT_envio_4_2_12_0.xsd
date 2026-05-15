@@ -566,7 +566,7 @@
                                   <xs:element name="adicionais" type="TAdicionais"/>
                                   <xs:element name="semMF"      type="TSemMF"/>
                                 </xs:choice>
-                                <xs:element name="documentoOriginario" type="TDocumentoOriginario"/>
+                                <xs:element name="documentoOriginario" type="TDocumentoOriginario" minOccurs="0"/>
                               </xs:sequence>
                             </xs:complexType>
                           </xs:element>
