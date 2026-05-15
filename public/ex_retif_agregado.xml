@@ -5,7 +5,7 @@
   O bloco <TACagregado> dentro de <ANTT> é o único dado permitido
   neste tipo de alteração — não há campos de carga ou veículos.
 -->
-<alterarOT_envio versao="4.2.12" token="TOKEN_24_CARACTERES_AQUI">
+<alterarOT_envio versao="4.2.12" token="TOKEN_24_CARACTERES_AQUI" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
   <OT>
     <infOT ID="b2c3d4e5-f6a7-4890-bcde-f01234567890">
       <cnpj>12345678000195</cnpj>
