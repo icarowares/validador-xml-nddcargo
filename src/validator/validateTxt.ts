@@ -6,7 +6,7 @@ function isDigits(v: string): boolean { return /^\d+$/.test(v); }
 function isDate(v: string): boolean { return /^\d{4}-\d{2}-\d{2}$/.test(v); }
 function isDatetime(v: string): boolean { return /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(v); }
 function isDecimal(v: string): boolean { return /^\d+(\.\d+)?$/.test(v); }
-function isBool(v: string): boolean { return v === 'true' || v === 'false'; }
+function isBit(v: string): boolean { return v === '0' || v === '1'; }
 function isCpfCnpj(v: string): boolean { return /^\d{11}$/.test(v) || /^\d{14}$/.test(v); }
 function isTel(v: string): boolean { return /^\d{10,11}$/.test(v); }
 
@@ -49,8 +49,8 @@ function reqDecimal(v: string, label: string, ctx: Ctx): void {
   if (!isDecimal(v)) ctx.err(`"${v}" deve ser um número (ex: 1000 ou 1000.50)`, label);
 }
 
-function reqBool(v: string, label: string, ctx: Ctx): void {
-  if (!isBool(v)) ctx.err(`"${v}" deve ser "true" ou "false"`, label);
+function reqBit(v: string, label: string, ctx: Ctx): void {
+  if (!isBit(v)) ctx.err(`"${v}" deve ser 0 (falso) ou 1 (verdadeiro)`, label);
 }
 
 function reqLen(v: string, min: number, max: number, label: string, ctx: Ctx): void {
@@ -252,17 +252,17 @@ function val2100(line: ParsedLine, otTipo: number | null): ValidationError[] {
 
   if (otTipo === 4) {
     if (!indAD || indAD.trim() === '') ctx.err('IndAltoDesempenho é obrigatório para tipo 4', 'IndAltoDesempenho');
-    else reqBool(indAD.trim(), 'IndAltoDesempenho', ctx);
+    else reqBit(indAD.trim(), 'IndAltoDesempenho', ctx);
 
     if (!indRV || indRV.trim() === '') ctx.err('IndRetornoVazio é obrigatório para tipo 4', 'IndRetornoVazio');
-    else reqBool(indRV.trim(), 'IndRetornoVazio', ctx);
+    else reqBit(indRV.trim(), 'IndRetornoVazio', ctx);
 
     if (!compVeic || compVeic.trim() === '') ctx.err('ComposicaoVeicular é obrigatória para tipo 4', 'ComposicaoVeicular');
-    else reqBool(compVeic.trim(), 'ComposicaoVeicular', ctx);
+    else reqBit(compVeic.trim(), 'ComposicaoVeicular', ctx);
   } else {
-    optField(indAD, v => reqBool(v, 'IndAltoDesempenho', ctx));
-    optField(indRV, v => reqBool(v, 'IndRetornoVazio', ctx));
-    optField(compVeic, v => reqBool(v, 'ComposicaoVeicular', ctx));
+    optField(indAD, v => reqBit(v, 'IndAltoDesempenho', ctx));
+    optField(indRV, v => reqBit(v, 'IndRetornoVazio', ctx));
+    optField(compVeic, v => reqBit(v, 'ComposicaoVeicular', ctx));
   }
 
   return ctx.errors;
