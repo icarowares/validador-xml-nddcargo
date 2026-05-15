@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Alteração de OT — Sem Movimentação Financeira (semMF)
+  Contexto: utiliza o bloco <semMF> para ajustar valores da OT
+  sem gerar movimentação de pagamento (não cria nem altera parcelas).
+  Casos de uso típicos:
+    - Correção do valor de frete declarado
+    - Ajuste de retenções (IRRF, INSS, SEST/SENAT)
+    - Registro de despesas ou combustível
+    - Desconto sobre rubrica específica
+-->
+<alterarOT_envio versao="4.2.12" token="TOKEN_24_CARACTERES_AQUI">
+  <OT>
+    <infOT ID="d4e5f6a7-b8c9-4012-defa-123456789012">
+      <cnpj>12345678000195</cnpj>
+      <autorizacao>
+        <ciot>
+          <numero>990000000321</numero>
+          <ciotCodVerificador>4321</ciotCodVerificador>
+        </ciot>
+      </autorizacao>
+      <alteracoes>
+        <alteracao>
+          <semMF>
+            <valores>
+              <!-- vlrFrete: opcional. Novo valor de frete sem movimentação financeira -->
+              <vlrFrete>4800.00</vlrFrete>
+
+              <!-- despesas: opcional. Despesas adicionais da operação -->
+              <despesas>
+                <vlrDespesas>250.00</vlrDespesas>
+                <descricao>Despesas de estacionamento e alimentação durante a viagem.</descricao>
+              </despesas>
+
+              <!-- retencoes: opcional. Informar mesmo que zerado quando alterado -->
+              <retencoes>
+                <irrf>0.00</irrf>
+                <inss>120.00</inss>
+                <sestsenat>36.00</sestsenat>
+              </retencoes>
+
+              <!-- vlrCombustivel: opcional -->
+              <vlrCombustivel>800.00</vlrCombustivel>
+
+              <!-- vlrPedagio: opcional -->
+              <vlrPedagio>180.00</vlrPedagio>
+
+              <!-- desconto: opcional -->
+              <desconto>
+                <nmDesc>Desconto INSS</nmDesc>
+                <vlrDesc>120.00</vlrDesc>
+                <!-- rubrica: 1=Frete | 2=Combustível | 3=Despesa | 4=Valor de Tarifa -->
+                <rubrica>1</rubrica>
+                <dsDesc>Desconto de INSS retido na fonte sobre o valor do frete.</dsDesc>
+              </desconto>
+            </valores>
+          </semMF>
+        </alteracao>
+      </alteracoes>
+      <motivo>Atualização de valores da OT sem movimentação financeira: ajuste de frete, inclusão de despesas e retenções.</motivo>
+    </infOT>
+    <ds:Signature/>
+  </OT>
+</alterarOT_envio>

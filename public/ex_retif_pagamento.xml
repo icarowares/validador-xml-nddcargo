@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Alteração de OT — Com Movimentação Financeira
+  Contexto: utiliza o bloco <financeiro> para:
+    - <novaParc>: adição de uma nova parcela de pagamento ao transportador
+    - <ajustaParc>: ajuste de valor de uma parcela existente
+  Pode ser combinado com <ANTT> em alterações distintas dentro de <alteracoes>,
+  mas cada <alteracao> deve conter apenas um tipo de bloco (ANTT, financeiro, semMF ou adicionais).
+
+  Exemplo 1: nova parcela com pagamento automático agendado + transferência automática ao condutor
+  Exemplo 2: ajuste de valor em parcela existente (adicionar valor na rubrica Frete)
+-->
+<alterarOT_envio versao="4.2.12.0" token="TOKEN_24_CARACTERES_AQUI">
+  <OT>
+    <infOT ID="c3d4e5f6-a7b8-4901-cdef-012345678901">
+      <cnpj>12345678000195</cnpj>
+      <autorizacao>
+        <ciot>
+          <numero>990000000123</numero>
+          <ciotCodVerificador>1234</ciotCodVerificador>
+        </ciot>
+      </autorizacao>
+      <alteracoes>
+
+        <!-- Alteração 1: adição de nova parcela com pagamento automático -->
+        <alteracao>
+          <financeiro>
+            <novaParc>
+              <nome>Saldo Frete</nome>
+              <tipoPgto>
+                <!-- Pagamento automático agendado para data e hora específicas -->
+                <automatico>
+                  <dataHora>2026-06-15 08:00:00</dataHora>
+                </automatico>
+                <!-- Alternativas comentadas:
+                <manual>
+                  <dataPrevisao>2026-06-15</dataPrevisao>
+                  <efetivacao>4</efetivacao>
+                </manual>
+                <imediato>2</imediato>
+                -->
+              </tipoPgto>
+              <!-- valorAplicado: valor bruto da parcela antes de descontos -->
+              <valorAplicado>2500.00</valorAplicado>
+              <!-- valorReal: informar somente se diferente do valorAplicado (após descontos) -->
+              <valorReal>2375.00</valorReal>
+              <!-- descontos: opcional -->
+              <descontos>
+                <desconto>
+                  <nmDesc>Adiantamento já pago</nmDesc>
+                  <vlrDesc>125.00</vlrDesc>
+                  <dsDesc>Desconto referente ao adiantamento pago no início da viagem.</dsDesc>
+                </desconto>
+              </descontos>
+              <!-- retencoes: informar mesmo que zerado -->
+              <retencoes>
+                <irrf>0.00</irrf>
+                <inss>0.00</inss>
+                <sestsenat>0.00</sestsenat>
+                <!-- rubrica: 1=Frete | 2=Combustível | 3=Despesa -->
+                <rubrica>1</rubrica>
+              </retencoes>
+              <prazoMinimo>3</prazoMinimo>
+              <confirmarPgto>2</confirmarPgto>
+            </novaParc>
+          </financeiro>
+        </alteracao>
+
+        <!-- Alteração 2: ajuste de valor em parcela existente (adicionar valor) -->
+        <alteracao>
+          <financeiro>
+            <ajustaParc>
+              <nome>Adiantamento</nome>
+              <altValores>
+                <adicional>
+                  <!-- valor: montante a ser acrescido na parcela -->
+                  <valor>350.00</valor>
+                  <!-- rubrica: 1=Frete | 2=Combustível | 3=Despesa | 4=Valor de Tarifa -->
+                  <rubrica>1</rubrica>
+                </adicional>
+                <!-- valorValidacao: total da OT após o ajuste (frete + combustível + despesas) -->
+                <valorValidacao>3200.00</valorValidacao>
+              </altValores>
+            </ajustaParc>
+          </financeiro>
+        </alteracao>
+
+      </alteracoes>
+      <motivo>Inclusão de saldo de frete e ajuste de adiantamento conforme acerto com transportador.</motivo>
+    </infOT>
+    <ds:Signature/>
+  </OT>
+</alterarOT_envio>

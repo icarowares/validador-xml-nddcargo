@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Alteração de OT — Tipo TAC-Agregado
+  Contexto: retifica a data de término (dtFim) de uma OT TAC-Agregado.
+  O bloco <TACagregado> dentro de <ANTT> é o único dado permitido
+  neste tipo de alteração — não há campos de carga ou veículos.
+-->
+<alterarOT_envio versao="4.2.12" token="TOKEN_24_CARACTERES_AQUI">
+  <OT>
+    <infOT ID="b2c3d4e5-f6a7-4890-bcde-f01234567890">
+      <cnpj>12345678000195</cnpj>
+      <autorizacao>
+        <ciot>
+          <numero>990000000789</numero>
+          <ciotCodVerificador>9012</ciotCodVerificador>
+        </ciot>
+      </autorizacao>
+      <alteracoes>
+        <alteracao>
+          <ANTT>
+            <TACagregado>
+              <!-- dtFim: obrigatório. Nova data de término da OT TAC-Agregado.
+                   Formato: AAAA-MM-DD
+                   Regra: deve estar dentro do intervalo de 10 a 30 dias a partir do início. -->
+              <dtFim>2026-06-10</dtFim>
+            </TACagregado>
+          </ANTT>
+        </alteracao>
+      </alteracoes>
+      <motivo>Ajuste na data de término do contrato TAC-Agregado conforme acordo entre as partes.</motivo>
+    </infOT>
+    <ds:Signature/>
+  </OT>
+</alterarOT_envio>

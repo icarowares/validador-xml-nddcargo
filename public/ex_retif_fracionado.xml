@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Alteração de OT — Tipo Fracionado
+  Contexto: retifica dados de carga (codigoSH, quantidade e CodigoTipoCarga) de uma OT fracionada.
+  O bloco <ANTT> com <fracionado> é usado para alterações que devem ser enviadas à ANTT.
+  Todos os campos de carga são opcionais — informe apenas o que precisa alterar.
+-->
+<alterarOT_envio versao="4.2.12" token="TOKEN_24_CARACTERES_AQUI">
+  <OT>
+    <infOT ID="a1b2c3d4-e5f6-4789-abcd-ef0123456789">
+      <cnpj>12345678000195</cnpj>
+      <autorizacao>
+        <ciot>
+          <numero>990000000456</numero>
+          <ciotCodVerificador>5678</ciotCodVerificador>
+        </ciot>
+      </autorizacao>
+      <alteracoes>
+        <alteracao>
+          <ANTT>
+            <fracionado>
+              <carga>
+                <!-- codigoSH: opcional. Natureza da carga (tabela SH, 4 dígitos) -->
+                <codigoSH>7505</codigoSH>
+                <!-- quantidade: opcional. Peso da carga em Kg (formato 10,2) -->
+                <quantidade>3200.50</quantidade>
+                <!-- CodigoTipoCarga: opcional. Novo campo.
+                     1=Granel sólido | 2=Granel líquido | 3=Frigorificada/Aquecida
+                     4=Conteinerizada | 5=Carga Geral | 6=Neogranel
+                     7 a 11=Perigosas | 12=Granel Pressurizada -->
+                <CodigoTipoCarga>5</CodigoTipoCarga>
+              </carga>
+            </fracionado>
+          </ANTT>
+        </alteracao>
+      </alteracoes>
+      <motivo>Correção da natureza e tipo da carga declarados incorretamente na emissão.</motivo>
+    </infOT>
+    <ds:Signature/>
+  </OT>
+</alterarOT_envio>
