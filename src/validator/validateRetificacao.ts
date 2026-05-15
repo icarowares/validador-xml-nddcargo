@@ -541,14 +541,35 @@ function validateRoot(doc: Document, ctx: Ctx): number {
   return ots.length;
 }
 
+// ─── Namespace injection ──────────────────────────────────────────────────────
+
+// The DOMParser requires namespace prefixes to be declared. If ds: is used
+// without xmlns:ds, inject it automatically and warn the user.
+function injectDsNamespace(xml: string): { xml: string; injected: boolean } {
+  if (!xml.includes('ds:') || xml.includes('xmlns:ds')) return { xml, injected: false };
+  const patched = xml.replace(
+    /(<[A-Za-z_][A-Za-z0-9_]*(?:\s[^>]*?)?)(\s*>)/,
+    '$1 xmlns:ds="http://www.w3.org/2000/09/xmldsig#"$2',
+  );
+  return { xml: patched, injected: true };
+}
+
 // ─── Entry point ──────────────────────────────────────────────────────────────
 
 export function validateRetificacao(xmlString: string): ValidationResult {
   if (!xmlString.trim())
     return { valid: false, errors: [], parseError: 'O conteúdo do XML está vazio', otCount: 0 };
 
+  const { xml: processedXml, injected } = injectDsNamespace(xmlString);
+  const warnings: string[] = [];
+  if (injected)
+    warnings.push(
+      'O namespace "xmlns:ds" não foi encontrado na tag raiz e foi injetado automaticamente para que o parse pudesse ser concluído. ' +
+      'Verifique se o seu código declara xmlns:ds="http://www.w3.org/2000/09/xmldsig#" no elemento raiz <alterarOT_envio>.',
+    );
+
   const parser = new DOMParser();
-  const doc = parser.parseFromString(xmlString, 'application/xml');
+  const doc = parser.parseFromString(processedXml, 'application/xml');
 
   const parseErr = doc.querySelector('parsererror');
   if (parseErr) {
@@ -564,5 +585,5 @@ export function validateRetificacao(xmlString: string): ValidationResult {
 
   const ctx = createCtx();
   const otCount = validateRoot(doc, ctx);
-  return { valid: ctx.errors.length === 0, errors: ctx.errors, otCount };
+  return { valid: ctx.errors.length === 0, errors: ctx.errors, otCount, warnings };
 }

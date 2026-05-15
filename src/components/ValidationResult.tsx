@@ -89,6 +89,19 @@ export function ValidationResult({ result, xml, fileType = 'xml', onErrorClick }
         />
       )}
 
+      {result.warnings && result.warnings.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {result.warnings.map((w, i) => (
+            <div key={i} className="flex items-start gap-3 p-3 rounded-lg border bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800">
+              <svg className="w-4 h-4 shrink-0 mt-0.5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+              </svg>
+              <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">{w}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
       {result.errors.length > 0 && (
         <div className="flex flex-col gap-2">
           {result.errors.map((err, i) => {

@@ -9,4 +9,5 @@ export interface ValidationResult {
   errors: ValidationError[];
   parseError?: string;
   otCount: number;
+  warnings?: string[];
 }
