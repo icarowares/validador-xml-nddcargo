@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { track } from '@vercel/analytics';
 import { XmlInput, type XmlInputHandle } from './components/XmlInput';
 import { ValidationResult } from './components/ValidationResult';
 import { validate } from './validator/validate';
@@ -38,6 +39,7 @@ export default function App() {
 
   function handleFileTypeChange(type: FileType) {
     if (type === fileType) return;
+    track('file_type_change', { from: fileType, to: type });
     setFileType(type);
     setContent('');
     setResult(null);
@@ -49,6 +51,12 @@ export default function App() {
       const res = fileType === 'txt' ? validateTxt(content) : fileType === 'json' ? validateJson(content) : validate(content);
       setResult(res);
       setIsValidating(false);
+      track('validate', {
+        fileType,
+        integrationType,
+        result: res.valid ? 'valid' : 'invalid',
+        errorCount: res.errors.length,
+      });
       setTimeout(() => {
         resultPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 50);
@@ -194,6 +202,7 @@ export default function App() {
                 <a
                   href="/loteOT_envio_4_2_12_0.xsd"
                   download="loteOT_envio_4_2_12_0.xsd"
+                  onClick={() => track('download_xsd', { file: 'loteOT_envio_4_2_12_0.xsd' })}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
                 >
                   <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -219,6 +228,7 @@ export default function App() {
                       key={file}
                       href={`/${file}`}
                       download={file}
+                      onClick={() => track('download_example', { file, fileType: 'txt' })}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-violet-200 dark:border-violet-800 text-xs text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40 hover:bg-violet-100 dark:hover:bg-violet-900/40 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
                     >
                       <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -243,6 +253,7 @@ export default function App() {
                       key={file}
                       href={`/${file}`}
                       download={file}
+                      onClick={() => track('download_example', { file, fileType: 'json' })}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
                     >
                       <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
