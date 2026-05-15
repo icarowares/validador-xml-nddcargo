@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { track } from '@vercel/analytics';
 import { XmlInput, type XmlInputHandle } from './components/XmlInput';
 import { ValidationResult } from './components/ValidationResult';
+import { ReleaseNotes } from './components/ReleaseNotes';
 import { validate } from './validator/validate';
 import { validateTxt } from './validator/validateTxt';
 import { validateJson } from './validator/validateJson';
@@ -324,9 +325,11 @@ export default function App() {
       </main>
 
       <footer className="border-t border-gray-100 dark:border-gray-800 py-3 shrink-0">
-        <p className="text-center text-xs text-gray-400 dark:text-gray-600">
-          Validação local · nenhum dado é enviado ao servidor
-        </p>
+        <div className="flex items-center justify-center gap-3 text-xs text-gray-400 dark:text-gray-600">
+          <span>Validação local · nenhum dado é enviado ao servidor</span>
+          <span aria-hidden>·</span>
+          <ReleaseNotes />
+        </div>
       </footer>
     </div>
   );
