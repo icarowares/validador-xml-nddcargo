@@ -215,7 +215,7 @@ export default function App() {
                     Schema
                   </p>
                   <a
-                    href="/loteOT_envio_4_2_12_0.xsd"
+                    href="/schemas/loteOT_envio_4_2_12_0.xsd"
                     download="loteOT_envio_4_2_12_0.xsd"
                     onClick={() => track('download_xsd', { file: 'loteOT_envio_4_2_12_0.xsd' })}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
@@ -239,7 +239,7 @@ export default function App() {
                     ].map(({ label, file }) => (
                       <a
                         key={file}
-                        href={`/${file}`}
+                        href={`/exemplos/emissao/${file}`}
                         download={file}
                         onClick={() => track('download_example', { file, fileType: 'xml' })}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
@@ -261,7 +261,7 @@ export default function App() {
                     Schema
                   </p>
                   <a
-                    href="/alterarOT_envio_4_2_12_0.xsd"
+                    href="/schemas/alterarOT_envio_4_2_12_0.xsd"
                     download="alterarOT_envio_4_2_12_0.xsd"
                     onClick={() => track('download_xsd', { file: 'alterarOT_envio_4_2_12_0.xsd' })}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
@@ -285,7 +285,7 @@ export default function App() {
                     ].map(({ label, file }) => (
                       <a
                         key={file}
-                        href={`/${file}`}
+                        href={`/exemplos/retificacao/${file}`}
                         download={file}
                         onClick={() => track('download_example', { file, fileType: 'xml' })}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
@@ -307,7 +307,7 @@ export default function App() {
                     Schema
                   </p>
                   <a
-                    href="/cancelarOT_envio_4_2_12_0.xsd"
+                    href="/schemas/cancelarOT_envio_4_2_12_0.xsd"
                     download="cancelarOT_envio_4_2_12_0.xsd"
                     onClick={() => track('download_xsd', { file: 'cancelarOT_envio_4_2_12_0.xsd' })}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
@@ -324,7 +324,7 @@ export default function App() {
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <a
-                      href="/ex_cancelamento.xml"
+                      href="/exemplos/cancelamento/ex_cancelamento.xml"
                       download="ex_cancelamento.xml"
                       onClick={() => track('download_example', { file: 'ex_cancelamento.xml', fileType: 'xml' })}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
@@ -345,7 +345,7 @@ export default function App() {
                     Schema
                   </p>
                   <a
-                    href="/encerrarOT_envio_4_2_12_0.xsd"
+                    href="/schemas/encerrarOT_envio_4_2_12_0.xsd"
                     download="encerrarOT_envio_4_2_12_0.xsd"
                     onClick={() => track('download_xsd', { file: 'encerrarOT_envio_4_2_12_0.xsd' })}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
@@ -368,7 +368,7 @@ export default function App() {
                     ].map(({ label, file }) => (
                       <a
                         key={file}
-                        href={`/${file}`}
+                        href={`/exemplos/encerramento/${file}`}
                         download={file}
                         onClick={() => track('download_example', { file, fileType: 'xml' })}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
@@ -397,7 +397,7 @@ export default function App() {
                   ].map(({ label, file }) => (
                     <a
                       key={file}
-                      href={`/${file}`}
+                      href={`/exemplos/emissao/${file}`}
                       download={file}
                       onClick={() => track('download_example', { file, fileType: 'txt' })}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-violet-200 dark:border-violet-800 text-xs text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40 hover:bg-violet-100 dark:hover:bg-violet-900/40 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
@@ -422,7 +422,7 @@ export default function App() {
                   ].map(({ label, file }) => (
                     <a
                       key={file}
-                      href={`/${file}`}
+                      href={`/exemplos/emissao/${file}`}
                       download={file}
                       onClick={() => track('download_example', { file, fileType: 'json' })}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
