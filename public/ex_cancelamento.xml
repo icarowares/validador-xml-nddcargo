@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Cancelamento de OT — cancelarOT_envio v4.2.12
+  Cancela uma Operação de Transporte previamente emitida.
+
+  Campos obrigatórios:
+  - cnpj: CNPJ da contratante (14 dígitos)
+  - autorizacao.ciot.numero: código CIOT da OT (12 dígitos)
+  - autorizacao.ciot.ciotCodVerificador: protocolo de 4 chars (ou "XXXX" para contingência)
+  - motivo: justificativa do cancelamento (1-500 caracteres)
+  - ds:Signature: assinatura digital obrigatória
+-->
+<cancelarOT_envio versao="4.2.12" token="TOKEN_24_CARACTERES_AQUI" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+  <infCancOT ID="f7e6d5c4-b3a2-4190-fedc-ba9876543210">
+    <cnpj>12345678000195</cnpj>
+    <autorizacao>
+      <ciot>
+        <numero>990000000123</numero>
+        <ciotCodVerificador>1234</ciotCodVerificador>
+      </ciot>
+    </autorizacao>
+    <motivo>Cancelamento solicitado pelo contratante por desistência do serviço de transporte contratado.</motivo>
+  </infCancOT>
+  <ds:Signature/>
+</cancelarOT_envio>

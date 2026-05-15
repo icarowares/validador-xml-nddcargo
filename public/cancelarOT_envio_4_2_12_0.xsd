@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       cancelarOT_envio — Schema v4.2.12.0
+       Layout de Cancelamento de Operação de Transporte
+       NDD Cargo · SOAP / ANTT
+  ═══════════════════════════════════════════════════════════════ -->
+
+  <!-- ─── Tipos simples ─────────────────────────────────────────── -->
+
+  <xs:simpleType name="TVersao">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="7"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TToken">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="24"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TCnpj">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{14}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TNumCiot">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TCodVerif">
+    <xs:restriction base="xs:string">
+      <xs:length value="4"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TMotivo">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="500"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- ─── Elemento raiz ────────────────────────────────────────────── -->
+
+  <xs:element name="cancelarOT_envio">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="infCancOT">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="cnpj" type="TCnpj"/>
+              <xs:element name="autorizacao">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="ciot">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="numero"             type="TNumCiot"/>
+                          <xs:element name="ciotCodVerificador" type="TCodVerif"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="motivo" type="TMotivo"/>
+            </xs:sequence>
+            <!-- ID ou Id: GUID para assinatura digital (ambos opcionais) -->
+            <xs:attribute name="ID" type="xs:string" use="optional"/>
+            <xs:attribute name="Id" type="xs:string" use="optional"/>
+          </xs:complexType>
+        </xs:element>
+        <!-- Assinatura digital obrigatória -->
+        <xs:any namespace="##other" processContents="lax"/>
+      </xs:sequence>
+      <xs:attribute name="versao" type="TVersao" use="required"/>
+      <xs:attribute name="token"  type="TToken"  use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

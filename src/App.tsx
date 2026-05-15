@@ -5,6 +5,7 @@ import { ValidationResult } from './components/ValidationResult';
 import { ReleaseNotes } from './components/ReleaseNotes';
 import { validate } from './validator/validate';
 import { validateRetificacao } from './validator/validateRetificacao';
+import { validateCancelamento } from './validator/validateCancelamento';
 import { validateTxt } from './validator/validateTxt';
 import { validateJson } from './validator/validateJson';
 import type { ValidationResult as ValidationResultType } from './validator/types';
@@ -16,7 +17,7 @@ type IntegrationType = 'emissao' | 'retificacao' | 'cancelamento' | 'encerrament
 const INTEGRATION_TYPES: { id: IntegrationType; label: string; activeFor: FileType[] }[] = [
   { id: 'emissao',      label: 'Emissão',      activeFor: ['xml', 'txt', 'json'] },
   { id: 'retificacao',  label: 'Retificação',  activeFor: ['xml']                },
-  { id: 'cancelamento', label: 'Cancelamento', activeFor: []                     },
+  { id: 'cancelamento', label: 'Cancelamento', activeFor: ['xml']                },
   { id: 'encerramento', label: 'Encerramento', activeFor: []                     },
 ];
 
@@ -56,7 +57,9 @@ export default function App() {
           ? validateJson(content)
           : integrationType === 'retificacao'
             ? validateRetificacao(content)
-            : validate(content);
+            : integrationType === 'cancelamento'
+              ? validateCancelamento(content)
+              : validate(content);
       setResult(res);
       setIsValidating(false);
       track('validate', {
@@ -290,6 +293,44 @@ export default function App() {
                         {label}
                       </a>
                     ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            {fileType === 'xml' && integrationType === 'cancelamento' && (
+              <div className="mb-4 shrink-0 flex flex-col gap-3">
+                <div>
+                  <p className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                    Schema
+                  </p>
+                  <a
+                    href="/cancelarOT_envio_4_2_12_0.xsd"
+                    download="cancelarOT_envio_4_2_12_0.xsd"
+                    onClick={() => track('download_xsd', { file: 'cancelarOT_envio_4_2_12_0.xsd' })}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
+                  >
+                    <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    cancelarOT_envio_4_2_12_0.xsd
+                  </a>
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                    Exemplos de arquivo
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <a
+                      href="/ex_cancelamento.xml"
+                      download="ex_cancelamento.xml"
+                      onClick={() => track('download_example', { file: 'ex_cancelamento.xml', fileType: 'xml' })}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
+                    >
+                      <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      Cancelamento
+                    </a>
                   </div>
                 </div>
               </div>
