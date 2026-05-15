@@ -14,6 +14,8 @@ const RELEASES: Release[] = [
   {
     date: '15 mai 2026',
     entries: [
+      { type: 'feat', text: 'Validação de XML Retificação (alterarOT_envio) — todas as regras técnicas e de negócio do layout v4.2.12.0' },
+      { type: 'feat', text: 'XSD alterarOT_envio_4_2_12_0.xsd disponível para download no painel XML › Retificação' },
       { type: 'feat', text: 'Syntax highlighting customizado para TXT NDD Cargo — destaque de código de registro, separadores e campos por tipo' },
       { type: 'feat', text: 'Editor substituído por CodeMirror 6 com highlight estilo VS Code para XML, JSON e TXT (números de linha, folding, bracket matching)' },
       { type: 'feat', text: 'Exemplos XML para download — Carga Lotação, Carga Fracionada, Frota Própria e TAC-Agregado' },
