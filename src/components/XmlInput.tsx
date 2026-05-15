@@ -3,6 +3,7 @@ import CodeMirror, { type ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import { EditorView, placeholder } from '@codemirror/view';
 import { xml } from '@codemirror/lang-xml';
 import { json } from '@codemirror/lang-json';
+import { nddTxt } from '../lib/nddTxtLang';
 import { vscodeDark, vscodeLight } from '@uiw/codemirror-theme-vscode';
 
 export interface XmlInputHandle {
@@ -124,7 +125,7 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
     const charCount = value.length;
 
     const extensions = [
-      ...(isXml ? [xml()] : isJson ? [json()] : []),
+      ...(isXml ? [xml()] : isJson ? [json()] : [nddTxt]),
       placeholder(
         isXml
           ? 'Cole ou arraste um XML aqui...'
