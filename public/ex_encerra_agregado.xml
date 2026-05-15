@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<encerrarOT_envio versao="4.2.12" token="TOKEN_24_CARACTERES_AQUI" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+  <infEnceOT ID="550e8400-e29b-41d4-a716-446655440002">
+    <cnpj>12345678000195</cnpj>
+    <autorizacao>
+      <ciot>
+        <numero>990000000789</numero>
+        <ciotCodVerificador>9012</ciotCodVerificador>
+      </ciot>
+    </autorizacao>
+    <encerramento>
+      <TACagregado>
+        <viagens>
+          <!-- Viagem 1: localização por coordenadas geográficas -->
+          <viagem>
+            <rota>
+              <rotaERP>ROTA-SP-RJ-001</rotaERP>
+              <informacoes>
+                <nome>São Paulo - Rio de Janeiro</nome>
+                <tipoRotaPadrao>1</tipoRotaPadrao>
+                <pontosParada>
+                  <pontoParada>
+                    <latitude>-23.550520</latitude>
+                    <longitude>-46.633308</longitude>
+                  </pontoParada>
+                  <pontoParada>
+                    <latitude>-22.906847</latitude>
+                    <longitude>-43.172896</longitude>
+                  </pontoParada>
+                </pontosParada>
+              </informacoes>
+            </rota>
+            <totalKM>429</totalKM>
+            <qtdeViagens>3</qtdeViagens>
+          </viagem>
+          <!-- Viagem 2: localização por CEP -->
+          <viagem>
+            <rota>
+              <rotaERP>ROTA-SP-BH-002</rotaERP>
+              <informacoes>
+                <nome>São Paulo - Belo Horizonte</nome>
+                <tipoRotaPadrao>1</tipoRotaPadrao>
+                <pontosParada>
+                  <pontoParada>
+                    <cep>01310100</cep>
+                  </pontoParada>
+                  <pontoParada>
+                    <cep>30130010</cep>
+                  </pontoParada>
+                </pontosParada>
+              </informacoes>
+            </rota>
+            <totalKM>586</totalKM>
+            <qtdeViagens>2</qtdeViagens>
+          </viagem>
+          <!-- Viagem 3: localização por código IBGE -->
+          <viagem>
+            <rota>
+              <rotaERP>ROTA-SP-CWB-003</rotaERP>
+              <informacoes>
+                <nome>São Paulo - Curitiba</nome>
+                <tipoRotaPadrao>1</tipoRotaPadrao>
+                <pontosParada>
+                  <pontoParada>
+                    <codigoIBGE>3550308</codigoIBGE>
+                  </pontoParada>
+                  <pontoParada>
+                    <codigoIBGE>4106902</codigoIBGE>
+                  </pontoParada>
+                </pontosParada>
+              </informacoes>
+            </rota>
+            <totalKM>408</totalKM>
+            <qtdeViagens>4</qtdeViagens>
+          </viagem>
+        </viagens>
+      </TACagregado>
+    </encerramento>
+  </infEnceOT>
+  <ds:Signature/>
+</encerrarOT_envio>
