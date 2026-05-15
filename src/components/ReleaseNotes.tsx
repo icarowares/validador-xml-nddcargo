@@ -14,6 +14,7 @@ const RELEASES: Release[] = [
   {
     date: '15 mai 2026',
     entries: [
+      { type: 'feat', text: 'Validação de XML Encerramento (encerrarOT_envio) — regras de negócio RN-E01 a RN-E04, XSD e suporte a lotação, fracionado e TAC-Agregado' },
       { type: 'feat', text: 'Validação de XML Cancelamento (cancelarOT_envio) — regras técnicas completas, XSD e arquivo de exemplo' },
       { type: 'feat', text: 'Validação de XML Retificação (alterarOT_envio) — todas as regras técnicas e de negócio do layout v4.2.12.0' },
       { type: 'feat', text: 'XSD alterarOT_envio_4_2_12_0.xsd disponível para download no painel XML › Retificação' },
