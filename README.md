@@ -1,73 +1,149 @@
-# React + TypeScript + Vite
+# Validador NDD Cargo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ferramenta web para validação de arquivos de integração da plataforma **NDD Cargo**, layout `loteOT_envio` v4.2.12.0. Suporta os três formatos aceitos pela API: **XML**, **TXT** e **JSON**.
 
-Currently, two official plugins are available:
+Todo o processamento é feito **localmente no navegador** — nenhum dado é enviado para servidores externos.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Funcionalidades
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Tipos de integração suportados
+| Tipo | XML | TXT | JSON |
+|---|:---:|:---:|:---:|
+| Emissão | ✅ | ✅ | ✅ |
+| Retificação | ✅ | — | — |
+| Cancelamento | ✅ | — | — |
+| Encerramento | ✅ | — | — |
 
-## Expanding the ESLint configuration
+### Validações realizadas
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **XSD / estrutura de campos** — tipo, tamanho, formato e obrigatoriedade de cada campo conforme o layout oficial NDD
+- **Regras de negócio** — mais de 50 regras cruzadas, incluindo:
+  - Datas coerentes (`dtFim ≥ dtInicio`, intervalo máximo de 90 dias)
+  - Peso e valor do frete maiores que zero
+  - `codigoSH` validado contra a tabela oficial (1.229 códigos agrupados por capítulo)
+  - `codigoTipoCarga` validado contra os 12 tipos permitidos
+  - Campos enum com lista completa de valores aceitos exibida na mensagem de erro
+  - Restrições por tipo de operação (Lotação, Fracionado, TAC-Agregado)
+  - Duplicidade de placa de veículo
+  - Transportador pessoa física obrigatório para TAC-Agregado
+  - Estrutura de registros TXT (sequência, hierarquia e cardinalidade)
+- **Atributo `versao`** — aceita somente `4.2.12.0`
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Recursos de apoio
+- Editor com syntax highlighting estilo VS Code (CodeMirror 6) para XML, JSON e TXT
+- Clique em um erro para navegar diretamente à linha correspondente no editor
+- Resultados ordenados por número de linha crescente
+- Tabela de `codigoSH` acessível pelo menu "Materiais de apoio"
+- Arquivos de exemplo para download (XML, TXT e JSON) para cada modalidade
+- XSDs disponíveis para download direto na interface
+- Modo escuro com persistência via `localStorage`
+- Rastreamento de eventos via Vercel Analytics
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Stack
+
+| Camada | Tecnologia |
+|---|---|
+| Framework | React 19 + TypeScript |
+| Build | Vite |
+| Estilo | Tailwind CSS |
+| Editor | CodeMirror 6 (`@uiw/react-codemirror`) |
+| Deploy | Vercel |
+| Analytics | `@vercel/analytics` |
+
+---
+
+## Estrutura do projeto
+
+```
+src/
+├── App.tsx                        # Componente raiz — roteamento hash, orquestração
+├── components/
+│   ├── XmlInput.tsx               # Editor CodeMirror com highlight e scroll para linha
+│   ├── ValidationResult.tsx       # Painel de resultados com navegação por erros
+│   ├── CodigoSHPage.tsx           # Subpágina: tabela de 1.229 códigos SH
+│   └── ReleaseNotes.tsx           # Modal de changelog
+├── validator/
+│   ├── types.ts                   # Interfaces ValidationError e ValidationResult
+│   ├── validate.ts                # Validador XML — Emissão
+│   ├── validateRetificacao.ts     # Validador XML — Retificação
+│   ├── validateCancelamento.ts    # Validador XML — Cancelamento
+│   ├── validateEncerramento.ts    # Validador XML — Encerramento
+│   ├── businessRules.ts           # Regras de negócio compartilhadas (XML)
+│   ├── validateTxt.ts             # Validador TXT — Emissão
+│   └── validateJson.ts            # Validador JSON — Emissão
+└── data/
+    ├── codigoSH.ts                # Tabela de 1.229 códigos SH (cap. NDD)
+    └── codigoTipoCarga.ts         # 12 tipos de carga com descrições
+
+public/
+├── schemas/                       # XSDs para download (emissão, retif., cancel., encerr.)
+├── exemplos/
+│   ├── emissao/                   # XML, TXT e JSON de exemplo por modalidade
+│   ├── retificacao/               # XMLs de retificação
+│   ├── cancelamento/              # XML de cancelamento
+│   └── encerramento/              # XMLs de encerramento
+└── ndd-logo.svg
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Configuração local
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Pré-requisitos
+
+- Node.js ≥ 18
+- npm ≥ 9 (ou `pnpm` / `yarn`)
+
+### Instalação e execução
+
+```bash
+# Clonar o repositório
+git clone <url-do-repositorio>
+cd xml-validator
+
+# Instalar dependências
+npm install
+
+# Iniciar servidor de desenvolvimento (http://localhost:5173)
+npm run dev
 ```
+
+### Scripts disponíveis
+
+| Comando | Descrição |
+|---|---|
+| `npm run dev` | Servidor de desenvolvimento com HMR |
+| `npm run build` | Build de produção (`dist/`) |
+| `npm run preview` | Pré-visualizar o build de produção localmente |
+| `npm run lint` | Verificar erros de lint com ESLint |
+
+### Build de produção
+
+```bash
+npm run build
+# Saída gerada em dist/
+```
+
+O projeto está configurado para deploy automático na **Vercel** a partir da branch `main`. Cada push dispara um novo build.
+
+---
+
+## Adicionando novos tipos de integração
+
+1. Crie um arquivo `src/validator/validateXxx.ts` exportando `validateXxx(content: string): ValidationResult`
+2. Importe e chame a função em `App.tsx` dentro de `handleValidate`
+3. Adicione a entrada em `INTEGRATION_TYPES` com os `activeFor` corretos
+4. Inclua exemplos em `public/exemplos/<tipo>/` e XSDs em `public/schemas/` se aplicável
+
+---
+
+## Convenções de código
+
+- Todos os validadores retornam `ValidationResult` com `errors: ValidationError[]` ordenado por `lineNumber` crescente (a ordenação é feita em `App.tsx` após a validação)
+- Campos enum sempre exibem a lista completa de valores aceitos com descrição na mensagem de erro
+- Strings opcionais deixadas em branco (`""`) são rejeitadas — use `null` ou omita o campo (JSON) / deixe o campo vazio entre separadores (TXT)
+- Nenhuma dependência de runtime além de React e CodeMirror — toda a lógica de validação é TypeScript puro
