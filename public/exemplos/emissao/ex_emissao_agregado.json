@@ -7,10 +7,6 @@
     "ptEmissor": "Filial SP"
   },
   "carga": {
-    "codigoSH": "6203",
-    "quantidade": 5000,
-    "CodigoTipoCarga": 2,
-    "distanciaPercorrida": 750,
     "remetente": {
       "cpfCnpj": "12345678000195",
       "nome": "Empresa Remetente Ltda",
