@@ -44,7 +44,8 @@
       "Bash(node -e ' *)",
       "Bash(node --input-type=module)",
       "Bash(git commit -m 'feat: 10 novas regras de negócio de emissão + tabela codigoSH *)",
-      "Bash(git commit -m 'feat: descrições inline para todos os campos enum em XML, TXT e JSON *)"
+      "Bash(git commit -m 'feat: descrições inline para todos os campos enum em XML, TXT e JSON *)",
+      "Bash(git commit -m 'feat: ordena resultados de validação por número de linha crescente *)"
     ],
     "additionalDirectories": [
       "/Users/icarowares/Downloads"

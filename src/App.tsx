@@ -78,6 +78,7 @@ export default function App() {
               : integrationType === 'encerramento'
                 ? validateEncerramento(content)
                 : validate(content);
+      res.errors.sort((a, b) => (a.lineNumber ?? Infinity) - (b.lineNumber ?? Infinity));
       setResult(res);
       setIsValidating(false);
       track('validate', {
