@@ -1,4 +1,5 @@
 import type { ValidationError, ValidationResult } from './types';
+import { CODIGOS_SH } from '../data/codigoSH';
 
 // ─── Field helpers ────────────────────────────────────────────────────────────
 
@@ -225,13 +226,28 @@ function val2100(line: ParsedLine, otTipo: number | null): ValidationError[] {
   const indAD = f[4]; const indRV = f[5]; const compVeic = f[6];
 
   if (!codigoSH || codigoSH.trim() === '') ctx.err('codigoSH é obrigatório', 'codigoSH');
-  else reqExact(codigoSH.trim(), 4, 'codigoSH', ctx);
+  else {
+    reqExact(codigoSH.trim(), 4, 'codigoSH', ctx);
+    // Regra: codigoSH deve existir na tabela (ativado quando lista for preenchida)
+    if (VALID_CODIGO_SH_TXT.size > 0 && !VALID_CODIGO_SH_TXT.has(codigoSH.trim()))
+      ctx.errors.push({
+        path: `Linha ${ctx.lineNumber} · Reg. 2100 · Campo: codigoSH`,
+        message: `O código da natureza da carga "${codigoSH.trim()}" não existe na tabela de codigoSH`,
+        lineNumber: ctx.lineNumber,
+        link: { url: '/#/codigos-sh', label: 'Consultar tabela de codigoSH' },
+      });
+  }
 
   if (!qtdPeso || qtdPeso.trim() === '') ctx.err('quantidade(peso) é obrigatória', 'quantidade(peso)');
   else {
     const v = qtdPeso.trim();
     if (!isDecimal(v)) ctx.err(`"${v}" deve ser um número (ex: 100 ou 100.50)`, 'quantidade(peso)');
     else if (v.length > 9) ctx.err(`"${v}" excede o máximo de 9 caracteres`, 'quantidade(peso)');
+    else {
+      const peso = parseFloat(v);
+      if (peso <= 0) ctx.err('Peso da carga deve ser maior que 0', 'quantidade(peso)');
+      else if (peso >= 9_999_999.99) ctx.err('Peso da carga deve ser menor que 9999999.99', 'quantidade(peso)');
+    }
   }
 
   if (otTipo === 2 || otTipo === 4) {
@@ -600,7 +616,12 @@ function val4300(line: ParsedLine): ValidationError[] {
   const irrf = f[4]; const inss = f[5]; const sestsenat = f[6]; const tpRateio = f[7];
 
   if (!vlrFrete || vlrFrete.trim() === '') ctx.err('vlrFrete é obrigatório', 'vlrFrete');
-  else reqDecimal(vlrFrete.trim(), 'vlrFrete', ctx);
+  else {
+    reqDecimal(vlrFrete.trim(), 'vlrFrete', ctx);
+    const vf = parseFloat(vlrFrete.trim());
+    if (isDecimal(vlrFrete.trim()) && vf <= 0)
+      ctx.err('O valor do frete deve ser informado e maior que 0', 'vlrFrete');
+  }
 
   optField(vlrComb, v => reqDecimal(v, 'vlrCombustivel', ctx));
   optField(vlrPedagio, v => reqDecimal(v, 'vlrPedagio', ctx));
@@ -1020,6 +1041,9 @@ function val9700(line: ParsedLine): ValidationError[] {
   return ctx.errors;
 }
 
+// ─── codigoSH válidos (alimentado via src/data/codigoSH.ts) ──────────────────
+const VALID_CODIGO_SH_TXT = new Set(CODIGOS_SH.map(e => e.codigo));
+
 // ─── Known codes set ─────────────────────────────────────────────────────────
 
 const KNOWN_CODES = new Set([
@@ -1086,6 +1110,11 @@ interface OTState {
   has9310: boolean;
   // line numbers for structural errors
   line1000: number;
+  // campos para regras de negócio cruzadas
+  dtInicio: string | null;
+  dtFim: string | null;
+  tracaoCount: number;
+  seenPlacas: Set<string>;
 }
 
 function newOTState(line1000: number): OTState {
@@ -1103,6 +1132,7 @@ function newOTState(line1000: number): OTState {
     has9800: false, has5000: false, has5100: false, has5110: false,
     has9300: false, has9310: false,
     line1000,
+    dtInicio: null, dtFim: null, tracaoCount: 0, seenPlacas: new Set(),
   };
 }
 
@@ -1159,6 +1189,38 @@ function finishOT(ot: OTState, otIndex: number, errors: ValidationError[]): void
   if (ot.has5000 && !ot.has5100) ref('Registro 5100 (Documentos) é obrigatório quando 5000 está presente');
   if (ot.has5100 && !ot.has5110) ref('Registro 5110 (Dependência) é obrigatório quando 5100 está presente');
   if (ot.has9300 && !ot.has9310) ref('Registro 9310 (Dependência) é obrigatório quando 9300 está presente');
+
+  // ── Regras de negócio cruzadas ─────────────────────────────────────────────
+
+  // Regra: dtInicio não deve ser informado em TAC-Agregado (tipo=3)
+  if (ot.tipo === 3 && ot.dtInicio)
+    ref('A data de início da viagem não deve ser informada em operações TAC-Agregado (tipo=3)');
+
+  // Regra: transportador deve ser Pessoa Física (reg. 4010) em TAC-Agregado
+  if (ot.tipo === 3 && !ot.has4010 && (ot.has4020 || ot.has4030))
+    ref('O transportador informado deve ser do tipo Pessoa Física (TAC — registro 4010) para operações TAC-Agregado (tipo=3)');
+
+  // Regra: dtFim >= dtInicio (quando ambas informadas e válidas)
+  if (ot.dtInicio && ot.dtFim && isDate(ot.dtInicio) && isDate(ot.dtFim)) {
+    const d1 = new Date(ot.dtInicio);
+    const d2 = new Date(ot.dtFim);
+    if (d2 < d1) {
+      ref('A data prevista para término da viagem deve ser maior ou igual à data de início da viagem');
+    } else if (ot.tipo === 2 || ot.tipo === 4) {
+      // Regra: intervalo máximo de 90 dias (fracionado=2 ou lotação=4)
+      const diffDays = (d2.getTime() - d1.getTime()) / 86_400_000;
+      if (diffDays > 90)
+        ref(`O intervalo entre a data de início e a data de fim da viagem não pode ser superior a 90 dias (${Math.round(diffDays)} dias informados)`);
+    }
+  }
+
+  // Regra: ao menos 1 veículo de tração e exatamente 1
+  if (ot.veiculoCount > 0) {
+    if (ot.tracaoCount === 0)
+      ref('É necessário informar ao menos um veículo do tipo Tração (tipo=1 no registro 4210)');
+    else if (ot.tracaoCount > 1)
+      ref(`Somente um veículo deve ser do tipo Tração (tipo=1 no registro 4210); ${ot.tracaoCount} informados`);
+  }
 }
 
 function parentErr(line: ParsedLine, parentCode: string): ValidationError {
@@ -1234,6 +1296,10 @@ export function validateTxt(content: string): ValidationResult {
       }
       otCount++;
       currentOT = newOTState(line.lineNumber);
+      // Capturar datas para regras de negócio cruzadas
+      const fi = line.fields;
+      currentOT.dtInicio = (fi[5]?.trim()) || null;
+      currentOT.dtFim    = (fi[6]?.trim()) || null;
       errors.push(...val1000(line));
       continue;
     }
@@ -1328,8 +1394,31 @@ export function validateTxt(content: string): ValidationResult {
       case '4111':
         if (!currentOT.has4110) errors.push(parentErr(line, '4110'));
         errors.push(...val4111(line)); break;
-      case '4200': currentOT.veiculoCount++; errors.push(...val4200(line)); break;
-      case '4210': errors.push(...val4210(line)); break;
+      case '4200': {
+        currentOT.veiculoCount++;
+        // Regra: duplicidade de placa
+        const placa4200 = line.fields[1]?.trim() ?? '';
+        if (placa4200.length === 7) {
+          if (currentOT.seenPlacas.has(placa4200)) {
+            errors.push({
+              path: `Linha ${line.lineNumber} · Reg. 4200 · Campo: placa`,
+              message: `Existe duplicidade de placa na lista informada: "${placa4200}"`,
+              lineNumber: line.lineNumber,
+            });
+          } else {
+            currentOT.seenPlacas.add(placa4200);
+          }
+        }
+        errors.push(...val4200(line));
+        break;
+      }
+      case '4210': {
+        // Regra: rastrear veículos de tração para validação posterior
+        const tipoVeic = parseInt(line.fields[3]?.trim() ?? '', 10);
+        if (tipoVeic === 1) currentOT.tracaoCount++;
+        errors.push(...val4210(line));
+        break;
+      }
       case '4300': currentOT.has4300 = true; errors.push(...val4300(line)); break;
       case '4310':
         if (!currentOT.has4300) errors.push(parentErr(line, '4300'));

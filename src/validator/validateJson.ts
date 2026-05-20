@@ -1,4 +1,8 @@
 import type { ValidationError, ValidationResult } from './types';
+import { CODIGOS_SH } from '../data/codigoSH';
+
+// ─── codigoSH válidos (alimentado via src/data/codigoSH.ts) ──────────────────
+const VALID_CODIGO_SH_JSON = new Set(CODIGOS_SH.map(e => e.codigo));
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -196,6 +200,22 @@ function validateIde(raw: unknown, errs: Errors): number | null {
   if (tipo === 2) {
     if (!raw['dtInicio']) e(errs, `${path}.dtInicio`, 'Obrigatório para carga fracionada (tipoOperacao=2)');
   }
+  // Regra: dtInicio não deve ser informado em TACagregado
+  if (tipo === 3 && raw['dtInicio'] !== undefined && raw['dtInicio'] !== null)
+    e(errs, `${path}.dtInicio`,
+      'A data de início da viagem não deve ser informada em operações TAC-Agregado (tipoOperacao=3)');
+
+  // Regra: dtFim >= dtInicio (quando ambos informados)
+  const dtIni = raw['dtInicio'];
+  const dtFim = raw['dtFim'];
+  if (typeof dtIni === 'string' && typeof dtFim === 'string' && isDate(dtIni) && isDate(dtFim)) {
+    const d1 = new Date(dtIni);
+    const d2 = new Date(dtFim);
+    if (d2 < d1)
+      e(errs, `${path}.dtFim`,
+        'A data prevista para término da viagem deve ser maior ou igual à data de início da viagem');
+  }
+
   return tipo;
 }
 
@@ -209,9 +229,21 @@ function validateCarga(raw: unknown, tipo: number | null, errs: Errors): void {
   if (tipo !== 3) {
     reqDigits(raw, 'codigoSH', path, 4, errs);
 
+    // Regra: codigoSH deve existir na tabela (ativado quando lista for preenchida)
+    if (VALID_CODIGO_SH_JSON.size > 0) {
+      const sh = raw['codigoSH'];
+      if (typeof sh === 'string' && sh.length === 4 && !VALID_CODIGO_SH_JSON.has(sh))
+        errs.push({
+          path: `${path}.codigoSH`,
+          message: `O código da natureza da carga "${sh}" não existe na tabela de codigoSH`,
+          link: { url: '/#/codigos-sh', label: 'Consultar tabela de codigoSH' },
+        });
+    }
+
     const qtd = raw['quantidade'];
     if (qtd === undefined || qtd === null) e(errs, `${path}.quantidade`, 'Campo obrigatório não informado');
     else if (!isNum(qtd) || (qtd as number) <= 0) e(errs, `${path}.quantidade`, 'Deve ser um número maior que zero');
+    else if ((qtd as number) >= 9_999_999.99) e(errs, `${path}.quantidade`, 'Peso da carga deve ser menor que 9999999.99');
 
     const tipoCarga = raw['CodigoTipoCarga'];
     if (tipoCarga === undefined || tipoCarga === null) e(errs, `${path}.CodigoTipoCarga`, 'Campo obrigatório não informado');
@@ -362,6 +394,7 @@ function validateVeiculos(raw: unknown, errs: Errors): void {
 
   let automotorCount = 0;
   let allHaveCadastro = true;
+  const seenPlacas = new Set<string>();
 
   raw.forEach((veic, i) => {
     const vp = `${path}[${i}]`;
@@ -371,6 +404,8 @@ function validateVeiculos(raw: unknown, errs: Errors): void {
     if (placa === undefined || placa === null) e(errs, `${vp}.placa`, 'Campo obrigatório não informado');
     else if (placa === '') e(errs, `${vp}.placa`, ERR_EMPTY_REQ);
     else if (typeof placa !== 'string' || placa.length !== 7) e(errs, `${vp}.placa`, `Deve ter exatamente 7 caracteres (recebido: "${placa}")`);
+    else if (seenPlacas.has(placa)) e(errs, `${vp}.placa`, `Existe duplicidade de placa na lista informada: "${placa}"`);
+    else seenPlacas.add(placa);
 
     reqDigits(veic, 'RNTRCTransportador', vp, 9, errs);
 
@@ -531,6 +566,34 @@ function validateSingleOT(payload: Obj, errs: Errors): void {
   validateValores(payload['valores'], errs);
   validateAdicionais(payload['adicionais'], errs);
   validateCiotFrotaPropria(payload['ciotFrotaPropria'], errs);
+
+  // ── Regras cruzadas ──────────────────────────────────────────────────────
+
+  // Regra: intervalo máximo de 90 dias (tipoOperacao 1 ou 2)
+  if ((tipo === 1 || tipo === 2) && isObj(payload['ide'])) {
+    const ide = payload['ide'] as Obj;
+    const dtIni = ide['dtInicio'];
+    const dtFim = ide['dtFim'];
+    if (typeof dtIni === 'string' && typeof dtFim === 'string' && isDate(dtIni) && isDate(dtFim)) {
+      const d1 = new Date(dtIni);
+      const d2 = new Date(dtFim);
+      if (d2 >= d1) {
+        const diffDays = (d2.getTime() - d1.getTime()) / 86_400_000;
+        if (diffDays > 90)
+          e(errs, 'ide',
+            `O intervalo entre a data de início e a data de fim da viagem não pode ser superior a 90 dias (${Math.round(diffDays)} dias informados)`);
+      }
+    }
+  }
+
+  // Regra: transportador deve ser Pessoa Física (CPF) em TACagregado
+  if (tipo === 3 && isObj(payload['transp'])) {
+    const transp = payload['transp'] as Obj;
+    const cpfCnpj = transp['cpfCnpj'];
+    if (typeof cpfCnpj === 'string' && cpfCnpj.length === 14)
+      e(errs, 'transp.cpfCnpj',
+        'O transportador informado deve ser do tipo Pessoa Física (TAC) para operações TAC-Agregado — "cpfCnpj" deve ser um CPF (11 dígitos)');
+  }
 }
 
 // ─── Main export ──────────────────────────────────────────────────────────────

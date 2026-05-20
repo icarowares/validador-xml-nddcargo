@@ -121,6 +121,19 @@ export function ValidationResult({ result, xml, fileType = 'xml', onErrorClick }
                   <div className="min-w-0 flex-1">
                     <PathBreadcrumb path={err.path} />
                     <p className="text-sm text-gray-800 dark:text-gray-200 leading-snug">{err.message}</p>
+                    {err.link && (
+                      <a
+                        href={err.link.url}
+                        onClick={e => e.stopPropagation()}
+                        className="inline-flex items-center gap-1 mt-1.5 text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                      >
+                        <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        {err.link.label}
+                      </a>
+                    )}
                   </div>
                   {line !== null && (
                     <span className="shrink-0 mt-0.5 inline-flex items-center gap-1 text-[10px] font-mono bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded px-1.5 py-0.5 leading-none">

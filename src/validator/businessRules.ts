@@ -1,4 +1,5 @@
 import type { ValidationError } from './types';
+import { CODIGOS_SH } from '../data/codigoSH';
 
 // ─── DOM helpers ──────────────────────────────────────────────────────────────
 
@@ -42,6 +43,9 @@ function validCNPJ(cnpj: string): boolean {
   };
   return calc(12) === +cnpj[12] && calc(13) === +cnpj[13];
 }
+
+// ─── codigoSH válidos (alimentado via src/data/codigoSH.ts) ──────────────────
+const VALID_CODIGO_SH = new Set(CODIGOS_SH.map(e => e.codigo));
 
 // ─── Entry point ──────────────────────────────────────────────────────────────
 
@@ -281,6 +285,88 @@ export function applyBusinessRules(doc: Document): ValidationError[] {
           if (hasLon && !hasLat)
             err(`${pPath}.latitude`, '[RN-46] "latitude" é obrigatória quando "longitude" é informada');
         });
+      }
+    }
+
+    // ── RN-47: dtFim >= dtInicio ───────────────────────────────────────────────
+    if (isLotFrac && ide) {
+      const dtInicioStr = txt(child(ide, 'dtInicio'));
+      const dtFimStr    = txt(child(ide, 'dtFim'));
+      if (dtInicioStr && dtFimStr) {
+        const d1 = new Date(dtInicioStr);
+        const d2 = new Date(dtFimStr);
+        if (!isNaN(d1.getTime()) && !isNaN(d2.getTime()) && d2 < d1)
+          err(`${ip}.ide.dtFim`,
+            '[RN-47] A data prevista para término da viagem deve ser maior ou igual à data de início da viagem');
+      }
+    }
+
+    // ── RN-48: Peso da carga > 0 e < 9999999.99 ───────────────────────────────
+    {
+      const cargaTipoNome = lotacao ? 'lotacao' : (fracionado ? 'fracionado' : null);
+      const cargaTipoEl   = lotacao ?? fracionado ?? null;
+      if (cargaTipoNome && cargaTipoEl) {
+        const qtdEl = child(cargaTipoEl, 'quantidade');
+        if (qtdEl) {
+          const peso = parseFloat(txt(qtdEl));
+          if (!isNaN(peso)) {
+            const qPath = `${cp}.${cargaTipoNome}.quantidade`;
+            if (peso <= 0)
+              err(qPath, '[RN-48] Peso da carga deve ser maior que 0');
+            else if (peso >= 9_999_999.99)
+              err(qPath, '[RN-48] Peso da carga deve ser menor que 9999999.99');
+          }
+        }
+      }
+    }
+
+    // ── RN-49: Intervalo máximo de 90 dias (lotação ou fracionado) ─────────────
+    if (isLotFrac && ide) {
+      const dtInicioStr = txt(child(ide, 'dtInicio'));
+      const dtFimStr    = txt(child(ide, 'dtFim'));
+      if (dtInicioStr && dtFimStr) {
+        const d1 = new Date(dtInicioStr);
+        const d2 = new Date(dtFimStr);
+        if (!isNaN(d1.getTime()) && !isNaN(d2.getTime()) && d2 >= d1) {
+          const diffDays = (d2.getTime() - d1.getTime()) / 86_400_000;
+          if (diffDays > 90)
+            err(`${ip}.ide`,
+              `[RN-49] O intervalo entre a data de início e a data de fim da viagem não pode ser superior a 90 dias (${Math.round(diffDays)} dias informados)`);
+        }
+      }
+    }
+
+    // ── RN-50: Transportador deve ser Pessoa Física (TAC) em TACagregado ───────
+    if (isTAC && transp) {
+      const cnpjT = child(transp, 'cnpjTransportador');
+      if (cnpjT)
+        err(`${tp}.cnpjTransportador`,
+          '[RN-50] O transportador informado deve ser do tipo Pessoa Física (TAC): utilize "cpfTransportador" em operações TACagregado');
+    }
+
+    // ── RN-51: vlrFrete deve ser maior que 0 ──────────────────────────────────
+    if (valEl) {
+      const vlrFreteEl = child(valEl, 'vlrFrete');
+      if (vlrFreteEl) {
+        const vlrFrete = parseFloat(txt(vlrFreteEl));
+        if (!isNaN(vlrFrete) && vlrFrete <= 0)
+          err(`${vp}.vlrFrete`, '[RN-51] O valor do frete deve ser informado e maior que 0');
+      }
+    }
+
+    // ── RN-52: codigoSH deve existir na tabela de natureza de cargas ──────────
+    // (validação ativada automaticamente quando src/data/codigoSH.ts for preenchido)
+    if (VALID_CODIGO_SH.size > 0) {
+      const shEl = child(lotacao, 'codigoSH') ?? child(fracionado, 'codigoSH');
+      if (shEl) {
+        const sh = txt(shEl);
+        const cargaTipo = lotacao ? 'lotacao' : 'fracionado';
+        if (sh && !VALID_CODIGO_SH.has(sh))
+          errors.push({
+            path: `${cp}.${cargaTipo}.codigoSH`,
+            message: `[RN-52] O código da natureza da carga "${sh}" não existe na tabela de codigoSH`,
+            link: { url: '/#/codigos-sh', label: 'Consultar tabela de codigoSH' },
+          });
       }
     }
   });

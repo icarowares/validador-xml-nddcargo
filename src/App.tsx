@@ -3,6 +3,7 @@ import { track } from '@vercel/analytics';
 import { XmlInput, type XmlInputHandle } from './components/XmlInput';
 import { ValidationResult } from './components/ValidationResult';
 import { ReleaseNotes } from './components/ReleaseNotes';
+import { CodigoSHPage } from './components/CodigoSHPage';
 import { validate } from './validator/validate';
 import { validateRetificacao } from './validator/validateRetificacao';
 import { validateCancelamento } from './validator/validateCancelamento';
@@ -22,7 +23,18 @@ const INTEGRATION_TYPES: { id: IntegrationType; label: string; activeFor: FileTy
   { id: 'encerramento', label: 'Encerramento', activeFor: ['xml']                },
 ];
 
+function useHashPage(): string {
+  const [hash, setHash] = useState(() => window.location.hash);
+  useEffect(() => {
+    const onHash = () => setHash(window.location.hash);
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+  return hash;
+}
+
 export default function App() {
+  const hash = useHashPage();
   const [fileType, setFileType] = useState<FileType>('xml');
   const [content, setContent] = useState('');
   const [result, setResult] = useState<ValidationResultType | null>(null);
@@ -40,6 +52,9 @@ export default function App() {
     document.documentElement.classList.toggle('dark', dark);
     localStorage.setItem('theme', dark ? 'dark' : 'light');
   }, [dark]);
+
+  // ── Sub-pages (após todos os hooks) ──────────────────────────────────────
+  if (hash === '#/codigos-sh') return <CodigoSHPage />;
 
   function handleFileTypeChange(type: FileType) {
     if (type === fileType) return;
@@ -137,9 +152,10 @@ export default function App() {
         </div>
       </header>
 
-      {/* File type selector */}
+      {/* File type selector + Materiais de Apoio */}
       <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shrink-0">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3 flex-wrap">
+          {/* Tipo de arquivo */}
           <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider shrink-0">
             Tipo de arquivo
           </span>
@@ -163,6 +179,30 @@ export default function App() {
               </button>
             ))}
           </div>
+
+          {/* Separador */}
+          <div className="hidden sm:block w-px h-4 bg-gray-200 dark:bg-gray-700 mx-1" />
+
+          {/* Materiais de Apoio */}
+          <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider shrink-0">
+            Materiais de apoio
+          </span>
+          <a
+            href="#/codigos-sh"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border
+                       border-amber-200 dark:border-amber-800/60
+                       bg-amber-50 dark:bg-amber-950/30
+                       text-xs font-medium text-amber-700 dark:text-amber-400
+                       hover:bg-amber-100 dark:hover:bg-amber-900/40
+                       hover:border-amber-300 dark:hover:border-amber-700
+                       transition-colors"
+          >
+            <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            Tabela codigoSH
+          </a>
         </div>
       </div>
 
