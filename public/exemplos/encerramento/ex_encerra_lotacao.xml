@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<encerrarOT_envio versao="4.2.12" token="TOKEN_24_CARACTERES_AQUI" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+<encerrarOT_envio versao="4.2.12.0" token="TOKEN_24_CARACTERES_AQUI" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
   <infEnceOT ID="550e8400-e29b-41d4-a716-446655440000">
     <cnpj>12345678000195</cnpj>
     <autorizacao>

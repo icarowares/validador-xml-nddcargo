@@ -12,8 +12,7 @@
 
   <xs:simpleType name="TVersao">
     <xs:restriction base="xs:string">
-      <xs:minLength value="1"/>
-      <xs:maxLength value="7"/>
+      <xs:enumeration value="4.2.12.0"/>
     </xs:restriction>
   </xs:simpleType>
 

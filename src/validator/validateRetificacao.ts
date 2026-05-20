@@ -522,8 +522,8 @@ function validateRoot(doc: Document, ctx: Ctx): number {
   const versao = root.getAttribute('versao');
   if (!versao)
     ctx.err('alterarOT_envio', 'Atributo obrigatório "versao" não encontrado');
-  else if (versao.length === 0 || versao.length > 7)
-    ctx.err('alterarOT_envio@versao', `Versão inválida: "${versao}". Deve ter entre 1 e 7 caracteres`);
+  else if (versao !== '4.2.12.0')
+    ctx.err('alterarOT_envio@versao', `Versão inválida: "${versao}". O único valor aceito é "4.2.12.0"`);
 
   const token = root.getAttribute('token');
   if (!token)

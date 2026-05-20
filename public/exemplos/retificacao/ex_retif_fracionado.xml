@@ -5,7 +5,7 @@
   O bloco <ANTT> com <fracionado> é usado para alterações que devem ser enviadas à ANTT.
   Todos os campos de carga são opcionais — informe apenas o que precisa alterar.
 -->
-<alterarOT_envio versao="4.2.12" token="TOKEN_24_CARACTERES_AQUI" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+<alterarOT_envio versao="4.2.12.0" token="TOKEN_24_CARACTERES_AQUI" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
   <OT>
     <infOT ID="a1b2c3d4-e5f6-4789-abcd-ef0123456789">
       <cnpj>12345678000195</cnpj>

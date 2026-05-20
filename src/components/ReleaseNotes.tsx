@@ -14,6 +14,7 @@ const RELEASES: Release[] = [
   {
     date: '20 mai 2026',
     entries: [
+      { type: 'feat', text: 'Atributo versao de todos os XMLs passa a aceitar somente o valor "4.2.12.0" — qualquer outro valor é rejeitado com mensagem clara' },
       { type: 'fix', text: 'Validação JSON agora detecta payloads em lote (loteOT) e exibe mensagem clara orientando o envio de uma única OT por vez' },
       { type: 'fix', text: 'Campos string opcionais deixados em branco ("") agora são rejeitados com mensagem orientativa — use null ou omita o campo' },
       { type: 'feat', text: 'Campos carga e carga.remetente agora obrigatórios para todos os tipos de operação (incluindo TAC-Agregado)' },
