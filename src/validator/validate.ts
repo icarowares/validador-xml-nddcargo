@@ -1,5 +1,6 @@
 import type { ValidationError, ValidationResult } from './types';
 import { applyBusinessRules } from './businessRules';
+import { VALID_ATIVIDADE_PRINCIPAL } from '../data/atividadePrincipal';
 
 // ─── Context ─────────────────────────────────────────────────────────────────
 
@@ -649,6 +650,83 @@ function validateValores(el: Element, path: string, ctx: Ctx) {
 
 }
 
+function validateInfTransportador(el: Element, path: string, ctx: Ctx) {
+  const idePath = `${path}.ide`;
+  const ide = requireChild(el, 'ide', path, ctx);
+  if (!ide) return;
+
+  const tac = child(ide, 'tac');
+  const etc = child(ide, 'etc');
+  const ctc = child(ide, 'ctc');
+  const found = [tac, etc, ctc].filter(Boolean);
+
+  if (found.length === 0)
+    ctx.err(idePath, 'É obrigatório informar o tipo de cadastro do transportador: "tac", "etc" ou "ctc"');
+  else if (found.length > 1)
+    ctx.err(idePath, 'Apenas um tipo de cadastro deve ser informado: "tac", "etc" ou "ctc"');
+
+  // ── tac ──────────────────────────────────────────────────────────────────────
+  if (tac) {
+    const tp = `${idePath}.tac`;
+    const nomeC = requireChild(tac, 'nomeCompleto', tp, ctx);
+    if (nomeC) valStrLen(txt(nomeC), 1, 150, `${tp}.nomeCompleto`, ctx);
+    const nomeMae = requireChild(tac, 'nomeMae', tp, ctx);
+    if (nomeMae) valStrLen(txt(nomeMae), 1, 150, `${tp}.nomeMae`, ctx);
+    const nomePai = child(tac, 'nomePai');
+    if (nomePai) valStrLen(txt(nomePai), 1, 150, `${tp}.nomePai`, ctx);
+    const dtNasc = requireChild(tac, 'dataNascimento', tp, ctx);
+    if (dtNasc) valData(txt(dtNasc), `${tp}.dataNascimento`, ctx);
+    const ident = requireChild(tac, 'identidade', tp, ctx);
+    if (ident) valStrLen(txt(ident), 1, 20, `${tp}.identidade`, ctx);
+  }
+
+  // ── etc / ctc (mesma estrutura) ───────────────────────────────────────────────
+  for (const [tag, el2] of [['etc', etc], ['ctc', ctc]] as [string, Element | undefined][]) {
+    if (!el2) continue;
+    const ep = `${idePath}.${tag}`;
+
+    const razao = requireChild(el2, 'razaoSocial', ep, ctx);
+    if (razao) valStrLen(txt(razao), 1, 150, `${ep}.razaoSocial`, ctx);
+
+    const fantasia = requireChild(el2, 'nomeFantasia', ep, ctx);
+    if (fantasia) valStrLen(txt(fantasia), 1, 150, `${ep}.nomeFantasia`, ctx);
+
+    const inscE = requireChild(el2, 'inscEstadual', ep, ctx);
+    if (inscE) valStrLen(txt(inscE), 1, 14, `${ep}.inscEstadual`, ctx);
+
+    const ativEl = requireChild(el2, 'atividadePrincipal', ep, ctx);
+    if (ativEl) {
+      const ativ = txt(ativEl);
+      valStrLen(ativ, 1, 2, `${ep}.atividadePrincipal`, ctx);
+      if (ativ.length > 0 && ativ.length <= 2 && !VALID_ATIVIDADE_PRINCIPAL.has(ativ))
+        ctx.errors.push({
+          path: `${ep}.atividadePrincipal`,
+          message: `O código de atividade principal "${ativ}" não é uma divisão CNAE válida`,
+          link: { url: '/#/atividade-principal', label: 'Consultar tabela de atividadePrincipal' },
+        });
+    }
+
+    const forma = requireChild(el2, 'formaConstituicao', ep, ctx);
+    if (forma) valStrLen(txt(forma), 5, 5, `${ep}.formaConstituicao`, ctx);
+
+    const dtConst = requireChild(el2, 'dataConstituicao', ep, ctx);
+    if (dtConst) valData(txt(dtConst), `${ep}.dataConstituicao`, ctx);
+  }
+
+  // ── campos comuns de infTransportador ────────────────────────────────────────
+  const end = child(el, 'endereco');
+  if (end) validateEnderecoCidade(end, `${path}.endereco`, ctx);
+
+  const tel = requireChild(el, 'telefone', path, ctx);
+  if (tel) valTelefone(txt(tel), `${path}.telefone`, ctx);
+
+  const cartao = child(el, 'cartaoId');
+  if (cartao) valStrLen(txt(cartao), 1, 15, `${path}.cartaoId`, ctx);
+
+  const email = child(el, 'email');
+  if (email) valStrLen(txt(email), 1, 255, `${path}.email`, ctx);
+}
+
 function validateTransp(el: Element, path: string, ctx: Ctx) {
   const rntrc = requireChild(el, 'rntrc', path, ctx);
   if (rntrc) valRNTRC(txt(rntrc), `${path}.rntrc`, ctx);
@@ -658,6 +736,9 @@ function validateTransp(el: Element, path: string, ctx: Ctx) {
   if (!cpfT && !cnpjT) ctx.err(path, 'É obrigatório informar "cpfTransportador" ou "cnpjTransportador"');
   if (cpfT) valCPF(txt(cpfT), `${path}.cpfTransportador`, ctx);
   if (cnpjT) valCNPJ(txt(cnpjT), `${path}.cnpjTransportador`, ctx);
+
+  const infTransp = child(el, 'infTransportador');
+  if (infTransp) validateInfTransportador(infTransp, `${path}.infTransportador`, ctx);
 
   const gc = child(el, 'gestoraCartao');
   if (gc) valMaxLen(txt(gc), 3, `${path}.gestoraCartao`, ctx);
