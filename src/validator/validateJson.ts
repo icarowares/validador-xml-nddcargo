@@ -1,6 +1,7 @@
 import type { ValidationError, ValidationResult } from './types';
 import { CODIGOS_SH } from '../data/codigoSH';
 import { TIPO_CARGA_LISTA } from '../data/codigoTipoCarga';
+import { VALID_ATIVIDADE_PRINCIPAL } from '../data/atividadePrincipal';
 
 // ─── codigoSH válidos (alimentado via src/data/codigoSH.ts) ──────────────────
 const VALID_CODIGO_SH_JSON = new Set(CODIGOS_SH.map(e => e.codigo));
@@ -339,7 +340,14 @@ function validateTransp(raw: unknown, errs: Errors): void {
 
   if (tipo === 2 || tipo === 3) {
     reqStr(c, 'inscEstadual', cp, 1, 14, errs);
-    reqStr(c, 'atividadePrincipal', cp, 1, 100, errs);
+    reqStr(c, 'atividadePrincipal', cp, 1, 2, errs);
+    const atPrinc = c['atividadePrincipal'];
+    if (typeof atPrinc === 'string' && atPrinc.trim() !== '' && !VALID_ATIVIDADE_PRINCIPAL.has(atPrinc.trim()))
+      errs.push({
+        path: `${cp}.atividadePrincipal`,
+        message: `O código de atividade principal "${atPrinc}" não é uma divisão CNAE válida`,
+        link: { url: '/#/atividade-principal', label: 'Consultar tabela de atividadePrincipal' },
+      });
     reqStr(c, 'formaConstituicao', cp, 5, 5, errs);
     reqDate(c, 'dataConstituicao', cp, errs);
   } else {

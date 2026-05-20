@@ -14,6 +14,9 @@ const RELEASES: Release[] = [
   {
     date: '21 mai 2026',
     entries: [
+      { type: 'feat', text: 'Validação de atividadePrincipal (TXT e JSON): rejeita divisões CNAE inválidas e exibe link direto para a tabela de consulta com todos os 87 códigos válidos' },
+      { type: 'feat', text: 'Subpágina "Tabela atividadePrincipal" com 87 divisões CNAE agrupadas por seção (A a U) e campo de pesquisa por código ou descrição — acessível pelo menu "Materiais de apoio"' },
+      { type: 'feat', text: 'Resultados de validação sempre ordenados por número de linha crescente' },
       { type: 'feat', text: 'Mensagens de erro para todos os campos enum (XML, TXT e JSON) agora exibem a lista completa de valores aceitos com descrição — gerPgtoFin, tipoOperacao, tipoRateio, tipo do transportador, finalidadeParcela, tipoPagamento, tipoChave, proprietarioCarga, tipo do veículo, efetivacao, prazoMinimo, campo, critério, conector e outros' },
       { type: 'fix',  text: 'Correção: gerPgtoFin no TXT aceitava apenas 1 e 2 — agora valida corretamente os 6 valores permitidos (1 a 6)' },
     ],

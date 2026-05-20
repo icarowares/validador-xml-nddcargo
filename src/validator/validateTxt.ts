@@ -1,6 +1,7 @@
 import type { ValidationError, ValidationResult } from './types';
 import { CODIGOS_SH } from '../data/codigoSH';
 import { TIPO_CARGA_LISTA } from '../data/codigoTipoCarga';
+import { VALID_ATIVIDADE_PRINCIPAL } from '../data/atividadePrincipal';
 
 // ─── Field helpers ────────────────────────────────────────────────────────────
 
@@ -475,7 +476,16 @@ function val4020(line: ParsedLine): ValidationError[] {
   else reqLen(ie.trim(), 1, 14, 'inscricaoEstadual', ctx);
 
   if (!ativ || ativ.trim() === '') ctx.err('atividadePrincipal é obrigatória', 'atividadePrincipal');
-  else reqLen(ativ.trim(), 1, 2, 'atividadePrincipal', ctx);
+  else {
+    reqLen(ativ.trim(), 1, 2, 'atividadePrincipal', ctx);
+    if (ativ.trim().length <= 2 && !VALID_ATIVIDADE_PRINCIPAL.has(ativ.trim()))
+      ctx.errors.push({
+        path: `Linha ${ctx.lineNumber} · Reg. 4020 · Campo: atividadePrincipal`,
+        message: `O código de atividade principal "${ativ.trim()}" não é uma divisão CNAE válida`,
+        lineNumber: ctx.lineNumber,
+        link: { url: '/#/atividade-principal', label: 'Consultar tabela de atividadePrincipal' },
+      });
+  }
 
   if (!forma || forma.trim() === '') ctx.err('formaConstituicao é obrigatória', 'formaConstituicao');
   else if (forma.trim().length !== 5) ctx.err(`formaConstituicao "${forma}" deve ter exatamente 5 caracteres`, 'formaConstituicao');
