@@ -525,6 +525,14 @@ export function validateJson(content: string): ValidationResult {
   if (!isObj(parsed))
     return { valid: false, errors: [], parseError: 'O payload deve ser um objeto JSON com uma única OT', otCount: 0 };
 
+  if (parsed['loteOT'] !== undefined) {
+    errors.push({
+      path: 'loteOT',
+      message: 'Envio via lote não é permitido. Envie apenas a OT diretamente.'
+    });
+    return { valid: false, errors, otCount: 0 };
+  }
+
   validateSingleOT(parsed, errors);
   return { valid: errors.length === 0, errors, otCount: 1 };
 }

@@ -12,6 +12,12 @@ interface Release {
 
 const RELEASES: Release[] = [
   {
+    date: '20 mai 2026',
+    entries: [
+      { type: 'fix', text: 'Validação JSON agora detecta payloads em lote (loteOT) e exibe mensagem clara orientando o envio de uma única OT por vez' },
+    ],
+  },
+  {
     date: '15 mai 2026',
     entries: [
       { type: 'feat', text: 'Validação de XML Encerramento (encerrarOT_envio) — regras de negócio RN-E01 a RN-E04, XSD e suporte a lotação, fracionado e TAC-Agregado' },
