@@ -30,46 +30,63 @@ function isTel(v: unknown): boolean { return typeof v === 'string' && /^\d{10,11
 
 // ─── Field validators ─────────────────────────────────────────────────────────
 
+const ERR_EMPTY = 'Não pode ser uma string vazia; omita o campo ou use null';
+const ERR_EMPTY_REQ = 'Campo obrigatório não pode ser uma string vazia';
+
 function reqStr(o: Obj, f: string, base: string, min: number, max: number, errs: Errors): void {
   const v = o[f];
   const p = `${base}.${f}`;
-  if (v === undefined || v === null || v === '') { e(errs, p, 'Campo obrigatório não informado'); return; }
+  if (v === undefined || v === null) { e(errs, p, 'Campo obrigatório não informado'); return; }
+  if (v === '') { e(errs, p, ERR_EMPTY_REQ); return; }
   if (typeof v !== 'string') { e(errs, p, 'Deve ser uma string'); return; }
   if (v.length < min || v.length > max) e(errs, p, `Deve ter entre ${min} e ${max} caractere(s) (possui ${v.length})`);
 }
 function optStr(o: Obj, f: string, base: string, min: number, max: number, errs: Errors): void {
   const v = o[f];
-  if (v === undefined || v === null || v === '') return;
+  if (v === undefined || v === null) return;
   const p = `${base}.${f}`;
+  if (v === '') { e(errs, p, ERR_EMPTY); return; }
   if (typeof v !== 'string') { e(errs, p, 'Deve ser uma string'); return; }
   if (v.length < min || v.length > max) e(errs, p, `Deve ter entre ${min} e ${max} caractere(s) (possui ${v.length})`);
 }
 function reqDigits(o: Obj, f: string, base: string, len: number, errs: Errors): void {
   const v = o[f]; const p = `${base}.${f}`;
-  if (v === undefined || v === null || v === '') { e(errs, p, 'Campo obrigatório não informado'); return; }
+  if (v === undefined || v === null) { e(errs, p, 'Campo obrigatório não informado'); return; }
+  if (v === '') { e(errs, p, ERR_EMPTY_REQ); return; }
   if (!isDigits(v) || (v as string).length !== len) e(errs, p, `Deve conter exatamente ${len} dígito(s) (recebido: "${v}")`);
 }
 function optDigits(o: Obj, f: string, base: string, len: number, errs: Errors): void {
-  const v = o[f]; if (v === undefined || v === null || v === '') return;
-  if (!isDigits(v) || (v as string).length !== len) e(errs, `${base}.${f}`, `Deve conter exatamente ${len} dígito(s) (recebido: "${v}")`);
+  const v = o[f];
+  if (v === undefined || v === null) return;
+  const p = `${base}.${f}`;
+  if (v === '') { e(errs, p, ERR_EMPTY); return; }
+  if (!isDigits(v) || (v as string).length !== len) e(errs, p, `Deve conter exatamente ${len} dígito(s) (recebido: "${v}")`);
 }
 function reqCpfCnpj(o: Obj, f: string, base: string, errs: Errors): void {
   const v = o[f]; const p = `${base}.${f}`;
-  if (v === undefined || v === null || v === '') { e(errs, p, 'Campo obrigatório não informado'); return; }
+  if (v === undefined || v === null) { e(errs, p, 'Campo obrigatório não informado'); return; }
+  if (v === '') { e(errs, p, ERR_EMPTY_REQ); return; }
   if (!isCpfCnpj(v)) e(errs, p, `Deve ter 11 dígitos (CPF) ou 14 dígitos (CNPJ) (recebido: "${v}")`);
 }
 function optCpfCnpj(o: Obj, f: string, base: string, errs: Errors): void {
-  const v = o[f]; if (v === undefined || v === null || v === '') return;
-  if (!isCpfCnpj(v)) e(errs, `${base}.${f}`, `Deve ter 11 dígitos (CPF) ou 14 dígitos (CNPJ) (recebido: "${v}")`);
+  const v = o[f];
+  if (v === undefined || v === null) return;
+  const p = `${base}.${f}`;
+  if (v === '') { e(errs, p, ERR_EMPTY); return; }
+  if (!isCpfCnpj(v)) e(errs, p, `Deve ter 11 dígitos (CPF) ou 14 dígitos (CNPJ) (recebido: "${v}")`);
 }
 function reqDate(o: Obj, f: string, base: string, errs: Errors): void {
   const v = o[f]; const p = `${base}.${f}`;
-  if (v === undefined || v === null || v === '') { e(errs, p, 'Campo obrigatório não informado'); return; }
+  if (v === undefined || v === null) { e(errs, p, 'Campo obrigatório não informado'); return; }
+  if (v === '') { e(errs, p, ERR_EMPTY_REQ); return; }
   if (!isDate(v)) e(errs, p, `Deve estar no formato AAAA-MM-DD (recebido: "${v}")`);
 }
 function optDate(o: Obj, f: string, base: string, errs: Errors): void {
-  const v = o[f]; if (v === undefined || v === null || v === '') return;
-  if (!isDate(v)) e(errs, `${base}.${f}`, `Deve estar no formato AAAA-MM-DD (recebido: "${v}")`);
+  const v = o[f];
+  if (v === undefined || v === null) return;
+  const p = `${base}.${f}`;
+  if (v === '') { e(errs, p, ERR_EMPTY); return; }
+  if (!isDate(v)) e(errs, p, `Deve estar no formato AAAA-MM-DD (recebido: "${v}")`);
 }
 function reqDecimal(o: Obj, f: string, base: string, errs: Errors): void {
   const v = o[f]; const p = `${base}.${f}`;
@@ -96,12 +113,16 @@ function reqBool(o: Obj, f: string, base: string, errs: Errors): void {
 }
 function reqTel(o: Obj, f: string, base: string, errs: Errors): void {
   const v = o[f]; const p = `${base}.${f}`;
-  if (v === undefined || v === null || v === '') { e(errs, p, 'Campo obrigatório não informado'); return; }
+  if (v === undefined || v === null) { e(errs, p, 'Campo obrigatório não informado'); return; }
+  if (v === '') { e(errs, p, ERR_EMPTY_REQ); return; }
   if (!isTel(v)) e(errs, p, `Deve ter 10 ou 11 dígitos numéricos (recebido: "${v}")`);
 }
 function optTel(o: Obj, f: string, base: string, errs: Errors): void {
-  const v = o[f]; if (v === undefined || v === null || v === '') return;
-  if (!isTel(v)) e(errs, `${base}.${f}`, `Deve ter 10 ou 11 dígitos numéricos (recebido: "${v}")`);
+  const v = o[f];
+  if (v === undefined || v === null) return;
+  const p = `${base}.${f}`;
+  if (v === '') { e(errs, p, ERR_EMPTY); return; }
+  if (!isTel(v)) e(errs, p, `Deve ter 10 ou 11 dígitos numéricos (recebido: "${v}")`);
 }
 
 // ─── Address helpers ──────────────────────────────────────────────────────────
@@ -110,7 +131,8 @@ function optTel(o: Obj, f: string, base: string, errs: Errors): void {
 function validateEnderecoMunicipio(raw: unknown, path: string, errs: Errors): void {
   if (!isObj(raw)) { e(errs, path, 'Deve ser um objeto'); return; }
   const uf = raw['UF'];
-  if (!uf || uf === '') e(errs, `${path}.UF`, 'Campo obrigatório não informado');
+  if (uf === undefined || uf === null) e(errs, `${path}.UF`, 'Campo obrigatório não informado');
+  else if (uf === '') e(errs, `${path}.UF`, ERR_EMPTY_REQ);
   else if (typeof uf !== 'string' || uf.length !== 2) e(errs, `${path}.UF`, `Deve ter exatamente 2 caracteres`);
   reqDigits(raw, 'codigoMunicipio', path, 7, errs);
   reqStr(raw, 'bairro', path, 1, 255, errs);
@@ -133,15 +155,17 @@ function validateEnderecoMunicipio(raw: unknown, path: string, errs: Errors): vo
 function validateEnderecoCidade(raw: unknown, path: string, errs: Errors): void {
   if (!isObj(raw)) { e(errs, path, 'Deve ser um objeto'); return; }
   const uf = raw['UF'];
-  if (!uf || uf === '') e(errs, `${path}.UF`, 'Campo obrigatório não informado');
+  if (uf === undefined || uf === null) e(errs, `${path}.UF`, 'Campo obrigatório não informado');
+  else if (uf === '') e(errs, `${path}.UF`, ERR_EMPTY_REQ);
   else if (typeof uf !== 'string' || uf.length !== 2) e(errs, `${path}.UF`, `Deve ter exatamente 2 caracteres`);
   reqStr(raw, 'cidade', path, 1, 100, errs);
   reqStr(raw, 'bairro', path, 1, 255, errs);
   reqStr(raw, 'logradouro', path, 1, 255, errs);
   optStr(raw, 'numero', path, 1, 8, errs);
   const cep = raw['CEP'];
-  if (cep !== undefined && cep !== null && cep !== '') {
-    if (!isDigits(cep) || (cep as string).length !== 8) e(errs, `${path}.CEP`, `Deve ter exatamente 8 dígitos (recebido: "${cep}")`);
+  if (cep !== undefined && cep !== null) {
+    if (cep === '') e(errs, `${path}.CEP`, ERR_EMPTY);
+    else if (!isDigits(cep) || (cep as string).length !== 8) e(errs, `${path}.CEP`, `Deve ter exatamente 8 dígitos (recebido: "${cep}")`);
   }
   optStr(raw, 'complemento', path, 1, 255, errs);
 }
@@ -346,7 +370,8 @@ function validateVeiculos(raw: unknown, errs: Errors): void {
     if (!isObj(veic)) { e(errs, vp, 'Deve ser um objeto'); allHaveCadastro = false; return; }
 
     const placa = veic['placa'];
-    if (!placa || placa === '') e(errs, `${vp}.placa`, 'Campo obrigatório não informado');
+    if (placa === undefined || placa === null) e(errs, `${vp}.placa`, 'Campo obrigatório não informado');
+    else if (placa === '') e(errs, `${vp}.placa`, ERR_EMPTY_REQ);
     else if (typeof placa !== 'string' || placa.length !== 7) e(errs, `${vp}.placa`, `Deve ter exatamente 7 caracteres (recebido: "${placa}")`);
 
     reqDigits(veic, 'RNTRCTransportador', vp, 9, errs);
@@ -414,7 +439,7 @@ function validateValores(raw: unknown, errs: Errors): void {
 
   if (isObj(raw['parcelamento'])) {
     const p = raw['parcelamento'] as Obj; const pp = `${path}.parcelamento`;
-    const hasRegraERP = p['regraERP'] !== undefined && p['regraERP'] !== null && p['regraERP'] !== '';
+    const hasRegraERP = p['regraERP'] !== undefined && p['regraERP'] !== null;
     const hasInfo = isObj(p['informacoes']);
     if (!hasRegraERP && !hasInfo) e(errs, pp, 'Deve informar regraERP ou informacoes');
     if (hasRegraERP && hasInfo) e(errs, pp, 'Informe apenas regraERP ou informacoes, não ambos');
@@ -429,7 +454,8 @@ function validateValores(raw: unknown, errs: Errors): void {
           reqNum(parc, 'tipoPgto', parcPath, [1, 2, 3], errs);
           reqNum(parc, 'finalidadeParcela', parcPath, [1, 2], errs);
           const dp = parc['dataPrevisao'];
-          if (!dp || dp === '') e(errs, `${parcPath}.dataPrevisao`, 'Campo obrigatório não informado');
+          if (dp === undefined || dp === null) e(errs, `${parcPath}.dataPrevisao`, 'Campo obrigatório não informado');
+          else if (dp === '') e(errs, `${parcPath}.dataPrevisao`, ERR_EMPTY_REQ);
           else if (!isDateOrDatetime(dp)) e(errs, `${parcPath}.dataPrevisao`, `Deve estar no formato AAAA-MM-DD ou AAAA-MM-DD HH:MM:SS`);
           reqDecimal(parc, 'valorAplicado', parcPath, errs);
           optDecimal(parc, 'valorReal', parcPath, errs);
@@ -484,12 +510,14 @@ function validateCiotFrotaPropria(raw: unknown, errs: Errors): void {
   if (isObj(raw['endereco'])) {
     const end = raw['endereco'] as Obj; const ep = `${path}.endereco`;
     reqStr(end, 'logradouro', ep, 1, 255, errs);
-    if (end['numero'] === undefined || end['numero'] === null || end['numero'] === '')
-      e(errs, `${ep}.numero`, 'Campo obrigatório não informado');
+    const numEnd = end['numero'];
+    if (numEnd === undefined || numEnd === null) e(errs, `${ep}.numero`, 'Campo obrigatório não informado');
+    else if (numEnd === '') e(errs, `${ep}.numero`, ERR_EMPTY_REQ);
     reqStr(end, 'bairro', ep, 1, 255, errs);
     reqStr(end, 'cidade', ep, 1, 100, errs);
     const uf = end['uf'] ?? end['UF'];
-    if (!uf || uf === '') e(errs, `${ep}.uf`, 'Campo obrigatório não informado');
+    if (uf === undefined || uf === null) e(errs, `${ep}.uf`, 'Campo obrigatório não informado');
+    else if (uf === '') e(errs, `${ep}.uf`, ERR_EMPTY_REQ);
     else if (typeof uf !== 'string' || uf.length !== 2) e(errs, `${ep}.uf`, 'Deve ter exatamente 2 caracteres');
   }
 }

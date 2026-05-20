@@ -15,6 +15,7 @@ const RELEASES: Release[] = [
     date: '20 mai 2026',
     entries: [
       { type: 'fix', text: 'Validação JSON agora detecta payloads em lote (loteOT) e exibe mensagem clara orientando o envio de uma única OT por vez' },
+      { type: 'fix', text: 'Campos string opcionais deixados em branco ("") agora são rejeitados com mensagem orientativa — use null ou omita o campo' },
     ],
   },
   {
