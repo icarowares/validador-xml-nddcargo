@@ -205,20 +205,23 @@ function validateCarga(raw: unknown, tipo: number | null, errs: Errors): void {
     e(errs, path, 'Campo obrigatório não informado'); return;
   }
 
-  reqDigits(raw, 'codigoSH', path, 4, errs);
+  // Campos obrigatórios apenas para tipoOperacao 1 e 2
+  if (tipo !== 3) {
+    reqDigits(raw, 'codigoSH', path, 4, errs);
 
-  const qtd = raw['quantidade'];
-  if (qtd === undefined || qtd === null) e(errs, `${path}.quantidade`, 'Campo obrigatório não informado');
-  else if (!isNum(qtd) || (qtd as number) <= 0) e(errs, `${path}.quantidade`, 'Deve ser um número maior que zero');
+    const qtd = raw['quantidade'];
+    if (qtd === undefined || qtd === null) e(errs, `${path}.quantidade`, 'Campo obrigatório não informado');
+    else if (!isNum(qtd) || (qtd as number) <= 0) e(errs, `${path}.quantidade`, 'Deve ser um número maior que zero');
 
-  const tipoCarga = raw['CodigoTipoCarga'];
-  if (tipoCarga === undefined || tipoCarga === null) e(errs, `${path}.CodigoTipoCarga`, 'Campo obrigatório não informado');
-  else if (!isNum(tipoCarga) || (tipoCarga as number) < 1 || (tipoCarga as number) > 12)
-    e(errs, `${path}.CodigoTipoCarga`, `Deve ser entre 1 e 12 (recebido: "${tipoCarga}")`);
+    const tipoCarga = raw['CodigoTipoCarga'];
+    if (tipoCarga === undefined || tipoCarga === null) e(errs, `${path}.CodigoTipoCarga`, 'Campo obrigatório não informado');
+    else if (!isNum(tipoCarga) || (tipoCarga as number) < 1 || (tipoCarga as number) > 12)
+      e(errs, `${path}.CodigoTipoCarga`, `Deve ser entre 1 e 12 (recebido: "${tipoCarga}")`);
 
-  const dist = raw['distanciaPercorrida'];
-  if (dist === undefined || dist === null) e(errs, `${path}.distanciaPercorrida`, 'Campo obrigatório não informado');
-  else if (!isNum(dist) || (dist as number) <= 0) e(errs, `${path}.distanciaPercorrida`, 'Deve ser um número maior que zero');
+    const dist = raw['distanciaPercorrida'];
+    if (dist === undefined || dist === null) e(errs, `${path}.distanciaPercorrida`, 'Campo obrigatório para tipoOperacao 1 ou 2');
+    else if (!isNum(dist) || (dist as number) <= 0) e(errs, `${path}.distanciaPercorrida`, 'Deve ser um número maior que zero');
+  }
 
   if (tipo === 2) {
     const frac = raw['ContratantesCargaFrac'];
@@ -244,9 +247,9 @@ function validateCarga(raw: unknown, tipo: number | null, errs: Errors): void {
     else validateEnderecoMunicipio(rem['endereco'], `${path}.remetente.endereco`, errs);
   }
 
-  // destinatario
+  // destinatario — obrigatório apenas para tipoOperacao 1 e 2
   if (!isObj(raw['destinatario'])) {
-    e(errs, `${path}.destinatario`, 'Obrigatório para tipoOperacao 1 ou 2');
+    if (tipo !== 3) e(errs, `${path}.destinatario`, 'Obrigatório para tipoOperacao 1 ou 2');
   } else {
     const dest = raw['destinatario'] as Obj;
     reqCpfCnpj(dest, 'cpfCnpj', `${path}.destinatario`, errs);
