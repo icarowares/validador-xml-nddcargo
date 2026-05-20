@@ -201,14 +201,9 @@ function validateIde(raw: unknown, errs: Errors): number | null {
 
 function validateCarga(raw: unknown, tipo: number | null, errs: Errors): void {
   const path = 'carga';
-  if (tipo === 3) {
-    if (raw !== undefined && raw !== null) e(errs, path, 'Não deve ser informado para TAC-Agregado (tipoOperacao=3)');
-    return;
+  if (!isObj(raw)) {
+    e(errs, path, 'Campo obrigatório não informado'); return;
   }
-  if ((tipo === 1 || tipo === 2) && !isObj(raw)) {
-    e(errs, path, `Obrigatório para tipoOperacao ${tipo}`); return;
-  }
-  if (!isObj(raw)) return;
 
   reqDigits(raw, 'codigoSH', path, 4, errs);
 
@@ -222,7 +217,7 @@ function validateCarga(raw: unknown, tipo: number | null, errs: Errors): void {
     e(errs, `${path}.CodigoTipoCarga`, `Deve ser entre 1 e 12 (recebido: "${tipoCarga}")`);
 
   const dist = raw['distanciaPercorrida'];
-  if (dist === undefined || dist === null) e(errs, `${path}.distanciaPercorrida`, 'Campo obrigatório para tipoOperacao 1 ou 2');
+  if (dist === undefined || dist === null) e(errs, `${path}.distanciaPercorrida`, 'Campo obrigatório não informado');
   else if (!isNum(dist) || (dist as number) <= 0) e(errs, `${path}.distanciaPercorrida`, 'Deve ser um número maior que zero');
 
   if (tipo === 2) {
@@ -240,7 +235,7 @@ function validateCarga(raw: unknown, tipo: number | null, errs: Errors): void {
 
   // remetente
   if (!isObj(raw['remetente'])) {
-    e(errs, `${path}.remetente`, 'Obrigatório para tipoOperacao 1 ou 2');
+    e(errs, `${path}.remetente`, 'Campo obrigatório não informado');
   } else {
     const rem = raw['remetente'] as Obj;
     reqCpfCnpj(rem, 'cpfCnpj', `${path}.remetente`, errs);

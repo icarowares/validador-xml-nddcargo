@@ -16,6 +16,8 @@ const RELEASES: Release[] = [
     entries: [
       { type: 'fix', text: 'Validação JSON agora detecta payloads em lote (loteOT) e exibe mensagem clara orientando o envio de uma única OT por vez' },
       { type: 'fix', text: 'Campos string opcionais deixados em branco ("") agora são rejeitados com mensagem orientativa — use null ou omita o campo' },
+      { type: 'feat', text: 'Campos carga e carga.remetente agora obrigatórios para todos os tipos de operação (incluindo TAC-Agregado)' },
+      { type: 'feat', text: 'Exemplo de payload JSON TAC-Agregado disponível para download no painel JSON › Emissão' },
     ],
   },
   {

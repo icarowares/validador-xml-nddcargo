@@ -418,7 +418,8 @@ export default function App() {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { label: 'Exemplo de payload', file: 'ex_emissao_single.json' },
+                    { label: 'Carga Lotação',  file: 'ex_emissao_single.json'   },
+                    { label: 'TAC-Agregado',   file: 'ex_emissao_agregado.json' },
                   ].map(({ label, file }) => (
                     <a
                       key={file}

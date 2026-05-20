@@ -1,0 +1,56 @@
+{
+  "ide": {
+    "cnpj": "12345678000195",
+    "tipoOperacao": 3,
+    "numero": "000002",
+    "serie": "001",
+    "ptEmissor": "Filial SP"
+  },
+  "carga": {
+    "codigoSH": "6203",
+    "quantidade": 5000,
+    "CodigoTipoCarga": 2,
+    "distanciaPercorrida": 750,
+    "remetente": {
+      "cpfCnpj": "12345678000195",
+      "nome": "Empresa Remetente Ltda",
+      "endereco": {
+        "UF": "SP",
+        "codigoMunicipio": "3550308",
+        "bairro": "Centro",
+        "logradouro": "Rua das Flores",
+        "numero": "100",
+        "CEP": "01310100"
+      }
+    }
+  },
+  "transp": {
+    "rntrc": "123456789",
+    "cpfCnpj": "11122233300",
+    "cadastro": {
+      "nomeRazao": "João Motorista",
+      "telefone": "11999990000",
+      "tipo": 1,
+      "dadosPF": {
+        "identidade": "1234567",
+        "nomeMae": "Maria Motorista",
+        "dataNascimento": "1985-03-20"
+      }
+    }
+  },
+  "veiculos": [
+    {
+      "placa": "ABC1D23",
+      "RNTRCTransportador": "123456789",
+      "eixos": 2,
+      "cadastro": {
+        "modelo": "Volkswagen Constellation",
+        "tipo": 1
+      }
+    }
+  ],
+  "valores": {
+    "vlrFrete": 3200.00,
+    "tipoRateio": 1
+  }
+}
