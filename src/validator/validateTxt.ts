@@ -2,6 +2,7 @@ import type { ValidationError, ValidationResult } from './types';
 import { CODIGOS_SH } from '../data/codigoSH';
 import { TIPO_CARGA_LISTA } from '../data/codigoTipoCarga';
 import { VALID_ATIVIDADE_PRINCIPAL } from '../data/atividadePrincipal';
+import { VALID_FORMA_CONSTITUICAO } from '../data/formaConstituicao';
 
 // ─── Field helpers ────────────────────────────────────────────────────────────
 
@@ -488,7 +489,14 @@ function val4020(line: ParsedLine): ValidationError[] {
   }
 
   if (!forma || forma.trim() === '') ctx.err('formaConstituicao é obrigatória', 'formaConstituicao');
-  else if (forma.trim().length !== 5) ctx.err(`formaConstituicao "${forma}" deve ter exatamente 5 caracteres`, 'formaConstituicao');
+  else if (forma.trim().length !== 5) ctx.err(`formaConstituicao "${forma}" deve ter exatamente 5 caracteres (ex: "206-2")`, 'formaConstituicao');
+  else if (!VALID_FORMA_CONSTITUICAO.has(forma.trim()))
+    ctx.errors.push({
+      path: `Linha ${ctx.lineNumber} · Reg. 4020 · Campo: formaConstituicao`,
+      message: `A forma de constituição "${forma.trim()}" não é uma natureza jurídica válida`,
+      lineNumber: ctx.lineNumber,
+      link: { url: '/#/forma-constituicao', label: 'Consultar tabela de formaConstituicao' },
+    });
 
   if (!dtConst || dtConst.trim() === '') ctx.err('dataConstituicao é obrigatória', 'dataConstituicao');
   else reqDate(dtConst.trim(), 'dataConstituicao', ctx);

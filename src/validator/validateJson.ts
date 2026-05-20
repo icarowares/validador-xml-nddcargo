@@ -2,6 +2,7 @@ import type { ValidationError, ValidationResult } from './types';
 import { CODIGOS_SH } from '../data/codigoSH';
 import { TIPO_CARGA_LISTA } from '../data/codigoTipoCarga';
 import { VALID_ATIVIDADE_PRINCIPAL } from '../data/atividadePrincipal';
+import { VALID_FORMA_CONSTITUICAO } from '../data/formaConstituicao';
 
 // ─── codigoSH válidos (alimentado via src/data/codigoSH.ts) ──────────────────
 const VALID_CODIGO_SH_JSON = new Set(CODIGOS_SH.map(e => e.codigo));
@@ -349,6 +350,13 @@ function validateTransp(raw: unknown, errs: Errors): void {
         link: { url: '/#/atividade-principal', label: 'Consultar tabela de atividadePrincipal' },
       });
     reqStr(c, 'formaConstituicao', cp, 5, 5, errs);
+    const formaConst = c['formaConstituicao'];
+    if (typeof formaConst === 'string' && formaConst.trim().length === 5 && !VALID_FORMA_CONSTITUICAO.has(formaConst.trim()))
+      errs.push({
+        path: `${cp}.formaConstituicao`,
+        message: `A forma de constituição "${formaConst}" não é uma natureza jurídica válida`,
+        link: { url: '/#/forma-constituicao', label: 'Consultar tabela de formaConstituicao' },
+      });
     reqDate(c, 'dataConstituicao', cp, errs);
   } else {
     optStr(c, 'inscEstadual', cp, 1, 14, errs);

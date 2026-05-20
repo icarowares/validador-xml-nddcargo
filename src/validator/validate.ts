@@ -1,6 +1,7 @@
 import type { ValidationError, ValidationResult } from './types';
 import { applyBusinessRules } from './businessRules';
 import { VALID_ATIVIDADE_PRINCIPAL } from '../data/atividadePrincipal';
+import { VALID_FORMA_CONSTITUICAO } from '../data/formaConstituicao';
 
 // ─── Context ─────────────────────────────────────────────────────────────────
 
@@ -707,7 +708,16 @@ function validateInfTransportador(el: Element, path: string, ctx: Ctx) {
     }
 
     const forma = requireChild(el2, 'formaConstituicao', ep, ctx);
-    if (forma) valStrLen(txt(forma), 5, 5, `${ep}.formaConstituicao`, ctx);
+    if (forma) {
+      valStrLen(txt(forma), 5, 5, `${ep}.formaConstituicao`, ctx);
+      const formaVal = txt(forma);
+      if (formaVal.length === 5 && !VALID_FORMA_CONSTITUICAO.has(formaVal))
+        ctx.errors.push({
+          path: `${ep}.formaConstituicao`,
+          message: `A forma de constituição "${formaVal}" não é uma natureza jurídica válida`,
+          link: { url: '/#/forma-constituicao', label: 'Consultar tabela de formaConstituicao' },
+        });
+    }
 
     const dtConst = requireChild(el2, 'dataConstituicao', ep, ctx);
     if (dtConst) valData(txt(dtConst), `${ep}.dataConstituicao`, ctx);

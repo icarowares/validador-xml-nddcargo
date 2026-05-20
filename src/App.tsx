@@ -5,6 +5,7 @@ import { ValidationResult } from './components/ValidationResult';
 import { ReleaseNotes } from './components/ReleaseNotes';
 import { CodigoSHPage } from './components/CodigoSHPage';
 import { AtividadePrincipalPage } from './components/AtividadePrincipalPage';
+import { FormaConstituicaoPage } from './components/FormaConstituicaoPage';
 import { validate } from './validator/validate';
 import { validateRetificacao } from './validator/validateRetificacao';
 import { validateCancelamento } from './validator/validateCancelamento';
@@ -57,6 +58,7 @@ export default function App() {
   // ── Sub-pages (após todos os hooks) ──────────────────────────────────────
   if (hash === '#/codigos-sh') return <CodigoSHPage />;
   if (hash === '#/atividade-principal') return <AtividadePrincipalPage />;
+  if (hash === '#/forma-constituicao') return <FormaConstituicaoPage />;
 
   function handleFileTypeChange(type: FileType) {
     if (type === fileType) return;
@@ -221,6 +223,22 @@ export default function App() {
                 d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
             Tabela atividadePrincipal
+          </a>
+          <a
+            href="#/forma-constituicao"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border
+                       border-amber-200 dark:border-amber-800/60
+                       bg-amber-50 dark:bg-amber-950/30
+                       text-xs font-medium text-amber-700 dark:text-amber-400
+                       hover:bg-amber-100 dark:hover:bg-amber-900/40
+                       hover:border-amber-300 dark:hover:border-amber-700
+                       transition-colors"
+          >
+            <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Tabela formaConstituicao
           </a>
 
         </div>
