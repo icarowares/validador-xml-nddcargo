@@ -1,8 +1,20 @@
 import type { ValidationError, ValidationResult } from './types';
 import { CODIGOS_SH } from '../data/codigoSH';
+import { TIPO_CARGA_LISTA } from '../data/codigoTipoCarga';
 
 // ─── codigoSH válidos (alimentado via src/data/codigoSH.ts) ──────────────────
 const VALID_CODIGO_SH_JSON = new Set(CODIGOS_SH.map(e => e.codigo));
+
+// ─── Enum descriptions (inline help) ─────────────────────────────────────────
+
+const D_TIPO_OPERACAO = '1 – Lotação (Frota Própria), 2 – Fracionado, 3 – TAC-Agregado';
+const D_GER_PGTO_FIN  = '1 – Conta digital NDD Cargo, 2 – Conta corrente (externo), 3 – Conta poupança (externo), 4 – Conta pagamento (externo), 5 – Outros (externo), 6 – PIX via NDD Cargo';
+const D_TIPO_TRANSP   = '1 – TAC (Autônomo / Pessoa Física), 2 – ETC (Empresa), 3 – CTC (Empresa)';
+const D_TIPO_RATEIO   = '1 – Primeira, 2 – Última, 3 – Todas, 4 – Não reter, 5 – Todas com proporção de impostos';
+const D_TIPO_PGTO     = '1 – À vista, 2 – A prazo, 3 – Outros';
+const D_FINALIDADE    = '1 – Adiantamento, 2 – Saldo';
+const D_TIPO_PAGAMENTO = '1 – Conta digital NDD Cargo, 2 – Conta corrente (externo), 3 – Conta poupança (externo), 4 – Conta pagamento (externo), 5 – Outros (externo), 6 – PIX via NDD Cargo';
+const D_TIPO_CHAVE    = '1 – CPF/CNPJ, 2 – Celular, 3 – E-mail, 4 – Chave aleatória, 5 – Outro';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -101,14 +113,20 @@ function optDecimal(o: Obj, f: string, base: string, errs: Errors): void {
   const v = o[f]; if (v === undefined || v === null) return;
   if (!isNum(v)) e(errs, `${base}.${f}`, `Deve ser um número decimal (recebido: "${v}")`);
 }
-function reqNum(o: Obj, f: string, base: string, allowed: number[], errs: Errors): void {
+function reqNum(o: Obj, f: string, base: string, allowed: number[], errs: Errors, descs?: string): void {
   const v = o[f]; const p = `${base}.${f}`;
   if (v === undefined || v === null) { e(errs, p, 'Campo obrigatório não informado'); return; }
-  if (!isNum(v) || !allowed.includes(v as number)) e(errs, p, `Valor inválido "${v}"; permitidos: ${allowed.join(', ')}`);
+  if (!isNum(v) || !allowed.includes(v as number)) {
+    const suffix = descs ? `. Valores aceitos: ${descs}` : `; permitidos: ${allowed.join(', ')}`;
+    e(errs, p, `Valor inválido "${v}"${suffix}`);
+  }
 }
-function optNum(o: Obj, f: string, base: string, allowed: number[], errs: Errors): void {
+function optNum(o: Obj, f: string, base: string, allowed: number[], errs: Errors, descs?: string): void {
   const v = o[f]; if (v === undefined || v === null) return;
-  if (!isNum(v) || !allowed.includes(v as number)) e(errs, `${base}.${f}`, `Valor inválido "${v}"; permitidos: ${allowed.join(', ')}`);
+  if (!isNum(v) || !allowed.includes(v as number)) {
+    const suffix = descs ? `. Valores aceitos: ${descs}` : `; permitidos: ${allowed.join(', ')}`;
+    e(errs, `${base}.${f}`, `Valor inválido "${v}"${suffix}`);
+  }
 }
 function reqBool(o: Obj, f: string, base: string, errs: Errors): void {
   const v = o[f]; const p = `${base}.${f}`;
@@ -181,14 +199,14 @@ function validateIde(raw: unknown, errs: Errors): number | null {
   if (!isObj(raw)) { e(errs, path, 'Campo obrigatório não informado'); return null; }
   optStr(raw, 'tms', path, 1, 20, errs);
   reqDigits(raw, 'cnpj', path, 14, errs);
-  reqNum(raw, 'tipoOperacao', path, [1, 2, 3], errs);
+  reqNum(raw, 'tipoOperacao', path, [1, 2, 3], errs, D_TIPO_OPERACAO);
   reqStr(raw, 'numero', path, 1, 9, errs);
   reqStr(raw, 'serie', path, 1, 4, errs);
   reqStr(raw, 'ptEmissor', path, 1, 30, errs);
   optDate(raw, 'dtInicio', path, errs);
   optDate(raw, 'dtFim', path, errs);
   optStr(raw, 'contrato', path, 1, 50, errs);
-  optNum(raw, 'gerPgtoFin', path, [1, 2, 3, 4, 5, 6], errs);
+  optNum(raw, 'gerPgtoFin', path, [1, 2, 3, 4, 5, 6], errs, D_GER_PGTO_FIN);
 
   const tipo = isNum(raw['tipoOperacao']) ? (raw['tipoOperacao'] as number) : null;
   if (tipo === 1) {
@@ -247,8 +265,9 @@ function validateCarga(raw: unknown, tipo: number | null, errs: Errors): void {
 
     const tipoCarga = raw['CodigoTipoCarga'];
     if (tipoCarga === undefined || tipoCarga === null) e(errs, `${path}.CodigoTipoCarga`, 'Campo obrigatório não informado');
-    else if (!isNum(tipoCarga) || (tipoCarga as number) < 1 || (tipoCarga as number) > 12)
-      e(errs, `${path}.CodigoTipoCarga`, `Deve ser entre 1 e 12 (recebido: "${tipoCarga}")`);
+    else if (!isNum(tipoCarga) || !Number.isInteger(tipoCarga as number) || (tipoCarga as number) < 1 || (tipoCarga as number) > 12)
+      e(errs, `${path}.CodigoTipoCarga`,
+        `O código de tipo de carga "${tipoCarga}" é inválido. Valores aceitos: ${TIPO_CARGA_LISTA}`);
 
     const dist = raw['distanciaPercorrida'];
     if (dist === undefined || dist === null) e(errs, `${path}.distanciaPercorrida`, 'Campo obrigatório para tipoOperacao 1 ou 2');
@@ -315,7 +334,7 @@ function validateTransp(raw: unknown, errs: Errors): void {
   reqStr(c, 'nomeRazao', cp, 1, 150, errs);
   reqTel(c, 'telefone', cp, errs);
   optStr(c, 'email', cp, 1, 255, errs);
-  reqNum(c, 'tipo', cp, [1, 2, 3], errs);
+  reqNum(c, 'tipo', cp, [1, 2, 3], errs, D_TIPO_TRANSP);
   const tipo = isNum(c['tipo']) ? (c['tipo'] as number) : null;
 
   if (tipo === 2 || tipo === 3) {
@@ -444,7 +463,7 @@ function validateValores(raw: unknown, errs: Errors): void {
 
   optDecimal(raw, 'vlrCombustivel', path, errs);
   optDecimal(raw, 'vlrPedagio', path, errs);
-  reqNum(raw, 'tipoRateio', path, [1, 2, 3, 4, 5], errs);
+  reqNum(raw, 'tipoRateio', path, [1, 2, 3, 4, 5], errs, D_TIPO_RATEIO);
 
   if (isObj(raw['despesas'])) {
     const d = raw['despesas'] as Obj; const dp = `${path}.despesas`;
@@ -484,8 +503,8 @@ function validateValores(raw: unknown, errs: Errors): void {
           const parcPath = `${pp}.informacoes.parcelas[${i}]`;
           if (!isObj(parc)) { e(errs, parcPath, 'Deve ser um objeto'); return; }
           reqStr(parc, 'nome', parcPath, 1, 50, errs);
-          reqNum(parc, 'tipoPgto', parcPath, [1, 2, 3], errs);
-          reqNum(parc, 'finalidadeParcela', parcPath, [1, 2], errs);
+          reqNum(parc, 'tipoPgto', parcPath, [1, 2, 3], errs, D_TIPO_PGTO);
+          reqNum(parc, 'finalidadeParcela', parcPath, [1, 2], errs, D_FINALIDADE);
           const dp = parc['dataPrevisao'];
           if (dp === undefined || dp === null) e(errs, `${parcPath}.dataPrevisao`, 'Campo obrigatório não informado');
           else if (dp === '') e(errs, `${parcPath}.dataPrevisao`, ERR_EMPTY_REQ);
@@ -512,13 +531,13 @@ function validateValores(raw: unknown, errs: Errors): void {
 
   if (isObj(raw['dadosBancarios'])) {
     const db = raw['dadosBancarios'] as Obj; const dbp = `${path}.dadosBancarios`;
-    reqNum(db, 'tipoPagamento', dbp, [1, 2, 3, 4, 5, 6], errs);
+    reqNum(db, 'tipoPagamento', dbp, [1, 2, 3, 4, 5, 6], errs, D_TIPO_PAGAMENTO);
     optStr(db, 'codigoInstituicaoFinanceira', dbp, 1, 10, errs);
     optStr(db, 'numeroAgencia', dbp, 1, 10, errs);
     optStr(db, 'digitoConta', dbp, 1, 5, errs);
     optStr(db, 'chavepix', dbp, 1, 77, errs);
     optCpfCnpj(db, 'cpfCnpjFavorecido', dbp, errs);
-    optNum(db, 'tipoChave', dbp, [1, 2, 3, 4, 5], errs);
+    optNum(db, 'tipoChave', dbp, [1, 2, 3, 4, 5], errs, D_TIPO_CHAVE);
   }
 }
 

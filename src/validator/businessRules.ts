@@ -1,5 +1,6 @@
 import type { ValidationError } from './types';
 import { CODIGOS_SH } from '../data/codigoSH';
+import { CODIGOS_TIPO_CARGA, TIPO_CARGA_LISTA } from '../data/codigoTipoCarga';
 
 // ─── DOM helpers ──────────────────────────────────────────────────────────────
 
@@ -46,6 +47,9 @@ function validCNPJ(cnpj: string): boolean {
 
 // ─── codigoSH válidos (alimentado via src/data/codigoSH.ts) ──────────────────
 const VALID_CODIGO_SH = new Set(CODIGOS_SH.map(e => e.codigo));
+
+// ─── codigoTipoCarga válidos (1–12) ──────────────────────────────────────────
+const VALID_CODIGO_TIPO_CARGA = new Set(CODIGOS_TIPO_CARGA.map(e => e.codigo));
 
 // ─── Entry point ──────────────────────────────────────────────────────────────
 
@@ -367,6 +371,21 @@ export function applyBusinessRules(doc: Document): ValidationError[] {
             message: `[RN-52] O código da natureza da carga "${sh}" não existe na tabela de codigoSH`,
             link: { url: '/#/codigos-sh', label: 'Consultar tabela de codigoSH' },
           });
+      }
+    }
+
+    // ── RN-53: codigoTipoCarga deve estar entre 1 e 12 ────────────────────────
+    {
+      const tcEl = child(lotacao, 'codigoTipoCarga') ?? child(fracionado, 'codigoTipoCarga');
+      if (tcEl) {
+        const val = txt(tcEl);
+        const n = parseInt(val, 10);
+        const cargaTipo = lotacao ? 'lotacao' : 'fracionado';
+        if (isNaN(n) || !VALID_CODIGO_TIPO_CARGA.has(n))
+          err(
+            `${cp}.${cargaTipo}.codigoTipoCarga`,
+            `[RN-53] O código de tipo de carga "${val}" é inválido. Valores aceitos: ${TIPO_CARGA_LISTA}`,
+          );
       }
     }
   });

@@ -1,5 +1,6 @@
 import type { ValidationError, ValidationResult } from './types';
 import { CODIGOS_SH } from '../data/codigoSH';
+import { TIPO_CARGA_LISTA } from '../data/codigoTipoCarga';
 
 // ─── Field helpers ────────────────────────────────────────────────────────────
 
@@ -72,11 +73,31 @@ function reqTel(v: string, label: string, ctx: Ctx): void {
   if (!isTel(v)) ctx.err(`"${v}" deve conter 10 ou 11 dígitos numéricos`, label);
 }
 
-function reqEnum(v: string, allowed: number[], label: string, ctx: Ctx): void {
+function reqEnum(v: string, allowed: number[], label: string, ctx: Ctx, descs?: string): void {
   const n = Number(v);
-  if (!Number.isInteger(n) || !allowed.includes(n))
-    ctx.err(`"${v}" inválido; valores permitidos: ${allowed.join(', ')}`, label);
+  if (!Number.isInteger(n) || !allowed.includes(n)) {
+    const suffix = descs ? `. Valores aceitos: ${descs}` : ` (permitidos: ${allowed.join(', ')})`;
+    ctx.err(`"${v}" inválido${suffix}`, label);
+  }
 }
+
+// ─── Enum descriptions (inline help) ─────────────────────────────────────────
+
+const D_GER_PGTO_FIN  = '1 – Conta digital NDD Cargo, 2 – Conta corrente (externo), 3 – Conta poupança (externo), 4 – Conta pagamento (externo), 5 – Outros (externo), 6 – PIX via NDD Cargo';
+const D_GER_PGTO_PED  = '1 – Movimentação via conta digital NDD, 2 – Sem movimentação';
+const D_SIM_NAO       = '1 – Sim, 2 – Não';
+const D_INTEGRAR_ANTT = '1 – Integra, 2 – Não integra';
+const D_PROP_CARGA    = '1 – Remetente, 2 – Destinatário, 3 – Consignatário, 4 – Outro';
+const D_OT_TIPO       = '2 – Fracionado, 3 – TAC-Agregado, 4 – Lotação';
+const D_TIPO_VEIC     = '1 – Tração, 2 – Reboque';
+const D_TIPO_ROTA     = '1 – Rápida, 2 – Curta';
+const D_TIPO_RATEIO   = '1 – Primeira, 2 – Última, 3 – Todas, 4 – Não reter, 5 – Todas com proporção de impostos';
+const D_EFETIVACAO    = '1 – Posto credenciado, 2 – Centro de triagem, 3 – Contratante, 4 – Confirmação eletrônica';
+const D_PRAZO_MIN     = '1 – Não utilizar, 2 – Dia fixo da contratante, 3 – Baseado em data prevista';
+const D_CAMPO_REST    = '1 – CNPJ do posto credenciado, 2 – Data';
+const D_CRITERIO      = '1 – Igual, 2 – Diferente, 3 – Maior, 4 – Maior ou igual, 5 – Menor, 6 – Menor ou igual';
+const D_CONECTOR      = '1 – E, 2 – OU';
+const D_FINALIDADE    = '1 – Adiantamento, 2 – Saldo';
 
 function optField(v: string | undefined, fn: (v: string) => void): void {
   if (v !== undefined && v.trim() !== '') fn(v.trim());
@@ -191,11 +212,11 @@ function val1000(line: ParsedLine): ValidationError[] {
   optField(dtInicio, v => reqDate(v, 'dtInicio', ctx));
   optField(dtFim, v => reqDate(v, 'dtFim', ctx));
   optField(contrato, v => reqLen(v, 1, 50, 'contrato', ctx));
-  optField(gerPgtoFin, v => reqEnum(v, [1, 2], 'gerPgtoFin', ctx));
-  optField(gerPgtoPedagio, v => reqEnum(v, [1, 2], 'gerPgtoPedagio', ctx));
-  optField(impAuto, v => reqEnum(v, [1, 2], 'impAuto', ctx));
-  optField(utilDir, v => reqEnum(v, [1, 2], 'utilizaDirecionamentoPedagio', ctx));
-  optField(integrarANTT, v => reqEnum(v, [1, 2], 'integrarANTT', ctx));
+  optField(gerPgtoFin, v => reqEnum(v, [1, 2, 3, 4, 5, 6], 'gerPgtoFin', ctx, D_GER_PGTO_FIN));
+  optField(gerPgtoPedagio, v => reqEnum(v, [1, 2], 'gerPgtoPedagio', ctx, D_GER_PGTO_PED));
+  optField(impAuto, v => reqEnum(v, [1, 2], 'impAuto', ctx, D_SIM_NAO));
+  optField(utilDir, v => reqEnum(v, [1, 2], 'utilizaDirecionamentoPedagio', ctx, D_SIM_NAO));
+  optField(integrarANTT, v => reqEnum(v, [1, 2], 'integrarANTT', ctx, D_INTEGRAR_ANTT));
 
   if (!tms || tms.trim() === '') ctx.err('tms é obrigatório', 'tms');
   else reqLen(tms.trim(), 1, 20, 'tms', ctx);
@@ -210,10 +231,10 @@ function val2000(line: ParsedLine): ValidationError[] {
   const tipo = f[1]; const prop = f[2];
 
   if (!tipo || tipo.trim() === '') ctx.err('tipo é obrigatório', 'tipo');
-  else reqEnum(tipo.trim(), [2, 3, 4], 'tipo', ctx);
+  else reqEnum(tipo.trim(), [2, 3, 4], 'tipo', ctx, D_OT_TIPO);
 
   if (!prop || prop.trim() === '') ctx.err('proprietarioCarga é obrigatório', 'proprietarioCarga');
-  else reqEnum(prop.trim(), [1, 2, 3, 4], 'proprietarioCarga', ctx);
+  else reqEnum(prop.trim(), [1, 2, 3, 4], 'proprietarioCarga', ctx, D_PROP_CARGA);
 
   return ctx.errors;
 }
@@ -256,13 +277,19 @@ function val2100(line: ParsedLine, otTipo: number | null): ValidationError[] {
     else {
       const n = Number(codigoTipoCarga.trim());
       if (!Number.isInteger(n) || n < 1 || n > 12)
-        ctx.err(`"${codigoTipoCarga}" deve ser entre 1 e 12`, 'CodigoTipoCarga');
+        ctx.err(
+          `O código de tipo de carga "${codigoTipoCarga.trim()}" é inválido. Valores aceitos: ${TIPO_CARGA_LISTA}`,
+          'CodigoTipoCarga',
+        );
     }
   } else {
     optField(codigoTipoCarga, v => {
       const n = Number(v);
       if (!Number.isInteger(n) || n < 1 || n > 12)
-        ctx.err(`"${v}" deve ser entre 1 e 12`, 'CodigoTipoCarga');
+        ctx.err(
+          `O código de tipo de carga "${v}" é inválido. Valores aceitos: ${TIPO_CARGA_LISTA}`,
+          'CodigoTipoCarga',
+        );
     });
   }
 
@@ -601,7 +628,7 @@ function val4210(line: ParsedLine): ValidationError[] {
   else reqLen(modelo.trim(), 1, 100, 'modelo', ctx);
 
   if (!tipo || tipo.trim() === '') ctx.err('tipo é obrigatório', 'tipo');
-  else reqEnum(tipo.trim(), [1, 2], 'tipo', ctx);
+  else reqEnum(tipo.trim(), [1, 2], 'tipo', ctx, D_TIPO_VEIC);
 
   if (!rntrc || rntrc.trim() === '') ctx.err('RNTRCTransportador é obrigatório', 'RNTRCTransportador');
   else reqExact(rntrc.trim(), 9, 'RNTRCTransportador', ctx);
@@ -636,7 +663,7 @@ function val4300(line: ParsedLine): ValidationError[] {
   else reqDecimal(sestsenat.trim(), 'sestsenat', ctx);
 
   if (!tpRateio || tpRateio.trim() === '') ctx.err('tpRateioRetencoes é obrigatório', 'tpRateioRetencoes');
-  else reqEnum(tpRateio.trim(), [1, 2, 3, 4, 5], 'tpRateioRetencoes', ctx);
+  else reqEnum(tpRateio.trim(), [1, 2, 3, 4, 5], 'tpRateioRetencoes', ctx, D_TIPO_RATEIO);
 
   return ctx.errors;
 }
@@ -736,9 +763,9 @@ function val4600(line: ParsedLine): ValidationError[] {
   if (!nome || nome.trim() === '') ctx.err('nome é obrigatório', 'nome');
   else reqLen(nome.trim(), 1, 50, 'nome', ctx);
 
-  optField(tipoRota, v => reqEnum(v, [1, 2], 'tipoRotaPadrao', ctx));
-  optField(utilRot, v => reqEnum(v, [1, 2], 'utilizarRoteirizador', ctx));
-  optField(notif, v => reqEnum(v, [1, 2], 'notificarRespContratante', ctx));
+  optField(tipoRota, v => reqEnum(v, [1, 2], 'tipoRotaPadrao', ctx, D_TIPO_ROTA));
+  optField(utilRot, v => reqEnum(v, [1, 2], 'utilizarRoteirizador', ctx, D_SIM_NAO));
+  optField(notif, v => reqEnum(v, [1, 2], 'notificarRespContratante', ctx, D_SIM_NAO));
 
   return ctx.errors;
 }
@@ -861,7 +888,7 @@ function val5100(line: ParsedLine): ValidationError[] {
   if (!tipo || tipo.trim() === '') ctx.err('tipo é obrigatório', 'tipo');
   else reqLen(tipo.trim(), 1, 255, 'tipo', ctx);
 
-  optField(obr, v => reqEnum(v, [1, 2], 'obrigatorio', ctx));
+  optField(obr, v => reqEnum(v, [1, 2], 'obrigatorio', ctx, D_SIM_NAO));
 
   return ctx.errors;
 }
@@ -926,8 +953,8 @@ function val9000(line: ParsedLine): ValidationError[] {
   else reqDecimal(vlrApl.trim(), 'valorAplicado', ctx);
 
   optField(vlrReal, v => reqDecimal(v, 'valorReal', ctx));
-  optField(prazo, v => reqEnum(v, [1, 2, 3], 'prazoMinimo', ctx));
-  optField(conf, v => reqEnum(v, [1, 2], 'confirmarPgto', ctx));
+  optField(prazo, v => reqEnum(v, [1, 2, 3], 'prazoMinimo', ctx, D_PRAZO_MIN));
+  optField(conf, v => reqEnum(v, [1, 2], 'confirmarPgto', ctx, D_SIM_NAO));
 
   return ctx.errors;
 }
@@ -951,7 +978,7 @@ function val9200(line: ParsedLine): ValidationError[] {
   if (!dtPrev || dtPrev.trim() === '') ctx.err('dataPrevisao é obrigatória', 'dataPrevisao');
   else reqDate(dtPrev.trim(), 'dataPrevisao', ctx);
 
-  optField(efet, v => reqEnum(v, [1, 2, 3, 4], 'efetivacao', ctx));
+  optField(efet, v => reqEnum(v, [1, 2, 3, 4], 'efetivacao', ctx, D_EFETIVACAO));
   optField(cnpjPosto, v => reqExact(v, 14, 'cnpjPostoCredenciado', ctx));
 
   return ctx.errors;
@@ -999,13 +1026,13 @@ function val9500(line: ParsedLine): ValidationError[] {
   const campo = f[1]; const valor = f[2]; const criterio = f[3]; const conector = f[4];
 
   if (!campo || campo.trim() === '') ctx.err('campo é obrigatório', 'campo');
-  else reqEnum(campo.trim(), [1, 2], 'campo', ctx);
+  else reqEnum(campo.trim(), [1, 2], 'campo', ctx, D_CAMPO_REST);
 
   if (!valor || valor.trim() === '') ctx.err('valor é obrigatório', 'valor');
   else reqLen(valor.trim(), 1, 15, 'valor', ctx);
 
-  optField(criterio, v => reqEnum(v, [1, 2, 3, 4, 5, 6], 'criterio', ctx));
-  optField(conector, v => reqEnum(v, [1, 2], 'conector', ctx));
+  optField(criterio, v => reqEnum(v, [1, 2, 3, 4, 5, 6], 'criterio', ctx, D_CRITERIO));
+  optField(conector, v => reqEnum(v, [1, 2], 'conector', ctx, D_CONECTOR));
 
   return ctx.errors;
 }
@@ -1036,7 +1063,7 @@ function val9700(line: ParsedLine): ValidationError[] {
   else reqExact(cpf.trim(), 11, 'cpfCondutor', ctx);
 
   if (!finalidade || finalidade.trim() === '') ctx.err('finalidadeParcela é obrigatória', 'finalidadeParcela');
-  else reqEnum(finalidade.trim(), [1, 2], 'finalidadeParcela', ctx);
+  else reqEnum(finalidade.trim(), [1, 2], 'finalidadeParcela', ctx, D_FINALIDADE);
 
   return ctx.errors;
 }

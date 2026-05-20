@@ -12,8 +12,16 @@ interface Release {
 
 const RELEASES: Release[] = [
   {
+    date: '21 mai 2026',
+    entries: [
+      { type: 'feat', text: 'Mensagens de erro para todos os campos enum (XML, TXT e JSON) agora exibem a lista completa de valores aceitos com descrição — gerPgtoFin, tipoOperacao, tipoRateio, tipo do transportador, finalidadeParcela, tipoPagamento, tipoChave, proprietarioCarga, tipo do veículo, efetivacao, prazoMinimo, campo, critério, conector e outros' },
+      { type: 'fix',  text: 'Correção: gerPgtoFin no TXT aceitava apenas 1 e 2 — agora valida corretamente os 6 valores permitidos (1 a 6)' },
+    ],
+  },
+  {
     date: '20 mai 2026',
     entries: [
+      { type: 'feat', text: 'Validação de codigoTipoCarga (XML, TXT e JSON): rejeita valores fora do intervalo 1–12 e exibe a lista completa dos 12 tipos válidos diretamente na mensagem de erro' },
       { type: 'feat', text: '10 novas regras de negócio no processo de emissão (XML, TXT e JSON): dtFim ≥ dtInicio, intervalo máximo de 90 dias, faixa de peso válida, vlrFrete > 0, cnpjTransportador vedado para TAC-Agregado e codigoSH validado contra a tabela oficial NDD' },
       { type: 'feat', text: 'Subpágina "Tabela codigoSH" com 1.229 códigos agrupados por capítulo SH — acessível pelo menu "Materiais de apoio" na barra da aplicação, sem necessidade de validação prévia' },
       { type: 'feat', text: 'Mensagens de erro de codigoSH inválido exibem link direto para a tabela de consulta' },
