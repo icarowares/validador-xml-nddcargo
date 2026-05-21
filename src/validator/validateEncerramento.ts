@@ -162,11 +162,93 @@ function validateViagem(el: Element, path: string, ctx: Ctx) {
   if (qtdeViagens) valInt(txt(qtdeViagens), 1, 99999, `${path}.qtdeViagens`, ctx);
 }
 
+// ─── financeiro (lotacao / fracionado / TACagregado) ─────────────────────────
+
+function validateFinanceiro(el: Element, path: string, ctx: Ctx) {
+  const comMF = child(el, 'comMF');
+  const semMF = child(el, 'semMF');
+
+  if (!comMF && !semMF) {
+    ctx.err(path, 'O elemento "financeiro" deve conter "comMF" ou "semMF"');
+    return;
+  }
+  if (comMF && semMF) {
+    ctx.err(path, '"financeiro" deve conter apenas "comMF" ou "semMF", não ambos simultaneamente');
+    return;
+  }
+
+  if (comMF) {
+    const cp = `${path}.comMF`;
+
+    const tarifas = requireChild(comMF, 'tarifas', cp, ctx);
+    if (tarifas) {
+      const qt = requireChild(tarifas, 'quantidadeTotal', `${cp}.tarifas`, ctx);
+      if (qt) valInt(txt(qt), 1, 9999999, `${cp}.tarifas.quantidadeTotal`, ctx);
+    }
+
+    const ajustaParc = requireChild(comMF, 'ajustaParc', cp, ctx);
+    if (ajustaParc) {
+      const ap = `${cp}.ajustaParc`;
+      const nome = requireChild(ajustaParc, 'nome', ap, ctx);
+      if (nome) valStrLen(txt(nome), 1, 255, `${ap}.nome`, ctx);
+
+      const altValor = requireChild(ajustaParc, 'altValor', ap, ctx);
+      if (altValor) {
+        const avp = `${ap}.altValor`;
+        const adicional = child(altValor, 'adicional');
+        const desconto  = child(altValor, 'desconto');
+
+        if (!adicional && !desconto)
+          ctx.err(avp, '"altValor" deve conter "adicional" ou "desconto"');
+        else if (adicional && desconto)
+          ctx.err(avp, '"altValor" deve conter apenas "adicional" ou "desconto", não ambos');
+
+        if (adicional) {
+          const adp = `${avp}.adicional`;
+          const valor = requireChild(adicional, 'valor', adp, ctx);
+          if (valor) valDecimal(txt(valor), 15, 2, `${adp}.valor`, ctx);
+          const rubrica = requireChild(adicional, 'rubrica', adp, ctx);
+          if (rubrica && txt(rubrica) !== '4')
+            ctx.err(`${adp}.rubrica`, `Rubrica inválida: "${txt(rubrica)}". Para encerramento apenas o tipo 4 (Valor de Tarifa) é permitido`);
+        }
+
+        if (desconto) {
+          const dp = `${avp}.desconto`;
+          const nmDesc = requireChild(desconto, 'nmDesc', dp, ctx);
+          if (nmDesc) valStrLen(txt(nmDesc), 1, 255, `${dp}.nmDesc`, ctx);
+          const vlrDesc = requireChild(desconto, 'vlrDesc', dp, ctx);
+          if (vlrDesc) valDecimal(txt(vlrDesc), 15, 2, `${dp}.vlrDesc`, ctx);
+          const dsDesc = requireChild(desconto, 'dsDesc', dp, ctx);
+          if (dsDesc) valStrLen(txt(dsDesc), 1, 2000, `${dp}.dsDesc`, ctx);
+          const rubrica = requireChild(desconto, 'rubrica', dp, ctx);
+          if (rubrica && txt(rubrica) !== '4')
+            ctx.err(`${dp}.rubrica`, `Rubrica inválida: "${txt(rubrica)}". Para encerramento apenas o tipo 4 (Valor de Tarifa) é permitido`);
+        }
+
+        const valValid = requireChild(altValor, 'valorValidacao', avp, ctx);
+        if (valValid) valDecimal(txt(valValid), 15, 2, `${avp}.valorValidacao`, ctx);
+      }
+    }
+  }
+
+  if (semMF) {
+    const sp = `${path}.semMF`;
+    const tarifas = requireChild(semMF, 'tarifas', sp, ctx);
+    if (tarifas) {
+      const tp = `${sp}.tarifas`;
+      const qt = requireChild(tarifas, 'quantidadeTotal', tp, ctx);
+      if (qt) valInt(txt(qt), 1, 9999999, `${tp}.quantidadeTotal`, ctx);
+      const valorTotal = requireChild(tarifas, 'valorTotal', tp, ctx);
+      if (valorTotal) valDecimal(txt(valorTotal), 15, 2, `${tp}.valorTotal`, ctx);
+    }
+  }
+}
+
 // ─── encerramento ────────────────────────────────────────────────────────────
 
 function validateEncerramentoEl(el: Element, path: string, ctx: Ctx) {
-  const lotacao    = child(el, 'lotacao');
-  const fracionado = child(el, 'fracionado');
+  const lotacao     = child(el, 'lotacao');
+  const fracionado  = child(el, 'fracionado');
   const tacAgregado = child(el, 'TACagregado');
   const found = [lotacao, fracionado, tacAgregado].filter(Boolean);
 
@@ -180,14 +262,23 @@ function validateEncerramentoEl(el: Element, path: string, ctx: Ctx) {
   }
 
   if (lotacao) {
-    const qtdeCarga = requireChild(lotacao, 'qtdeCarga', `${path}.lotacao`, ctx);
-    if (qtdeCarga) valDecimal(txt(qtdeCarga), 12, 2, `${path}.lotacao.qtdeCarga`, ctx);
+    const lp = `${path}.lotacao`;
+    // Peso da carga em KG: tam 1-10,2
+    const qtdeCarga = requireChild(lotacao, 'qtdeCarga', lp, ctx);
+    if (qtdeCarga) valDecimal(txt(qtdeCarga), 10, 2, `${lp}.qtdeCarga`, ctx);
+
+    const fin = child(lotacao, 'financeiro');
+    if (fin) validateFinanceiro(fin, `${lp}.financeiro`, ctx);
   }
 
   if (fracionado) {
-    const encerrar = requireChild(fracionado, 'encerrar', `${path}.fracionado`, ctx);
+    const fp = `${path}.fracionado`;
+    const encerrar = requireChild(fracionado, 'encerrar', fp, ctx);
     if (encerrar && txt(encerrar) !== '1')
-      ctx.err(`${path}.fracionado.encerrar`, `[RN-E02] O campo "encerrar" deve ter valor 1 (recebido: "${txt(encerrar)}")`);
+      ctx.err(`${fp}.encerrar`, `[RN-E02] O campo "encerrar" deve ter valor 1 (recebido: "${txt(encerrar)}")`);
+
+    const fin = child(fracionado, 'financeiro');
+    if (fin) validateFinanceiro(fin, `${fp}.financeiro`, ctx);
   }
 
   if (tacAgregado) {
@@ -202,6 +293,9 @@ function validateEncerramentoEl(el: Element, path: string, ctx: Ctx) {
         validateViagem(v, `${vp}.viagem[${i + 1}]`, ctx)
       );
     }
+
+    const fin = child(tacAgregado, 'financeiro');
+    if (fin) validateFinanceiro(fin, `${tp}.financeiro`, ctx);
   }
 }
 

@@ -10,7 +10,17 @@
     </autorizacao>
     <encerramento>
       <lotacao>
+        <!-- Peso da carga em KG: até 10 dígitos com 2 casas decimais -->
         <qtdeCarga>18500.00</qtdeCarga>
+        <!-- financeiro é opcional; use comMF (com Módulo Financeiro) ou semMF -->
+        <financeiro>
+          <semMF>
+            <tarifas>
+              <quantidadeTotal>2</quantidadeTotal>
+              <valorTotal>350.00</valorTotal>
+            </tarifas>
+          </semMF>
+        </financeiro>
       </lotacao>
     </encerramento>
   </infEnceOT>

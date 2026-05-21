@@ -74,6 +74,16 @@
             <qtdeViagens>4</qtdeViagens>
           </viagem>
         </viagens>
+        <!-- financeiro é opcional; use comMF (com Módulo Financeiro) ou semMF
+        <financeiro>
+          <semMF>
+            <tarifas>
+              <quantidadeTotal>3</quantidadeTotal>
+              <valorTotal>920.00</valorTotal>
+            </tarifas>
+          </semMF>
+        </financeiro>
+        -->
       </TACagregado>
     </encerramento>
   </infEnceOT>

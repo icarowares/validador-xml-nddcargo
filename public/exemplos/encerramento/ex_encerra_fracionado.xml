@@ -10,7 +10,31 @@
     </autorizacao>
     <encerramento>
       <fracionado>
+        <!-- encerrar deve ser exatamente 1 -->
         <encerrar>1</encerrar>
+        <!-- financeiro é opcional; use comMF (com Módulo Financeiro) ou semMF -->
+        <financeiro>
+          <comMF>
+            <tarifas>
+              <quantidadeTotal>1</quantidadeTotal>
+            </tarifas>
+            <ajustaParc>
+              <nome>Desconto fidelidade</nome>
+              <altValor>
+                <!-- use adicional (acréscimo) ou desconto — nunca ambos -->
+                <desconto>
+                  <nmDesc>Desconto fidelidade fracionado</nmDesc>
+                  <vlrDesc>75.00</vlrDesc>
+                  <dsDesc>Desconto aplicado por volume de operações fracionadas no período</dsDesc>
+                  <!-- rubrica: apenas valor 4 (Valor de Tarifa) é permitido no encerramento -->
+                  <rubrica>4</rubrica>
+                </desconto>
+                <!-- valorValidacao: valor total da OT (frete + combustível + despesas + Valor de Tarifa) -->
+                <valorValidacao>1425.00</valorValidacao>
+              </altValor>
+            </ajustaParc>
+          </comMF>
+        </financeiro>
       </fracionado>
     </encerramento>
   </infEnceOT>

@@ -54,7 +54,11 @@
       "Bash(git commit -m 'feat: subpágina '\\\\''Como usar?'\\\\'' com guia completo para desenvolvedores *)",
       "Bash(git commit -m 'ux: destaque para '\\\\''Como usar?'\\\\'' no header e Changelog como pill estilizado *)",
       "Bash(pip3 install *)",
-      "Bash(git commit -m 'feat: tabela codigoSH versão final com 1.231 posições SH e descrições *)"
+      "Bash(git commit -m 'feat: tabela codigoSH versão final com 1.231 posições SH e descrições *)",
+      "Bash(git commit -m 'fix: corrige parêntese em CAPITULOS_SH \\(TS1005 no Vercel\\) *)",
+      "Bash(git commit -m 'fix: reescreve CAPITULOS_SH com função imperativa \\(evita TS1005 no Vercel\\) *)",
+      "Bash(git commit -m 'feat: adiciona código 0001 - Diversos ao codigoSH *)",
+      "Bash(git commit -m 'feat: atualiza layout Encerramento conforme Notion v4.2.12.0 *)"
     ],
     "additionalDirectories": [
       "/Users/icarowares/Downloads"

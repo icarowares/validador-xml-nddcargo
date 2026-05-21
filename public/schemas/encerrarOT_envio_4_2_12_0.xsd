@@ -8,7 +8,7 @@
        NDD Cargo · SOAP / ANTT
   ═══════════════════════════════════════════════════════════════ -->
 
-  <!-- ─── Tipos simples ─────────────────────────────────────────── -->
+  <!-- ─── Tipos simples base ────────────────────────────────────── -->
 
   <xs:simpleType name="TVersao">
     <xs:restriction base="xs:string">
@@ -73,13 +73,127 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <!-- ─── Tipos simples: bloco financeiro ──────────────────────── -->
+
+  <!-- Para encerramento: apenas rubrica tipo 4 = Valor de Tarifa -->
+  <xs:simpleType name="TRubricaEncerramento">
+    <xs:restriction base="xs:integer">
+      <xs:enumeration value="4"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TValorMonetario">
+    <xs:restriction base="xs:decimal">
+      <xs:totalDigits value="15"/>
+      <xs:fractionDigits value="2"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TQuantidadeTotal">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="9999999"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- ─── Tipos complexos: bloco financeiro ─────────────────────── -->
+
+  <xs:complexType name="TAdicional">
+    <xs:sequence>
+      <xs:element name="valor"   type="TValorMonetario"/>
+      <xs:element name="rubrica" type="TRubricaEncerramento"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TDesconto">
+    <xs:sequence>
+      <xs:element name="nmDesc">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="255"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="vlrDesc" type="TValorMonetario"/>
+      <xs:element name="dsDesc">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="2000"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="rubrica" type="TRubricaEncerramento"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- altValor: choice(adicional | desconto) + valorValidacao -->
+  <xs:complexType name="TAltValor">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="adicional" type="TAdicional"/>
+        <xs:element name="desconto"  type="TDesconto"/>
+      </xs:choice>
+      <xs:element name="valorValidacao" type="TValorMonetario"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TAjustaParc">
+    <xs:sequence>
+      <xs:element name="nome">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="255"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="altValor" type="TAltValor"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TComMF">
+    <xs:sequence>
+      <xs:element name="tarifas">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="quantidadeTotal" type="TQuantidadeTotal"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ajustaParc" type="TAjustaParc"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TSemMF">
+    <xs:sequence>
+      <xs:element name="tarifas">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="quantidadeTotal" type="TQuantidadeTotal"/>
+            <xs:element name="valorTotal"      type="TValorMonetario"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- financeiro: exatamente um de comMF ou semMF -->
+  <xs:complexType name="TFinanceiro">
+    <xs:choice>
+      <xs:element name="comMF" type="TComMF"/>
+      <xs:element name="semMF" type="TSemMF"/>
+    </xs:choice>
+  </xs:complexType>
+
   <!-- ─── pontoParada ────────────────────────────────────────────── -->
   <!-- [RN-E03] Exatamente um de: codigoIBGE, cep ou latitude+longitude -->
 
   <xs:complexType name="TPontoParada">
     <xs:choice>
       <xs:element name="codigoIBGE" type="TCodigoIBGE"/>
-      <xs:element name="cep" type="TCEP"/>
+      <xs:element name="cep"        type="TCEP"/>
       <xs:sequence>
         <xs:element name="latitude"  type="TLatLon"/>
         <xs:element name="longitude" type="TLatLon"/>
@@ -138,9 +252,9 @@
 
   <xs:complexType name="TViagem">
     <xs:sequence>
-      <xs:element name="rota"         type="TRota"/>
-      <xs:element name="totalKM"      type="TTotalKM"/>
-      <xs:element name="qtdeViagens"  type="TQtdeViagens"/>
+      <xs:element name="rota"        type="TRota"/>
+      <xs:element name="totalKM"     type="TTotalKM"/>
+      <xs:element name="qtdeViagens" type="TQtdeViagens"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -149,20 +263,24 @@
 
   <xs:complexType name="TEncerramento">
     <xs:choice>
+
       <xs:element name="lotacao">
         <xs:complexType>
           <xs:sequence>
+            <!-- Peso da carga em KG: até 10 dígitos com 2 casas decimais -->
             <xs:element name="qtdeCarga">
               <xs:simpleType>
                 <xs:restriction base="xs:decimal">
-                  <xs:totalDigits value="12"/>
+                  <xs:totalDigits   value="10"/>
                   <xs:fractionDigits value="2"/>
                 </xs:restriction>
               </xs:simpleType>
             </xs:element>
+            <xs:element name="financeiro" type="TFinanceiro" minOccurs="0"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+
       <!-- [RN-E02] encerrar deve ter valor 1 -->
       <xs:element name="fracionado">
         <xs:complexType>
@@ -174,9 +292,11 @@
                 </xs:restriction>
               </xs:simpleType>
             </xs:element>
+            <xs:element name="financeiro" type="TFinanceiro" minOccurs="0"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+
       <xs:element name="TACagregado">
         <xs:complexType>
           <xs:sequence>
@@ -187,9 +307,11 @@
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
+            <xs:element name="financeiro" type="TFinanceiro" minOccurs="0"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+
     </xs:choice>
   </xs:complexType>
 
