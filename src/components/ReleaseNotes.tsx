@@ -15,6 +15,7 @@ const RELEASES: Release[] = [
     date: '21 mai 2026',
     entries: [
       { type: 'feat', text: 'Subpágina "Como usar?" com guia completo para desenvolvedores: 5 passos de uso, tipos de arquivo, tipos de integração, como ler erros, tabelas de apoio, campos enum, regras de negócio, erros comuns e limitações — acessível pelo link no rodapé da aplicação' },
+      { type: 'feat', text: 'Tabela codigoSH atualizada para a lista oficial: 1.231 posições SH com descrição completa de cada código, campo de busca por código ou descrição e layout com zebra por capítulo' },
       { type: 'feat', text: 'Validação de formaConstituicao (XML, TXT e JSON): rejeita naturezas jurídicas inválidas e exibe link direto para a tabela de consulta com os 73 códigos válidos' },
       { type: 'feat', text: 'Subpágina "Tabela formaConstituicao" com 73 naturezas jurídicas (IBGE/RFB) agrupadas em 5 grupos e campo de pesquisa — acessível pelo menu "Materiais de apoio"' },
       { type: 'feat', text: 'Validação de atividadePrincipal (XML, TXT e JSON): rejeita divisões CNAE inválidas e exibe link direto para a tabela de consulta com todos os 87 códigos válidos' },
@@ -29,7 +30,7 @@ const RELEASES: Release[] = [
     entries: [
       { type: 'feat', text: 'Validação de codigoTipoCarga (XML, TXT e JSON): rejeita valores fora do intervalo 1–12 e exibe a lista completa dos 12 tipos válidos diretamente na mensagem de erro' },
       { type: 'feat', text: '10 novas regras de negócio no processo de emissão (XML, TXT e JSON): dtFim ≥ dtInicio, intervalo máximo de 90 dias, faixa de peso válida, vlrFrete > 0, cnpjTransportador vedado para TAC-Agregado e codigoSH validado contra a tabela oficial NDD' },
-      { type: 'feat', text: 'Subpágina "Tabela codigoSH" com 1.229 códigos agrupados por capítulo SH — acessível pelo menu "Materiais de apoio" na barra da aplicação, sem necessidade de validação prévia' },
+      { type: 'feat', text: 'Subpágina "Tabela codigoSH" com 1.231 posições SH agrupadas por capítulo, campo de busca por código ou descrição e descrição completa de cada posição — acessível pelo menu "Materiais de apoio"' },
       { type: 'feat', text: 'Mensagens de erro de codigoSH inválido exibem link direto para a tabela de consulta' },
       { type: 'fix',  text: 'Tela em branco corrigida — hook useEffect do tema estava posicionado após retorno antecipado de subpágina, violando as Rules of Hooks do React' },
       { type: 'feat', text: 'Atributo versao de todos os XMLs passa a aceitar somente o valor "4.2.12.0" — qualquer outro valor é rejeitado com mensagem clara' },

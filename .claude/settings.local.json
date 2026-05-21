@@ -52,7 +52,9 @@
       "Bash(git commit -m 'feat: validação e tabela de apoio para formaConstituicao \\(XML, TXT e JSON\\) *)",
       "Bash(git commit -m 'fix: remove variável '\\\\''n'\\\\'' não utilizada em formaConstituicao.ts *)",
       "Bash(git commit -m 'feat: subpágina '\\\\''Como usar?'\\\\'' com guia completo para desenvolvedores *)",
-      "Bash(git commit -m 'ux: destaque para '\\\\''Como usar?'\\\\'' no header e Changelog como pill estilizado *)"
+      "Bash(git commit -m 'ux: destaque para '\\\\''Como usar?'\\\\'' no header e Changelog como pill estilizado *)",
+      "Bash(pip3 install *)",
+      "Bash(git commit -m 'feat: tabela codigoSH versão final com 1.231 posições SH e descrições *)"
     ],
     "additionalDirectories": [
       "/Users/icarowares/Downloads"

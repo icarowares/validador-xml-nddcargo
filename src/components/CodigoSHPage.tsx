@@ -1,19 +1,22 @@
-import { CODIGOS_SH } from '../data/codigoSH';
-
-// Agrupa os códigos pelo prefixo de 2 dígitos (capítulo SH)
-function groupByChapter(entries: typeof CODIGOS_SH) {
-  const map = new Map<string, string[]>();
-  for (const e of entries) {
-    const chapter = e.codigo.slice(0, 2);
-    const list = map.get(chapter) ?? [];
-    list.push(e.codigo);
-    map.set(chapter, list);
-  }
-  return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-}
+import { useState, useMemo } from 'react';
+import { CAPITULOS_SH, CODIGOS_SH } from '../data/codigoSH';
 
 export function CodigoSHPage() {
-  const chapters = groupByChapter(CODIGOS_SH);
+  const [query, setQuery] = useState('');
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return CAPITULOS_SH;
+
+    return CAPITULOS_SH.map(cap => ({
+      ...cap,
+      entradas: cap.entradas.filter(
+        e => e.codigo.includes(q) || e.descricao.toLowerCase().includes(q),
+      ),
+    })).filter(cap => cap.entradas.length > 0);
+  }, [query]);
+
+  const totalFiltrado = filtered.reduce((n, c) => n + c.entradas.length, 0);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-gray-950 flex flex-col">
@@ -46,7 +49,7 @@ export function CodigoSHPage() {
                 Tabela de Natureza de Cargas · codigoSH
               </h1>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {CODIGOS_SH.length.toLocaleString('pt-BR')} códigos · agrupados por capítulo
+                {CODIGOS_SH.length.toLocaleString('pt-BR')} posições SH · {CAPITULOS_SH.length} capítulos
               </p>
             </div>
           </div>
@@ -59,54 +62,91 @@ export function CodigoSHPage() {
         </div>
       </header>
 
-      {/* Aviso temporário */}
-      <div className="bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-800">
-        <div className="max-w-screen-lg mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-2">
-          <svg className="w-4 h-4 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-          </svg>
-          <p className="text-xs text-amber-800 dark:text-amber-300">
-            Exibição temporária — as descrições dos códigos serão adicionadas em breve.
-          </p>
+      {/* Search bar */}
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shrink-0">
+        <div className="max-w-screen-lg mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
+          <div className="relative flex-1 max-w-md">
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 pointer-events-none"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Pesquisar por código ou descrição…"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700
+                         bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+                         placeholder-gray-400 dark:placeholder-gray-500
+                         focus:outline-none focus:ring-2 focus:ring-amber-400 dark:focus:ring-amber-500 focus:border-transparent
+                         transition-colors"
+            />
+          </div>
+          <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">
+            {query
+              ? `${totalFiltrado.toLocaleString('pt-BR')} resultado${totalFiltrado !== 1 ? 's' : ''}`
+              : `${CODIGOS_SH.length.toLocaleString('pt-BR')} códigos`}
+          </span>
         </div>
       </div>
 
       {/* Content */}
-      <main className="flex-1 max-w-screen-lg mx-auto w-full px-4 sm:px-6 py-6 flex flex-col gap-5">
-        {chapters.map(([chapter, codes]) => (
-          <section key={chapter}>
-            {/* Cabeçalho do capítulo */}
-            <div className="flex items-center gap-2 mb-2">
-              <span className="inline-flex items-center justify-center min-w-[2.5rem] h-6 px-2 rounded
-                               bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400
-                               font-mono text-xs font-bold">
-                {chapter}
-              </span>
-              <span className="text-xs text-gray-400 dark:text-gray-500">
-                {codes.length} código{codes.length !== 1 ? 's' : ''}
-              </span>
-              <div className="flex-1 h-px bg-gray-100 dark:bg-gray-800" />
-            </div>
-
-            {/* Grade de códigos */}
-            <div className="flex flex-wrap gap-1.5">
-              {codes.map(codigo => (
-                <span
-                  key={codigo}
-                  className="inline-flex items-center px-2.5 py-1 rounded-md
-                             bg-white dark:bg-gray-800
-                             border border-gray-200 dark:border-gray-700
-                             font-mono text-xs font-medium
-                             text-gray-700 dark:text-gray-300
-                             select-all"
-                >
-                  {codigo}
+      <main className="flex-1 max-w-screen-lg mx-auto w-full px-4 sm:px-6 py-6 flex flex-col gap-6">
+        {filtered.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <svg className="w-10 h-10 text-gray-300 dark:text-gray-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Nenhum código encontrado</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Tente outro código ou descrição</p>
+          </div>
+        ) : (
+          filtered.map(cap => (
+            <section key={cap.numero}>
+              {/* Cabeçalho do capítulo */}
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-flex items-center justify-center min-w-[2.5rem] h-6 px-2 rounded
+                                 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400
+                                 font-mono text-xs font-bold">
+                  {cap.numero}
                 </span>
-              ))}
-            </div>
-          </section>
-        ))}
+                <span className="text-xs text-gray-400 dark:text-gray-500">
+                  {cap.entradas.length} posição{cap.entradas.length !== 1 ? 'ões' : ''}
+                </span>
+                <div className="flex-1 h-px bg-gray-100 dark:bg-gray-800" />
+              </div>
+
+              {/* Tabela de entradas */}
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <table className="w-full text-sm">
+                  <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                    {cap.entradas.map((entry, idx) => (
+                      <tr
+                        key={entry.codigo}
+                        className={idx % 2 === 0
+                          ? 'bg-white dark:bg-gray-900'
+                          : 'bg-gray-50/60 dark:bg-gray-800/40'}
+                      >
+                        <td className="px-3 py-2 whitespace-nowrap w-16">
+                          <span className="font-mono text-xs font-semibold text-amber-700 dark:text-amber-400 select-all">
+                            {entry.codigo}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
+                          {entry.descricao}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          ))
+        )}
 
         <p className="text-xs text-center text-gray-400 dark:text-gray-600 pt-2 pb-4">
           Tabela de Natureza de Cargas conforme especificação NDD Cargo ·{' '}
