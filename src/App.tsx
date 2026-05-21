@@ -6,6 +6,7 @@ import { ReleaseNotes } from './components/ReleaseNotes';
 import { CodigoSHPage } from './components/CodigoSHPage';
 import { AtividadePrincipalPage } from './components/AtividadePrincipalPage';
 import { FormaConstituicaoPage } from './components/FormaConstituicaoPage';
+import { ComoUsarPage } from './components/ComoUsarPage';
 import { validate } from './validator/validate';
 import { validateRetificacao } from './validator/validateRetificacao';
 import { validateCancelamento } from './validator/validateCancelamento';
@@ -59,6 +60,7 @@ export default function App() {
   if (hash === '#/codigos-sh') return <CodigoSHPage />;
   if (hash === '#/atividade-principal') return <AtividadePrincipalPage />;
   if (hash === '#/forma-constituicao') return <FormaConstituicaoPage />;
+  if (hash === '#/como-usar') return <ComoUsarPage />;
 
   function handleFileTypeChange(type: FileType) {
     if (type === fileType) return;
@@ -548,6 +550,13 @@ export default function App() {
       <footer className="border-t border-gray-100 dark:border-gray-800 py-3 shrink-0">
         <div className="flex items-center justify-center gap-3 text-xs text-gray-400 dark:text-gray-600">
           <span>Validação local · nenhum dado é enviado ao servidor</span>
+          <span aria-hidden>·</span>
+          <a
+            href="#/como-usar"
+            className="text-xs text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition-colors underline underline-offset-2"
+          >
+            Como usar?
+          </a>
           <span aria-hidden>·</span>
           <ReleaseNotes />
         </div>

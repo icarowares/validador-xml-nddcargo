@@ -14,6 +14,7 @@ const RELEASES: Release[] = [
   {
     date: '21 mai 2026',
     entries: [
+      { type: 'feat', text: 'Subpágina "Como usar?" com guia completo para desenvolvedores: 5 passos de uso, tipos de arquivo, tipos de integração, como ler erros, tabelas de apoio, campos enum, regras de negócio, erros comuns e limitações — acessível pelo link no rodapé da aplicação' },
       { type: 'feat', text: 'Validação de formaConstituicao (XML, TXT e JSON): rejeita naturezas jurídicas inválidas e exibe link direto para a tabela de consulta com os 73 códigos válidos' },
       { type: 'feat', text: 'Subpágina "Tabela formaConstituicao" com 73 naturezas jurídicas (IBGE/RFB) agrupadas em 5 grupos e campo de pesquisa — acessível pelo menu "Materiais de apoio"' },
       { type: 'feat', text: 'Validação de atividadePrincipal (XML, TXT e JSON): rejeita divisões CNAE inválidas e exibe link direto para a tabela de consulta com todos os 87 códigos válidos' },
