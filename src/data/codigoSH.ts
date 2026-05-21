@@ -1344,12 +1344,17 @@ export interface CapituloSH {
   entradas: CodigoSHEntry[];
 }
 
-export const CAPITULOS_SH: CapituloSH[] = Array.from(
-  CODIGOS_SH.reduce((map, e) => {
+function buildCapitulos(): CapituloSH[] {
+  const map = new Map<string, CodigoSHEntry[]>();
+  for (const e of CODIGOS_SH) {
     const num = e.codigo.slice(0, 2);
     const list = map.get(num) ?? [];
     list.push(e);
     map.set(num, list);
-    return map;
-  }, new Map<string, CodigoSHEntry[]>()).entries()
-).map(([numero, entradas]) => ({ numero, entradas }));
+  }
+  const result: CapituloSH[] = [];
+  map.forEach((entradas, numero) => result.push({ numero, entradas }));
+  return result;
+}
+
+export const CAPITULOS_SH: CapituloSH[] = buildCapitulos();
