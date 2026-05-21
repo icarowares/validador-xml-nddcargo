@@ -86,8 +86,19 @@ export function ReleaseNotes() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="text-xs text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition-colors underline underline-offset-2"
+        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium
+                   border border-gray-200 dark:border-gray-700
+                   bg-white dark:bg-gray-800
+                   text-gray-500 dark:text-gray-400
+                   hover:bg-gray-50 dark:hover:bg-gray-700
+                   hover:text-gray-700 dark:hover:text-gray-200
+                   hover:border-gray-300 dark:hover:border-gray-600
+                   transition-colors shadow-sm"
       >
+        <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
         Changelog
       </button>
 

@@ -138,6 +138,25 @@ export default function App() {
             className="ml-auto h-6 dark:invert opacity-80"
           />
 
+          {/* Como usar? — texto no desktop, só ícone no mobile */}
+          <a
+            href="#/como-usar"
+            aria-label="Como usar?"
+            className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg
+                       border border-indigo-200 dark:border-indigo-700
+                       bg-indigo-50 dark:bg-indigo-950/50
+                       text-xs font-semibold text-indigo-700 dark:text-indigo-300
+                       hover:bg-indigo-100 dark:hover:bg-indigo-900/60
+                       hover:border-indigo-300 dark:hover:border-indigo-600
+                       transition-colors"
+          >
+            <svg className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="hidden sm:inline">Como usar?</span>
+          </a>
+
           <button
             type="button"
             onClick={() => setDark(d => !d)}
@@ -550,13 +569,6 @@ export default function App() {
       <footer className="border-t border-gray-100 dark:border-gray-800 py-3 shrink-0">
         <div className="flex items-center justify-center gap-3 text-xs text-gray-400 dark:text-gray-600">
           <span>Validação local · nenhum dado é enviado ao servidor</span>
-          <span aria-hidden>·</span>
-          <a
-            href="#/como-usar"
-            className="text-xs text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition-colors underline underline-offset-2"
-          >
-            Como usar?
-          </a>
           <span aria-hidden>·</span>
           <ReleaseNotes />
         </div>

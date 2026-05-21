@@ -50,7 +50,9 @@
       "Bash(git commit -m 'feat: validação e tabela de apoio para atividadePrincipal \\(TXT e JSON\\) *)",
       "Bash(git commit -m 'feat: validação de atividadePrincipal no XML \\(ETC e CTC\\) *)",
       "Bash(git commit -m 'feat: validação e tabela de apoio para formaConstituicao \\(XML, TXT e JSON\\) *)",
-      "Bash(git commit -m 'fix: remove variável '\\\\''n'\\\\'' não utilizada em formaConstituicao.ts *)"
+      "Bash(git commit -m 'fix: remove variável '\\\\''n'\\\\'' não utilizada em formaConstituicao.ts *)",
+      "Bash(git commit -m 'feat: subpágina '\\\\''Como usar?'\\\\'' com guia completo para desenvolvedores *)",
+      "Bash(git commit -m 'ux: destaque para '\\\\''Como usar?'\\\\'' no header e Changelog como pill estilizado *)"
     ],
     "additionalDirectories": [
       "/Users/icarowares/Downloads"
