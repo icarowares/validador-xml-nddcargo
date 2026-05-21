@@ -7,6 +7,8 @@ export interface CodigoSHEntry {
 }
 
 export const CODIGOS_SH: CodigoSHEntry[] = [
+  // ── Código especial ──────────────────────────────────────────────────────────
+  { codigo: '0001', descricao: 'Diversos' },
   // ── Capítulo 01 ──────────────────────────────────────────────────────────────
   { codigo: '0101', descricao: 'Cavalos, asininos e muares, vivos' },
   { codigo: '0102', descricao: 'Animais vivos da espécie bovina' },

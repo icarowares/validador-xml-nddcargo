@@ -112,11 +112,14 @@ export function CodigoSHPage() {
                 <span className="inline-flex items-center justify-center min-w-[2.5rem] h-6 px-2 rounded
                                  bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400
                                  font-mono text-xs font-bold">
-                  {cap.numero}
+                  {cap.numero === '00' ? '—' : cap.numero}
                 </span>
-                <span className="text-xs text-gray-400 dark:text-gray-500">
-                  {cap.entradas.length} posição{cap.entradas.length !== 1 ? 'ões' : ''}
-                </span>
+                {cap.numero === '00'
+                  ? <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Código especial</span>
+                  : <span className="text-xs text-gray-400 dark:text-gray-500">
+                      {cap.entradas.length} posição{cap.entradas.length !== 1 ? 'ões' : ''}
+                    </span>
+                }
                 <div className="flex-1 h-px bg-gray-100 dark:bg-gray-800" />
               </div>
 
