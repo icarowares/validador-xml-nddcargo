@@ -1351,5 +1351,5 @@ export const CAPITULOS_SH: CapituloSH[] = Array.from(
     list.push(e);
     map.set(num, list);
     return map;
-  }, new Map<string, CodigoSHEntry[]>())
-).entries()).map(([numero, entradas]) => ({ numero, entradas }));
+  }, new Map<string, CodigoSHEntry[]>()).entries()
+).map(([numero, entradas]) => ({ numero, entradas }));
