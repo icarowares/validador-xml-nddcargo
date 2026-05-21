@@ -205,11 +205,11 @@ function validateLotacao(el: Element, path: string, ctx: Ctx) {
   if (sh && !/^[0-9]{4}$/.test(txt(sh)))
     ctx.err(`${path}.codigoSH`, `Código SH inválido: "${txt(sh)}". Deve conter exatamente 4 dígitos numéricos`);
 
-  const ctc = child(el, 'CodigoTipoCarga');
+  const ctc = child(el, 'codigoTipoCarga');
   if (ctc) {
     const v = parseInt(txt(ctc), 10);
     if (v < 1 || v > 12)
-      ctx.err(`${path}.CodigoTipoCarga`, `Valor inválido: "${txt(ctc)}". Deve ser entre 1 e 12`);
+      ctx.err(`${path}.codigoTipoCarga`, `Valor inválido: "${txt(ctc)}". Deve ser entre 1 e 12`);
   }
 
   const qtd = requireChild(el, 'quantidade', path, ctx);
@@ -233,21 +233,21 @@ function validateFracionado(el: Element, path: string, ctx: Ctx) {
   if (sh && !/^[0-9]{4}$/.test(txt(sh)))
     ctx.err(`${path}.codigoSH`, `Código SH inválido: "${txt(sh)}". Deve conter exatamente 4 dígitos numéricos`);
 
-  // CodigoTipoCarga é obrigatório em fracionado
-  const ctc = requireChild(el, 'CodigoTipoCarga', path, ctx);
+  // codigoTipoCarga é obrigatório em fracionado
+  const ctc = requireChild(el, 'codigoTipoCarga', path, ctx);
   if (ctc) {
     const v = parseInt(txt(ctc), 10);
     if (v < 1 || v > 12)
-      ctx.err(`${path}.CodigoTipoCarga`, `Valor inválido: "${txt(ctc)}". Deve ser entre 1 e 12`);
+      ctx.err(`${path}.codigoTipoCarga`, `Valor inválido: "${txt(ctc)}". Deve ser entre 1 e 12`);
   }
 
-  const contratantes = requireChild(el, 'ContratantesCargaFrac', path, ctx);
+  const contratantes = requireChild(el, 'contratantesCargaFrac', path, ctx);
   if (contratantes) {
-    const cfs = children(contratantes, 'ContratanteF');
+    const cfs = children(contratantes, 'contratanteF');
     if (cfs.length === 0)
-      ctx.err(`${path}.ContratantesCargaFrac`, 'Deve haver pelo menos um "ContratanteF"');
+      ctx.err(`${path}.contratantesCargaFrac`, 'Deve haver pelo menos um "contratanteF"');
     cfs.forEach((cf, i) => {
-      const p = `${path}.ContratantesCargaFrac.ContratanteF[${i + 1}]`;
+      const p = `${path}.contratantesCargaFrac.contratanteF[${i + 1}]`;
       const cpfcnpj = requireChild(cf, 'cpfCnpj', p, ctx);
       if (cpfcnpj) valCpfCnpj(txt(cpfcnpj), `${p}.cpfCnpj`, ctx);
     });

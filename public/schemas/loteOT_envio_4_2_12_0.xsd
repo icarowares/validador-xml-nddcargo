@@ -566,8 +566,8 @@
                                         <xs:element name="codigoSH">
                                           <xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[0-9]{4}"/></xs:restriction></xs:simpleType>
                                         </xs:element>
-                                        <!-- E: CodigoTipoCarga, N, 0-1, 1-2 -->
-                                        <xs:element name="CodigoTipoCarga" minOccurs="0">
+                                        <!-- E: codigoTipoCarga, N, 0-1, 1-2 -->
+                                        <xs:element name="codigoTipoCarga" minOccurs="0">
                                           <xs:simpleType><xs:restriction base="xs:integer"><xs:minInclusive value="1"/><xs:maxInclusive value="12"/></xs:restriction></xs:simpleType>
                                         </xs:element>
                                         <!-- E: quantidade, N, 1, 9,2 -->
@@ -592,15 +592,15 @@
                                         <xs:element name="codigoSH">
                                           <xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[0-9]{4}"/></xs:restriction></xs:simpleType>
                                         </xs:element>
-                                        <!-- E: CodigoTipoCarga, N, 1, 2 — obrigatório em fracionado -->
-                                        <xs:element name="CodigoTipoCarga">
+                                        <!-- E: codigoTipoCarga, N, 1, 2 — obrigatório em fracionado -->
+                                        <xs:element name="codigoTipoCarga">
                                           <xs:simpleType><xs:restriction base="xs:integer"><xs:minInclusive value="1"/><xs:maxInclusive value="12"/></xs:restriction></xs:simpleType>
                                         </xs:element>
-                                        <!-- Raiz: ContratantesCargaFrac (1) → ContratanteF (1-N) → cpfCnpj (E) -->
-                                        <xs:element name="ContratantesCargaFrac">
+                                        <!-- Raiz: contratantesCargaFrac (1) → contratanteF (1-N) → cpfCnpj (E) -->
+                                        <xs:element name="contratantesCargaFrac">
                                           <xs:complexType>
                                             <xs:sequence>
-                                              <xs:element name="ContratanteF" maxOccurs="unbounded">
+                                              <xs:element name="contratanteF" maxOccurs="unbounded">
                                                 <xs:complexType>
                                                   <xs:sequence>
                                                     <xs:element name="cpfCnpj" type="TCpfCnpj"/>
