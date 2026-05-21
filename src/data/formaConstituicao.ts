@@ -104,8 +104,6 @@ export const GRUPOS_FORMA: GrupoForma[] = GRUPOS_DEF.map(g => ({
   prefixo: g.prefixo,
   nome: g.nome,
   entradas: FORMAS_CONSTITUICAO.filter(e => {
-    const n = parseInt(e.codigo.replace('-', ''), 10);
-    // o número sem dígito verificador para fins de agrupamento
     const base = parseInt(e.codigo.split('-')[0], 10);
     return base >= g.min && base <= g.max;
   }),
