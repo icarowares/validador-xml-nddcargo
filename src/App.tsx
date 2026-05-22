@@ -528,6 +528,7 @@ export default function App() {
                     group: 'Com pagamento',
                     items: [
                       { label: 'TAC · PIX',       file: 'ex_emissao_lotacao_tac_pix.json' },
+                      { label: 'ETC · PIX',       file: 'ex_emissao_lotacao_etc_pix.json' },
                       { label: 'TAC · NDD Cargo', file: 'ex_emissao_lotacao_tac_ndd.json' },
                     ],
                   },
