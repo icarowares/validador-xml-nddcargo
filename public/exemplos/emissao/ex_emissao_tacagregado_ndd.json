@@ -33,7 +33,8 @@
         "cidade": "Guarulhos",
         "bairro": "Centro",
         "logradouro": "Rua das Palmeiras",
-        "numero": "123"
+        "numero": "123",
+        "CEP": "07010100"
       },
       "dadosPF": {
         "identidade": "SP-9876543",

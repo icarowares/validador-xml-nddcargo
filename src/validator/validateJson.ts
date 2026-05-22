@@ -378,7 +378,13 @@ function validateTransp(raw: unknown, errs: Errors): void {
   }
 
   if (!isObj(c['endereco'])) e(errs, `${cp}.endereco`, 'Campo obrigatório não informado');
-  else validateEnderecoCidade(c['endereco'], `${cp}.endereco`, errs);
+  else {
+    validateEnderecoCidade(c['endereco'], `${cp}.endereco`, errs);
+    const end = c['endereco'] as Obj;
+    reqStr(end, 'numero', `${cp}.endereco`, 1, 8, errs);
+    if (end['CEP'] === undefined || end['CEP'] === null)
+      e(errs, `${cp}.endereco.CEP`, 'Campo obrigatório não informado');
+  }
 
   if (tipo === 1) {
     if (!isObj(c['dadosPF'])) {

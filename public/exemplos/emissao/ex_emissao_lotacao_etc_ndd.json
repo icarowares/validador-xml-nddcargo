@@ -55,7 +55,8 @@
         "cidade": "Rio de Janeiro",
         "bairro": "Barra da Tijuca",
         "logradouro": "Av. das Américas",
-        "numero": "800"
+        "numero": "800",
+        "CEP": "22631000"
       },
       "inscEstadual": "555666777888",
       "atividadePrincipal": "49",

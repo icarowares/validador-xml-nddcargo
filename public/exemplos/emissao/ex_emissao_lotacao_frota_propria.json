@@ -55,7 +55,8 @@
         "cidade": "São Paulo",
         "bairro": "Vila Leopoldina",
         "logradouro": "Rua Catiguá",
-        "numero": "50"
+        "numero": "50",
+        "CEP": "05307000"
       },
       "inscEstadual": "111222333444",
       "atividadePrincipal": "49",
