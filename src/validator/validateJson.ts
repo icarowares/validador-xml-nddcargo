@@ -656,6 +656,16 @@ function validateSingleOT(payload: Obj, errs: Errors): void {
     }
   }
 
+  // Regra: condutores só podem ser informados quando gerPgtoFin = 1 ou 6
+  if (isObj(payload['ide'])) {
+    const gerPgto = (payload['ide'] as Obj)['gerPgtoFin'];
+    const hasCondutores = Array.isArray(payload['condutores']) && payload['condutores'].length > 0;
+    if (hasCondutores && gerPgto !== 1 && gerPgto !== 6)
+      e(errs, 'condutores',
+        `Condutores só podem ser informados quando gerPgtoFin = 1 (Módulo Financeiro NDD) ou 6 (Gestora de Cartão). ` +
+        `Valor informado: "${gerPgto ?? 'não informado'}"`);
+  }
+
   // Regra: transportador deve ser Pessoa Física (CPF) em TACagregado
   // TODO: regra desativada — possível erro de interpretação da legislação; revisar antes de reativar
   // if (tipo === 3 && isObj(payload['transp'])) {
