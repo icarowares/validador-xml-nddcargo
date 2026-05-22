@@ -1,0 +1,123 @@
+<loteOT_envio
+  xmlns="http://www.nddigital.com.br/nddcargo"
+  versao="4.2.12.0"
+  token="123456789012345678901234"
+  tms="Nome TMS ou sistema"
+>
+  <operacoes>
+    <OT>
+      <infOT
+        ID="c2d3e4f5-a6b7-48c9-0d1e-2f3a4b5c6d7e"
+        gerPgtoFin="5"
+        impAuto="2"
+      >
+        <!-- TACagregado: sem dtInicio (RN-03) -->
+        <ide>
+          <cnpj>12345678000195</cnpj>
+          <numero>000019</numero>
+          <serie>001</serie>
+          <ptEmissor>Matriz SP</ptEmissor>
+        </ide>
+        <carga>
+          <!-- TACagregado: sem codigoSH, quantidade e destinatario (RN-07) -->
+          <TACagregado>
+            <remetente>
+              <cnpj>12345678000195</cnpj>
+              <nome>EMPRESA ABC TRANSPORTES LTDA</nome>
+              <endereco>
+                <UF>SP</UF>
+                <codigoMunicipio>3550308</codigoMunicipio>
+                <bairro>VILA OLIMPIA</bairro>
+                <logradouro>AV DAS NACOES UNIDAS</logradouro>
+                <numero>1000</numero>
+                <CEP>04578000</CEP>
+              </endereco>
+            </remetente>
+          </TACagregado>
+          <proprietarioCarga>1</proprietarioCarga>
+        </carga>
+        <transp>
+          <rntrc>111222333</rntrc>
+          <!-- ATENÇÃO: cnpjTransportador em TACagregado viola RN-50.
+               Em operações TACagregado o transportador deve ser PF (cpfTransportador). -->
+          <cnpjTransportador>44333222000181</cnpjTransportador>
+          <infTransportador>
+            <ide>
+              <etc>
+                <razaoSocial>TRANS RAPIDO CARGAS LTDA</razaoSocial>
+                <nomeFantasia>TRANS RAPIDO</nomeFantasia>
+                <inscEstadual>555666777888</inscEstadual>
+                <atividadePrincipal>49</atividadePrincipal>
+                <formaConstituicao>206-2</formaConstituicao>
+                <dataConstituicao>2012-08-20</dataConstituicao>
+                <socio>
+                  <nomeCompleto>MARCOS PEREIRA LIMA</nomeCompleto>
+                  <nomeMae>SANDRA PEREIRA</nomeMae>
+                  <dataNascimento>1970-04-30</dataNascimento>
+                  <cpf>99988877766</cpf>
+                  <identidade>RJ-5554443</identidade>
+                  <endereco>
+                    <UF>RJ</UF>
+                    <cidade>RIO DE JANEIRO</cidade>
+                    <bairro>BARRA DA TIJUCA</bairro>
+                    <logradouro>AV DAS AMERICAS</logradouro>
+                    <numero>800</numero>
+                    <CEP>22631000</CEP>
+                  </endereco>
+                  <telefone>21988776655</telefone>
+                </socio>
+              </etc>
+            </ide>
+            <endereco>
+              <UF>RJ</UF>
+              <cidade>RIO DE JANEIRO</cidade>
+              <bairro>BARRA DA TIJUCA</bairro>
+              <logradouro>AV DAS AMERICAS</logradouro>
+              <numero>800</numero>
+              <CEP>22631000</CEP>
+            </endereco>
+            <telefone>11933221100</telefone>
+          </infTransportador>
+          <!-- gerPgtoFin=5: condutores não obrigatório (RN-05 não se aplica) -->
+          <veiculos>
+            <veiculo>
+              <placa>GHI3F45</placa>
+              <informacoes>
+                <modelo>SCANIA R 450</modelo>
+                <tipo>1</tipo>
+                <RNTRCTransportador>111222333</RNTRCTransportador>
+                <qtdEixos>3</qtdEixos>
+              </informacoes>
+            </veiculo>
+          </veiculos>
+          <!-- gerPgtoFin=5: sem parcelamento e sem dadosBancarios -->
+          <valores>
+            <vlrFrete>2800.00</vlrFrete>
+            <tipoRateio>1</tipoRateio>
+          </valores>
+          <categoriaPedagio>0</categoriaPedagio>
+        </transp>
+      </infOT>
+      <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <SignedInfo>
+          <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+          <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+          <Reference URI="">
+            <Transforms>
+              <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+              <Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+            </Transforms>
+            <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <DigestValue/>
+          </Reference>
+        </SignedInfo>
+        <SignatureValue/>
+        <KeyInfo>
+          <X509Data>
+            <X509Certificate/>
+          </X509Data>
+        </KeyInfo>
+      </Signature>
+    </OT>
+  </operacoes>
+</loteOT_envio>

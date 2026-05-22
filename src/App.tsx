@@ -331,10 +331,12 @@ export default function App() {
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {[
-                      { label: 'Carga Lotação',  file: 'ex_emissao_lotacao.xml'    },
-                      { label: 'Carga Fracionada', file: 'ex_emissao_fracionado.xml' },
-                      { label: 'Frota Própria',  file: 'ex_emissao_frota.xml'      },
-                      { label: 'TAC-Agregado',   file: 'ex_emissao_agregado.xml'   },
+                      { label: 'Carga Lotação',          file: 'ex_emissao_lotacao.xml'                  },
+                      { label: 'Carga Fracionada',        file: 'ex_emissao_fracionado.xml'               },
+                      { label: 'Frota Própria',            file: 'ex_emissao_frota.xml'                   },
+                      { label: 'TAC-Agregado',             file: 'ex_emissao_agregado.xml'                },
+                      { label: 'TAC-Agr. · NDD (TAC)',     file: 'ex_emissao_tacagregado_tac_ndd.xml'     },
+                      { label: 'TAC-Agr. · Outros (ETC)',  file: 'ex_emissao_tacagregado_etc_outros.xml'  },
                     ].map(({ label, file }) => (
                       <a
                         key={file}

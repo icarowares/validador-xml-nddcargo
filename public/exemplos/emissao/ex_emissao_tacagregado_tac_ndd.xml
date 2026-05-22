@@ -1,0 +1,141 @@
+<loteOT_envio
+  xmlns="http://www.nddigital.com.br/nddcargo"
+  versao="4.2.12.0"
+  token="123456789012345678901234"
+  tms="Nome TMS ou sistema"
+>
+  <operacoes>
+    <OT>
+      <infOT
+        ID="b1c2d3e4-f5a6-47b8-9c0d-1e2f3a4b5c6d"
+        gerPgtoFin="1"
+        impAuto="2"
+      >
+        <!-- TACagregado: sem dtInicio (RN-03) -->
+        <ide>
+          <cnpj>12345678000195</cnpj>
+          <numero>000018</numero>
+          <serie>001</serie>
+          <ptEmissor>Matriz SP</ptEmissor>
+        </ide>
+        <carga>
+          <!-- TACagregado: sem codigoSH, quantidade e destinatario (RN-07) -->
+          <TACagregado>
+            <remetente>
+              <cnpj>12345678000195</cnpj>
+              <nome>EMPRESA ABC TRANSPORTES LTDA</nome>
+              <endereco>
+                <UF>SP</UF>
+                <codigoMunicipio>3550308</codigoMunicipio>
+                <bairro>VILA OLIMPIA</bairro>
+                <logradouro>AV DAS NACOES UNIDAS</logradouro>
+                <numero>1000</numero>
+                <CEP>04578000</CEP>
+              </endereco>
+            </remetente>
+          </TACagregado>
+          <proprietarioCarga>1</proprietarioCarga>
+        </carga>
+        <transp>
+          <rntrc>987654321</rntrc>
+          <!-- TAC/PF: cpfTransportador (RN-50) -->
+          <cpfTransportador>55566677788</cpfTransportador>
+          <infTransportador>
+            <ide>
+              <tac>
+                <nomeCompleto>ROBERTO ALVES DA SILVA</nomeCompleto>
+                <nomeMae>LUCIA ALVES</nomeMae>
+                <dataNascimento>1982-07-14</dataNascimento>
+                <identidade>SP-9876543</identidade>
+              </tac>
+            </ide>
+            <endereco>
+              <UF>SP</UF>
+              <cidade>GUARULHOS</cidade>
+              <bairro>CENTRO</bairro>
+              <logradouro>RUA DAS PALMEIRAS</logradouro>
+              <numero>123</numero>
+              <CEP>07010100</CEP>
+            </endereco>
+            <telefone>11977665544</telefone>
+          </infTransportador>
+          <!-- condutores obrigatório para gerPgtoFin=1 (RN-05) -->
+          <condutores>
+            <condutor>
+              <cpf>55566677788</cpf>
+              <informacoes>
+                <nomeCompleto>ROBERTO ALVES DA SILVA</nomeCompleto>
+                <nomeMae>LUCIA ALVES</nomeMae>
+                <dataNascimento>1982-07-14</dataNascimento>
+                <identidade>SP-9876543</identidade>
+                <RNTRCTransportador>987654321</RNTRCTransportador>
+                <endereco>
+                  <UF>SP</UF>
+                  <cidade>GUARULHOS</cidade>
+                  <bairro>CENTRO</bairro>
+                  <logradouro>RUA DAS PALMEIRAS</logradouro>
+                  <numero>123</numero>
+                  <CEP>07010100</CEP>
+                </endereco>
+                <CNH>12345678901</CNH>
+                <telefone>11977665544</telefone>
+              </informacoes>
+            </condutor>
+          </condutores>
+          <veiculos>
+            <veiculo>
+              <placa>DEF2E34</placa>
+              <informacoes>
+                <modelo>MERCEDES-BENZ ATEGO 2430</modelo>
+                <tipo>1</tipo>
+                <RNTRCTransportador>987654321</RNTRCTransportador>
+                <qtdEixos>2</qtdEixos>
+              </informacoes>
+            </veiculo>
+          </veiculos>
+          <valores>
+            <vlrFrete>2800.00</vlrFrete>
+            <!-- Parcela única de remuneração fixa a prazo 30 dias -->
+            <parcelamento>
+              <informacoes>
+                <parcelas>
+                  <parcela>
+                    <nome>Remuneracao Fixa</nome>
+                    <tipoPgto>
+                      <manual>
+                        <dataPrevisao>2026-06-21</dataPrevisao>
+                      </manual>
+                    </tipoPgto>
+                    <valorAplicado>2800.00</valorAplicado>
+                  </parcela>
+                </parcelas>
+              </informacoes>
+            </parcelamento>
+            <tipoRateio>1</tipoRateio>
+          </valores>
+          <categoriaPedagio>0</categoriaPedagio>
+        </transp>
+      </infOT>
+      <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <SignedInfo>
+          <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+          <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+          <Reference URI="">
+            <Transforms>
+              <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+              <Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+            </Transforms>
+            <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <DigestValue/>
+          </Reference>
+        </SignedInfo>
+        <SignatureValue/>
+        <KeyInfo>
+          <X509Data>
+            <X509Certificate/>
+          </X509Data>
+        </KeyInfo>
+      </Signature>
+    </OT>
+  </operacoes>
+</loteOT_envio>
