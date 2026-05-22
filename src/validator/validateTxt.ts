@@ -434,6 +434,7 @@ function val4010(line: ParsedLine): ValidationError[] {
   const f = line.fields;
   const nomeC = f[1]; const nomeMae = f[2]; const nomePai = f[3];
   const dtNasc = f[4]; const ident = f[5]; const tel = f[6];
+  const email = f[7]; const idCartao = f[8];
 
   if (!nomeC || nomeC.trim() === '') ctx.err('nomeCompleto é obrigatório', 'nomeCompleto');
   else reqLen(nomeC.trim(), 1, 150, 'nomeCompleto', ctx);
@@ -451,6 +452,9 @@ function val4010(line: ParsedLine): ValidationError[] {
 
   if (!tel || tel.trim() === '') ctx.err('telefoneCelular é obrigatório', 'telefoneCelular');
   else reqTel(tel.trim(), 'telefoneCelular', ctx);
+
+  optField(email, v => reqLen(v, 1, 100, 'email', ctx));
+  optField(idCartao, v => reqLen(v, 1, 20, 'idCartao', ctx));
 
   return ctx.errors;
 }
@@ -626,13 +630,10 @@ function val4111(line: ParsedLine): ValidationError[] {
 function val4200(line: ParsedLine): ValidationError[] {
   const ctx = makeCtx(line.lineNumber, '4200');
   const f = line.fields;
-  const placa = f[1]; const qtdEixos = f[2];
+  const placa = f[1];
 
   if (!placa || placa.trim() === '') ctx.err('placa é obrigatória', 'placa');
   else if (placa.trim().length !== 7) ctx.err(`placa "${placa}" deve ter exatamente 7 caracteres`, 'placa');
-
-  if (!qtdEixos || qtdEixos.trim() === '') ctx.err('qtdEixos é obrigatório', 'qtdEixos');
-  else reqLen(qtdEixos.trim(), 1, 4, 'qtdEixos', ctx);
 
   return ctx.errors;
 }
@@ -640,7 +641,7 @@ function val4200(line: ParsedLine): ValidationError[] {
 function val4210(line: ParsedLine): ValidationError[] {
   const ctx = makeCtx(line.lineNumber, '4210');
   const f = line.fields;
-  const modelo = f[1]; const tipo = f[3]; const rntrc = f[5];
+  const modelo = f[1]; const tipo = f[3]; const rntrc = f[5]; const qtdEixos = f[6];
 
   if (!modelo || modelo.trim() === '') ctx.err('modelo é obrigatório', 'modelo');
   else reqLen(modelo.trim(), 1, 100, 'modelo', ctx);
@@ -650,6 +651,9 @@ function val4210(line: ParsedLine): ValidationError[] {
 
   if (!rntrc || rntrc.trim() === '') ctx.err('RNTRCTransportador é obrigatório', 'RNTRCTransportador');
   else reqExact(rntrc.trim(), 9, 'RNTRCTransportador', ctx);
+
+  if (!qtdEixos || qtdEixos.trim() === '') ctx.err('qtdEixos é obrigatório', 'qtdEixos');
+  else reqLen(qtdEixos.trim(), 1, 4, 'qtdEixos', ctx);
 
   return ctx.errors;
 }
