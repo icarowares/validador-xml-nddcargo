@@ -2,7 +2,7 @@
   "ide": {
     "cnpj": "12345678000195",
     "tipoOperacao": 1,
-    "numero": "000015",
+    "numero": "000017",
     "serie": "001",
     "ptEmissor": "Matriz SP",
     "dtInicio": "2026-05-22",
@@ -43,39 +43,57 @@
     }
   },
   "transp": {
-    "rntrc": "987654321",
-    "cpfCnpj": "55566677788",
+    "rntrc": "111222333",
+    "cpfCnpj": "44333222000181",
     "cadastro": {
-      "nomeRazao": "Roberto Alves da Silva",
-      "telefone": "11977665544",
-      "tipo": 1,
-      "dadosPF": {
-        "identidade": "SP-9876543",
-        "nomeMae": "Lucia Alves",
-        "dataNascimento": "1982-07-14"
-      }
+      "nomeRazao": "Trans Rápido Cargas Ltda",
+      "telefone": "11933221100",
+      "email": "financeiro@transrapido.com.br",
+      "tipo": 2,
+      "inscEstadual": "555666777888",
+      "atividadePrincipal": "49",
+      "formaConstituicao": "206-2",
+      "dataConstituicao": "2012-08-20",
+      "dadosPJ": [
+        {
+          "cpf": "99988877766",
+          "identidade": "RJ-5554443",
+          "nomeCompleto": "Marcos Pereira Lima",
+          "nomeMae": "Sandra Pereira",
+          "dataNascimento": "1970-04-30",
+          "telefone": "21988776655",
+          "email": "marcos@transrapido.com.br",
+          "endereco": {
+            "UF": "RJ",
+            "cidade": "Rio de Janeiro",
+            "bairro": "Barra da Tijuca",
+            "logradouro": "Av. das Américas",
+            "numero": "800"
+          }
+        }
+      ]
     }
   },
   "condutores": [
     {
-      "cpf": "55566677788",
-      "nomeCompleto": "Roberto Alves da Silva",
-      "cpfCnpjTransportador": "55566677788"
+      "cpf": "77788899900",
+      "nomeCompleto": "Fernando Costa Dias",
+      "cpfCnpjTransportador": "44333222000181"
     }
   ],
   "veiculos": [
     {
-      "placa": "DEF2E34",
-      "RNTRCTransportador": "987654321",
-      "eixos": 2,
+      "placa": "GHI3F45",
+      "RNTRCTransportador": "111222333",
+      "eixos": 3,
       "cadastro": {
-        "modelo": "Mercedes-Benz Atego 2430",
+        "modelo": "Scania R 450",
         "tipo": 1
       }
     }
   ],
   "valores": {
-    "vlrFrete": 3200.00,
+    "vlrFrete": 4500.00,
     "tipoRateio": 1,
     "parcelamento": {
       "informacoes": {
@@ -85,14 +103,14 @@
             "tipoPgto": 1,
             "finalidadeParcela": 1,
             "dataPrevisao": "2026-05-22",
-            "valorAplicado": 1200.00
+            "valorAplicado": 1500.00
           },
           {
             "nome": "Saldo",
             "tipoPgto": 2,
             "finalidadeParcela": 2,
             "dataPrevisao": "2026-05-23",
-            "valorAplicado": 2000.00
+            "valorAplicado": 3000.00
           }
         ]
       }
