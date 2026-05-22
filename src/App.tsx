@@ -511,35 +511,56 @@ export default function App() {
               </div>
             )}
             {fileType === 'json' && integrationType === 'emissao' && (
-              <div className="mb-4 shrink-0">
-                <p className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+              <div className="mb-4 shrink-0 flex flex-col gap-3">
+                <p className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                   Exemplos de payload
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { label: 'Carga Lotação',        file: 'ex_emissao_single.json'                      },
-                    { label: 'TAC-Agregado',          file: 'ex_emissao_agregado.json'                    },
-                    { label: 'CIOT Frota Própria',    file: 'ex_emissao_lotacao_frota_propria.json'        },
-                    { label: 'TAC · Conta Corrente',  file: 'ex_emissao_lotacao_tac_contacorrente.json'   },
-                    { label: 'ETC · Conta Corrente',      file: 'ex_emissao_lotacao_etc_contacorrente.json'      },
-                    { label: 'TAC · PIX',                 file: 'ex_emissao_lotacao_tac_pix.json'                },
-                    { label: 'TAC · NDD Cargo',           file: 'ex_emissao_lotacao_tac_ndd.json'                },
-                    { label: 'Frac. · CIOT Frota Própria', file: 'ex_emissao_fracionado_frota_propria.json'      },
-                  ].map(({ label, file }) => (
-                    <a
-                      key={file}
-                      href={`/exemplos/emissao/${file}`}
-                      download={file}
-                      onClick={() => track('download_example', { file, fileType: 'json' })}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
-                    >
-                      <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                      </svg>
-                      {label}
-                    </a>
-                  ))}
-                </div>
+                {([
+                  {
+                    group: 'Sem pagamento',
+                    items: [
+                      { label: 'TAC-Agregado',         file: 'ex_emissao_agregado.json'                  },
+                      { label: 'TAC · Conta Corrente', file: 'ex_emissao_lotacao_tac_contacorrente.json' },
+                      { label: 'ETC · Conta Corrente', file: 'ex_emissao_lotacao_etc_contacorrente.json' },
+                    ],
+                  },
+                  {
+                    group: 'Com pagamento',
+                    items: [
+                      { label: 'TAC · PIX',       file: 'ex_emissao_lotacao_tac_pix.json' },
+                      { label: 'TAC · NDD Cargo', file: 'ex_emissao_lotacao_tac_ndd.json' },
+                    ],
+                  },
+                  {
+                    group: 'Frota Própria',
+                    items: [
+                      { label: 'Lotação',    file: 'ex_emissao_lotacao_frota_propria.json'    },
+                      { label: 'Fracionado', file: 'ex_emissao_fracionado_frota_propria.json' },
+                    ],
+                  },
+                ] as { group: string; items: { label: string; file: string }[] }[]).map(({ group, items }) => (
+                  <div key={group}>
+                    <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">
+                      {group}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {items.map(({ label, file }) => (
+                        <a
+                          key={file}
+                          href={`/exemplos/emissao/${file}`}
+                          download={file}
+                          onClick={() => track('download_example', { file, fileType: 'json' })}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
+                        >
+                          <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                          {label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
             <XmlInput
