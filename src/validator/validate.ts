@@ -259,7 +259,7 @@ function validateLotacao(el: Element, path: string, ctx: Ctx) {
 }
 
 function validateFracionado(el: Element, path: string, ctx: Ctx) {
-  checkOrder(el, path, ['codigoSH', 'codigoTipoCarga', 'contratantesCargaFrac', 'quantidade', 'remetente', 'destinatario'], ctx);
+  checkOrder(el, path, ['codigoSH', 'codigoTipoCarga', 'quantidade', 'contratantesCargaFrac', 'remetente', 'destinatario'], ctx);
   const sh = requireChild(el, 'codigoSH', path, ctx);
   if (sh && !/^[0-9]{4}$/.test(txt(sh)))
     ctx.err(`${path}.codigoSH`, `Código SH inválido: "${txt(sh)}". Deve conter exatamente 4 dígitos numéricos`);
