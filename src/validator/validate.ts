@@ -130,9 +130,36 @@ function valStrLen(value: string, min: number, max: number, path: string, ctx: C
     ctx.err(path, `Valor excede o limite de ${max} caractere(s) (${value.length} informados)`);
 }
 
+// ─── Verificação de ordenação de tags ─────────────────────────────────────────
+
+/**
+ * Verifica se os elementos filho de `el` que constam em `order` aparecem
+ * na sequência correta (xs:sequence). Elementos não listados são ignorados.
+ */
+function checkOrder(el: Element, path: string, order: readonly string[], ctx: Ctx) {
+  let lastIdx = -1;
+  let lastName = '';
+  for (const c of Array.from(el.children)) {
+    const name = c.localName;
+    const idx = order.indexOf(name);
+    if (idx === -1) continue;
+    if (idx < lastIdx) {
+      ctx.err(
+        `${path}.${name}`,
+        `Tag <${name}> está fora de ordem — deve aparecer antes de <${lastName}>. ` +
+        `Sequência esperada: ${order.join(' → ')}`
+      );
+    } else {
+      lastIdx = idx;
+      lastName = name;
+    }
+  }
+}
+
 // ─── Endereços ────────────────────────────────────────────────────────────────
 
 function validateEnderecoMunicipio(el: Element, path: string, ctx: Ctx) {
+  checkOrder(el, path, ['UF', 'codigoMunicipio', 'bairro', 'logradouro', 'numero', 'CEP', 'complemento'], ctx);
   const uf = requireChild(el, 'UF', path, ctx);
   if (uf) valUF(txt(uf), `${path}.UF`, ctx);
 
@@ -157,6 +184,7 @@ function validateEnderecoMunicipio(el: Element, path: string, ctx: Ctx) {
 }
 
 function validateEnderecoCidade(el: Element, path: string, ctx: Ctx) {
+  checkOrder(el, path, ['UF', 'cidade', 'bairro', 'logradouro', 'numero', 'CEP', 'complemento'], ctx);
   const uf = requireChild(el, 'UF', path, ctx);
   if (uf) valUF(txt(uf), `${path}.UF`, ctx);
 
@@ -183,6 +211,7 @@ function validateEnderecoCidade(el: Element, path: string, ctx: Ctx) {
 // ─── Pessoa ───────────────────────────────────────────────────────────────────
 
 function validatePessoa(el: Element, path: string, ctx: Ctx) {
+  checkOrder(el, path, ['cnpj', 'cpf', 'nome', 'endereco'], ctx);
   const cnpj = child(el, 'cnpj');
   const cpf = child(el, 'cpf');
 
@@ -201,6 +230,7 @@ function validatePessoa(el: Element, path: string, ctx: Ctx) {
 // ─── Carga ────────────────────────────────────────────────────────────────────
 
 function validateLotacao(el: Element, path: string, ctx: Ctx) {
+  checkOrder(el, path, ['codigoSH', 'codigoTipoCarga', 'quantidade', 'IndAltoDesempenho', 'IndRetornoVazio', 'remetente', 'destinatario'], ctx);
   const sh = requireChild(el, 'codigoSH', path, ctx);
   if (sh && !/^[0-9]{4}$/.test(txt(sh)))
     ctx.err(`${path}.codigoSH`, `Código SH inválido: "${txt(sh)}". Deve conter exatamente 4 dígitos numéricos`);
@@ -229,6 +259,7 @@ function validateLotacao(el: Element, path: string, ctx: Ctx) {
 }
 
 function validateFracionado(el: Element, path: string, ctx: Ctx) {
+  checkOrder(el, path, ['codigoSH', 'codigoTipoCarga', 'contratantesCargaFrac', 'quantidade', 'remetente', 'destinatario'], ctx);
   const sh = requireChild(el, 'codigoSH', path, ctx);
   if (sh && !/^[0-9]{4}$/.test(txt(sh)))
     ctx.err(`${path}.codigoSH`, `Código SH inválido: "${txt(sh)}". Deve conter exatamente 4 dígitos numéricos`);
@@ -264,10 +295,12 @@ function validateFracionado(el: Element, path: string, ctx: Ctx) {
 }
 
 function validateTACagregado(el: Element, path: string, ctx: Ctx) {
+  checkOrder(el, path, ['remetente'], ctx);
   const rem = requireChild(el, 'remetente', path, ctx);
   if (!rem) return;
 
   const rp = `${path}.remetente`;
+  checkOrder(rem, rp, ['cnpj', 'cpf', 'nome', 'endereco'], ctx);
   const cnpj = child(rem, 'cnpj');
   const cpf = child(rem, 'cpf');
 
@@ -282,6 +315,7 @@ function validateTACagregado(el: Element, path: string, ctx: Ctx) {
   if (!end) return;
 
   const ep = `${rp}.endereco`;
+  checkOrder(end, ep, ['UF', 'codigoMunicipio', 'bairro', 'logradouro', 'numero', 'CEP', 'complemento'], ctx);
   const uf = requireChild(end, 'UF', ep, ctx);
   if (uf) valUF(txt(uf), `${ep}.UF`, ctx);
 
@@ -306,6 +340,7 @@ function validateTACagregado(el: Element, path: string, ctx: Ctx) {
 }
 
 function validateCarga(el: Element, path: string, ctx: Ctx): string | null {
+  checkOrder(el, path, ['lotacao', 'fracionado', 'TACagregado', 'consignatario', 'proprietarioCarga', 'documentosOriginarios'], ctx);
   const lotacao = child(el, 'lotacao');
   const fracionado = child(el, 'fracionado');
   const tacAgregado = child(el, 'TACagregado');
@@ -362,6 +397,7 @@ function validateCarga(el: Element, path: string, ctx: Ctx): string | null {
 // ─── IDE ──────────────────────────────────────────────────────────────────────
 
 function validateIde(el: Element, path: string, ctx: Ctx) {
+  checkOrder(el, path, ['cnpj', 'numero', 'serie', 'ptEmissor', 'dtInicio', 'dtFim', 'contrato'], ctx);
   const cnpj = requireChild(el, 'cnpj', path, ctx);
   if (cnpj) valCNPJ(txt(cnpj), `${path}.cnpj`, ctx);
 
@@ -407,10 +443,12 @@ function validateCondutores(el: Element, path: string, ctx: Ctx) {
     const cpf = requireChild(cond, 'cpf', cp, ctx);
     if (cpf) valCPF(txt(cpf), `${cp}.cpf`, ctx);
 
+    checkOrder(cond, cp, ['cpf', 'informacoes'], ctx);
     const info = child(cond, 'informacoes');
     if (!info) return;
 
     const ip = `${cp}.informacoes`;
+    checkOrder(info, ip, ['nomeCompleto', 'nomeMae', 'nomePai', 'dataNascimento', 'identidade', 'RNTRCTransportador', 'cpfTransportador', 'cnpjTransportador', 'endereco', 'CNH', 'dataEmissaoCNH', 'dataRenovacaoCNH', 'telefone', 'cartaoId'], ctx);
 
     const nomeCompleto = requireChild(info, 'nomeCompleto', ip, ctx);
     if (nomeCompleto) valStrLen(txt(nomeCompleto), 1, 150, `${ip}.nomeCompleto`, ctx);
@@ -468,6 +506,7 @@ function validateVeiculos(el: Element, path: string, ctx: Ctx) {
   veics.forEach((v, i) => {
     const vp = `${path}.veiculo[${i + 1}]`;
 
+    checkOrder(v, vp, ['placa', 'informacoes'], ctx);
     const placa = requireChild(v, 'placa', vp, ctx);
     if (placa) valPlaca(txt(placa), `${vp}.placa`, ctx);
 
@@ -475,6 +514,7 @@ function validateVeiculos(el: Element, path: string, ctx: Ctx) {
     if (!info) return;
 
     const ip = `${vp}.informacoes`;
+    checkOrder(info, ip, ['modelo', 'kmLitroModelo', 'tipo', 'kmLitroVeiculo', 'RNTRCTransportador', 'qtdEixos', 'ComposicaoVeicular'], ctx);
 
     const modelo = requireChild(info, 'modelo', ip, ctx);
     if (modelo) valStrLen(txt(modelo), 1, 100, `${ip}.modelo`, ctx);
@@ -504,6 +544,7 @@ function validateVeiculos(el: Element, path: string, ctx: Ctx) {
 }
 
 function validateParcela(el: Element, path: string, ctx: Ctx) {
+  checkOrder(el, path, ['nome', 'tipoPgto', 'valorAplicado', 'valorReal', 'documentos', 'descontos', 'restricoes', 'prazoMinimo', 'carga', 'confirmarPgto', 'transferenciaAutomatica'], ctx);
   const nome = requireChild(el, 'nome', path, ctx);
   if (nome) valStrLen(txt(nome), 1, 50, `${path}.nome`, ctx);
 
@@ -554,6 +595,7 @@ function validateParcela(el: Element, path: string, ctx: Ctx) {
 }
 
 function validateValores(el: Element, path: string, ctx: Ctx) {
+  checkOrder(el, path, ['vlrFrete', 'despesas', 'parcelamento', 'retencoes', 'tipoRateio', 'descontos', 'vlrCombustivel', 'vlrPedagio', 'direcionamentosPedagio', 'dadosBancarios'], ctx);
   const vlrFrete = requireChild(el, 'vlrFrete', path, ctx);
   if (vlrFrete) valValor(txt(vlrFrete), `${path}.vlrFrete`, ctx);
 
@@ -596,6 +638,7 @@ function validateValores(el: Element, path: string, ctx: Ctx) {
   const retencoes = child(el, 'retencoes');
   if (retencoes) {
     const rp = `${path}.retencoes`;
+    checkOrder(retencoes, rp, ['irrf', 'inss', 'sestsenat'], ctx);
     const irrf = requireChild(retencoes, 'irrf', rp, ctx);
     if (irrf) valValor(txt(irrf), `${rp}.irrf`, ctx);
     const inss = requireChild(retencoes, 'inss', rp, ctx);
@@ -652,6 +695,7 @@ function validateValores(el: Element, path: string, ctx: Ctx) {
 }
 
 function validateInfTransportador(el: Element, path: string, ctx: Ctx) {
+  checkOrder(el, path, ['ide', 'endereco', 'telefone', 'cartaoId', 'email'], ctx);
   const idePath = `${path}.ide`;
   const ide = requireChild(el, 'ide', path, ctx);
   if (!ide) return;
@@ -669,6 +713,7 @@ function validateInfTransportador(el: Element, path: string, ctx: Ctx) {
   // ── tac ──────────────────────────────────────────────────────────────────────
   if (tac) {
     const tp = `${idePath}.tac`;
+    checkOrder(tac, tp, ['nomeCompleto', 'nomeMae', 'nomePai', 'dataNascimento', 'identidade'], ctx);
     const nomeC = requireChild(tac, 'nomeCompleto', tp, ctx);
     if (nomeC) valStrLen(txt(nomeC), 1, 150, `${tp}.nomeCompleto`, ctx);
     const nomeMae = requireChild(tac, 'nomeMae', tp, ctx);
@@ -685,6 +730,7 @@ function validateInfTransportador(el: Element, path: string, ctx: Ctx) {
   for (const [tag, el2] of [['etc', etc], ['ctc', ctc]] as [string, Element | undefined][]) {
     if (!el2) continue;
     const ep = `${idePath}.${tag}`;
+    checkOrder(el2, ep, ['razaoSocial', 'nomeFantasia', 'inscEstadual', 'atividadePrincipal', 'formaConstituicao', 'dataConstituicao', 'socio'], ctx);
 
     const razao = requireChild(el2, 'razaoSocial', ep, ctx);
     if (razao) valStrLen(txt(razao), 1, 150, `${ep}.razaoSocial`, ctx);
@@ -738,6 +784,7 @@ function validateInfTransportador(el: Element, path: string, ctx: Ctx) {
 }
 
 function validateTransp(el: Element, path: string, ctx: Ctx) {
+  checkOrder(el, path, ['rntrc', 'cpfTransportador', 'cnpjTransportador', 'infTransportador', 'gestoraCartao', 'subcontratado', 'rota', 'condutores', 'veiculos', 'valores', 'categoriaPedagio'], ctx);
   const rntrc = requireChild(el, 'rntrc', path, ctx);
   if (rntrc) valRNTRC(txt(rntrc), `${path}.rntrc`, ctx);
 
@@ -756,6 +803,7 @@ function validateTransp(el: Element, path: string, ctx: Ctx) {
   const sub = child(el, 'subcontratado');
   if (sub) {
     const sp = `${path}.subcontratado`;
+    checkOrder(sub, sp, ['cnpj', 'cpf', 'nome', 'endereco'], ctx);
     const cnpj = child(sub, 'cnpj');
     const cpf = child(sub, 'cpf');
     if (!cnpj && !cpf) ctx.err(sp, 'É obrigatório informar "cnpj" ou "cpf"');
@@ -799,6 +847,8 @@ function validateInfOT(el: Element, path: string, ctx: Ctx) {
 
   const integrarANTT = el.getAttribute('integrarANTT');
   if (integrarANTT !== null) valEnum(integrarANTT, [1, 2], `${path}@integrarANTT`, ctx);
+
+  checkOrder(el, path, ['ide', 'carga', 'contatos', 'transp', 'quitacao', 'adicionais', 'confirmador'], ctx);
 
   const ide = requireChild(el, 'ide', path, ctx);
   if (ide) validateIde(ide, `${path}.ide`, ctx);
