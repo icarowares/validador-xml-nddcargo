@@ -377,7 +377,8 @@ function validateTransp(raw: unknown, errs: Errors): void {
     optStr(c, 'inscEstadual', cp, 1, 14, errs);
   }
 
-  if (isObj(c['endereco'])) validateEnderecoCidade(c['endereco'], `${cp}.endereco`, errs);
+  if (!isObj(c['endereco'])) e(errs, `${cp}.endereco`, 'Campo obrigatório não informado');
+  else validateEnderecoCidade(c['endereco'], `${cp}.endereco`, errs);
 
   if (tipo === 1) {
     if (!isObj(c['dadosPF'])) {

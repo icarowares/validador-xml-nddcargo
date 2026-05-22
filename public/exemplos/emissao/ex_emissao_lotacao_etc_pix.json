@@ -50,6 +50,13 @@
       "telefone": "11933221100",
       "email": "financeiro@transrapido.com.br",
       "tipo": 2,
+      "endereco": {
+        "UF": "RJ",
+        "cidade": "Rio de Janeiro",
+        "bairro": "Barra da Tijuca",
+        "logradouro": "Av. das Américas",
+        "numero": "800"
+      },
       "inscEstadual": "555666777888",
       "atividadePrincipal": "49",
       "formaConstituicao": "206-2",
@@ -93,7 +100,7 @@
     }
   ],
   "valores": {
-    "vlrFrete": 4500.00,
+    "vlrFrete": 4500.0,
     "tipoRateio": 1,
     "parcelamento": {
       "informacoes": {
@@ -103,7 +110,7 @@
             "tipoPgto": 1,
             "finalidadeParcela": 1,
             "dataPrevisao": "2026-05-22",
-            "valorAplicado": 1500.00,
+            "valorAplicado": 1500.0,
             "transferenciaAutomatica": {
               "cpfCondutor": "77788899900"
             }
@@ -113,7 +120,7 @@
             "tipoPgto": 2,
             "finalidadeParcela": 2,
             "dataPrevisao": "2026-05-23",
-            "valorAplicado": 3000.00,
+            "valorAplicado": 3000.0,
             "transferenciaAutomatica": {
               "cpfCondutor": "77788899900"
             }

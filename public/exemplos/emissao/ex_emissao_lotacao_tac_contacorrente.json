@@ -49,6 +49,13 @@
       "nomeRazao": "Roberto Alves da Silva",
       "telefone": "11977665544",
       "tipo": 1,
+      "endereco": {
+        "UF": "SP",
+        "cidade": "Guarulhos",
+        "bairro": "Centro",
+        "logradouro": "Rua das Palmeiras",
+        "numero": "123"
+      },
       "dadosPF": {
         "identidade": "SP-9876543",
         "nomeMae": "Lucia Alves",
@@ -68,7 +75,7 @@
     }
   ],
   "valores": {
-    "vlrFrete": 3200.00,
+    "vlrFrete": 3200.0,
     "tipoRateio": 1,
     "dadosBancarios": {
       "tipoPagamento": 2,

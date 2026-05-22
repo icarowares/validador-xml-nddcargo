@@ -15,8 +15,12 @@
     "CodigoTipoCarga": 1,
     "distanciaPercorrida": 350,
     "ContratantesCargaFrac": [
-      { "cpfCnpj": "76543210000188" },
-      { "cpfCnpj": "65432100000177" }
+      {
+        "cpfCnpj": "76543210000188"
+      },
+      {
+        "cpfCnpj": "65432100000177"
+      }
     ],
     "remetente": {
       "cpfCnpj": "12345678000195",
@@ -51,6 +55,13 @@
       "telefone": "11999990000",
       "email": "operacoes@abctransportes.com.br",
       "tipo": 2,
+      "endereco": {
+        "UF": "SP",
+        "cidade": "São Paulo",
+        "bairro": "Vila Leopoldina",
+        "logradouro": "Rua Catiguá",
+        "numero": "50"
+      },
       "inscEstadual": "111222333444",
       "atividadePrincipal": "49",
       "formaConstituicao": "206-2",
@@ -87,7 +98,7 @@
     }
   ],
   "valores": {
-    "vlrFrete": 3800.00,
+    "vlrFrete": 3800.0,
     "tipoRateio": 1
   },
   "ciotFrotaPropria": {
