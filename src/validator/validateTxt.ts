@@ -1246,8 +1246,9 @@ function finishOT(ot: OTState, otIndex: number, errors: ValidationError[]): void
     ref('A data de início da viagem não deve ser informada em operações TAC-Agregado (tipo=3)');
 
   // Regra: transportador deve ser Pessoa Física (reg. 4010) em TAC-Agregado
-  if (ot.tipo === 3 && !ot.has4010 && (ot.has4020 || ot.has4030))
-    ref('O transportador informado deve ser do tipo Pessoa Física (TAC — registro 4010) para operações TAC-Agregado (tipo=3)');
+  // TODO: regra desativada — possível erro de interpretação da legislação; revisar antes de reativar
+  // if (ot.tipo === 3 && !ot.has4010 && (ot.has4020 || ot.has4030))
+  //   ref('O transportador informado deve ser do tipo Pessoa Física (TAC — registro 4010) para operações TAC-Agregado (tipo=3)');
 
   // Regra: dtFim >= dtInicio (quando ambas informadas e válidas)
   if (ot.dtInicio && ot.dtFim && isDate(ot.dtInicio) && isDate(ot.dtFim)) {

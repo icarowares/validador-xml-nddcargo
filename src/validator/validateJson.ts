@@ -644,13 +644,14 @@ function validateSingleOT(payload: Obj, errs: Errors): void {
   }
 
   // Regra: transportador deve ser Pessoa Física (CPF) em TACagregado
-  if (tipo === 3 && isObj(payload['transp'])) {
-    const transp = payload['transp'] as Obj;
-    const cpfCnpj = transp['cpfCnpj'];
-    if (typeof cpfCnpj === 'string' && cpfCnpj.length === 14)
-      e(errs, 'transp.cpfCnpj',
-        'O transportador informado deve ser do tipo Pessoa Física (TAC) para operações TAC-Agregado — "cpfCnpj" deve ser um CPF (11 dígitos)');
-  }
+  // TODO: regra desativada — possível erro de interpretação da legislação; revisar antes de reativar
+  // if (tipo === 3 && isObj(payload['transp'])) {
+  //   const transp = payload['transp'] as Obj;
+  //   const cpfCnpj = transp['cpfCnpj'];
+  //   if (typeof cpfCnpj === 'string' && cpfCnpj.length === 14)
+  //     e(errs, 'transp.cpfCnpj',
+  //       'O transportador informado deve ser do tipo Pessoa Física (TAC) para operações TAC-Agregado — "cpfCnpj" deve ser um CPF (11 dígitos)');
+  // }
 }
 
 // ─── Main export ──────────────────────────────────────────────────────────────

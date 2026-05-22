@@ -341,12 +341,13 @@ export function applyBusinessRules(doc: Document): ValidationError[] {
     }
 
     // ── RN-50: Transportador deve ser Pessoa Física (TAC) em TACagregado ───────
-    if (isTAC && transp) {
-      const cnpjT = child(transp, 'cnpjTransportador');
-      if (cnpjT)
-        err(`${tp}.cnpjTransportador`,
-          '[RN-50] O transportador informado deve ser do tipo Pessoa Física (TAC): utilize "cpfTransportador" em operações TACagregado');
-    }
+    // TODO: regra desativada — possível erro de interpretação da legislação; revisar antes de reativar
+    // if (isTAC && transp) {
+    //   const cnpjT = child(transp, 'cnpjTransportador');
+    //   if (cnpjT)
+    //     err(`${tp}.cnpjTransportador`,
+    //       '[RN-50] O transportador informado deve ser do tipo Pessoa Física (TAC): utilize "cpfTransportador" em operações TACagregado');
+    // }
 
     // ── RN-51: vlrFrete deve ser maior que 0 ──────────────────────────────────
     if (valEl) {
