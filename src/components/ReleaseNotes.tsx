@@ -12,6 +12,16 @@ interface Release {
 
 const RELEASES: Release[] = [
   {
+    date: '22 mai 2026',
+    entries: [
+      { type: 'fix', text: 'TXT Emissão — registro 4200 corrigido: qtdEixos removido (campo movido para o registro 4210); 4200 agora contém apenas placa (f[1])' },
+      { type: 'fix', text: 'TXT Emissão — registro 4210 corrigido: qtdEixos adicionado como campo obrigatório em f[6]' },
+      { type: 'feat', text: 'TXT Emissão — registro 4010: campos opcionais email (f[7]) e idCartao (f[8]) agora validados' },
+      { type: 'feat', text: 'JSON Emissão — transp.cadastro.endereco passa a ser obrigatório; campos numero e CEP também obrigatórios dentro do endereço do transportador' },
+      { type: 'feat', text: 'XML Emissão — validação de ordenação de tags (xs:sequence): 24 verificações de ordem cobrindo todos os blocos do layout v4.2.12.0' },
+    ],
+  },
+  {
     date: '21 mai 2026',
     entries: [
       { type: 'feat', text: 'Subpágina "Como usar?" com guia completo para desenvolvedores: 5 passos de uso, tipos de arquivo, tipos de integração, como ler erros, tabelas de apoio, campos enum, regras de negócio, erros comuns e limitações — acessível pelo link no rodapé da aplicação' },
