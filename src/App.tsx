@@ -519,7 +519,6 @@ export default function App() {
                   {
                     group: 'Sem pagamento',
                     items: [
-                      { label: 'TAC-Agregado',         file: 'ex_emissao_agregado.json'                  },
                       { label: 'TAC · Conta Corrente', file: 'ex_emissao_lotacao_tac_contacorrente.json' },
                       { label: 'ETC · Conta Corrente', file: 'ex_emissao_lotacao_etc_contacorrente.json' },
                     ],
@@ -527,10 +526,11 @@ export default function App() {
                   {
                     group: 'Com pagamento',
                     items: [
-                      { label: 'TAC · PIX',       file: 'ex_emissao_lotacao_tac_pix.json' },
-                      { label: 'ETC · PIX',       file: 'ex_emissao_lotacao_etc_pix.json' },
-                      { label: 'TAC · NDD Cargo', file: 'ex_emissao_lotacao_tac_ndd.json' },
-                      { label: 'ETC · NDD Cargo', file: 'ex_emissao_lotacao_etc_ndd.json' },
+                      { label: 'TAC · PIX',              file: 'ex_emissao_lotacao_tac_pix.json'     },
+                      { label: 'ETC · PIX',              file: 'ex_emissao_lotacao_etc_pix.json'     },
+                      { label: 'TAC · NDD Cargo',        file: 'ex_emissao_lotacao_tac_ndd.json'     },
+                      { label: 'ETC · NDD Cargo',        file: 'ex_emissao_lotacao_etc_ndd.json'     },
+                      { label: 'TAC-Agregado · NDD Cargo', file: 'ex_emissao_tacagregado_ndd.json'   },
                     ],
                   },
                   {

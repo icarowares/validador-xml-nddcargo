@@ -1,0 +1,73 @@
+{
+  "ide": {
+    "cnpj": "12345678000195",
+    "tipoOperacao": 3,
+    "numero": "000018",
+    "serie": "001",
+    "ptEmissor": "Matriz SP",
+    "gerPgtoFin": 1
+  },
+  "carga": {
+    "remetente": {
+      "cpfCnpj": "12345678000195",
+      "nome": "Empresa ABC Transportes Ltda",
+      "endereco": {
+        "UF": "SP",
+        "codigoMunicipio": "3550308",
+        "bairro": "Vila Olímpia",
+        "logradouro": "Av. das Nações Unidas",
+        "numero": "1000",
+        "CEP": "04578000"
+      }
+    }
+  },
+  "transp": {
+    "rntrc": "987654321",
+    "cpfCnpj": "55566677788",
+    "cadastro": {
+      "nomeRazao": "Roberto Alves da Silva",
+      "telefone": "11977665544",
+      "tipo": 1,
+      "dadosPF": {
+        "identidade": "SP-9876543",
+        "nomeMae": "Lucia Alves",
+        "dataNascimento": "1982-07-14"
+      }
+    }
+  },
+  "condutores": [
+    {
+      "cpf": "55566677788",
+      "nomeCompleto": "Roberto Alves da Silva",
+      "cpfCnpjTransportador": "55566677788"
+    }
+  ],
+  "veiculos": [
+    {
+      "placa": "DEF2E34",
+      "RNTRCTransportador": "987654321",
+      "eixos": 2,
+      "cadastro": {
+        "modelo": "Mercedes-Benz Atego 2430",
+        "tipo": 1
+      }
+    }
+  ],
+  "valores": {
+    "vlrFrete": 2800.00,
+    "tipoRateio": 1,
+    "parcelamento": {
+      "informacoes": {
+        "parcelas": [
+          {
+            "nome": "Remuneração Fixa",
+            "tipoPgto": 2,
+            "finalidadeParcela": 2,
+            "dataPrevisao": "2026-06-21",
+            "valorAplicado": 2800.00
+          }
+        ]
+      }
+    }
+  }
+}
