@@ -468,12 +468,11 @@ function validateVeiculos(raw: unknown, errs: Errors): void {
   if (raw.length > 5) e(errs, path, `Máximo de 5 veículos por OT (informado: ${raw.length})`);
 
   let automotorCount = 0;
-  let allHaveCadastro = true;
   const seenPlacas = new Set<string>();
 
   raw.forEach((veic, i) => {
     const vp = `${path}[${i}]`;
-    if (!isObj(veic)) { e(errs, vp, 'Deve ser um objeto'); allHaveCadastro = false; return; }
+    if (!isObj(veic)) { e(errs, vp, 'Deve ser um objeto'); return; }
 
     const placa = veic['placa'];
     if (placa === undefined || placa === null) e(errs, `${vp}.placa`, 'Campo obrigatório não informado');
@@ -488,7 +487,9 @@ function validateVeiculos(raw: unknown, errs: Errors): void {
     if (eixos === undefined || eixos === null) e(errs, `${vp}.eixos`, 'Campo obrigatório não informado');
     else if (!isNum(eixos)) e(errs, `${vp}.eixos`, 'Deve ser um número');
 
-    if (isObj(veic['cadastro'])) {
+    if (!isObj(veic['cadastro'])) {
+      e(errs, `${vp}.cadastro`, 'Campo obrigatório não informado');
+    } else {
       const c = veic['cadastro'] as Obj;
       const cp = `${vp}.cadastro`;
       reqStr(c, 'modelo', cp, 1, 100, errs);
@@ -498,15 +499,11 @@ function validateVeiculos(raw: unknown, errs: Errors): void {
       if (isNum(tipo) && tipo === 1) automotorCount++;
       optDecimal(c, 'kmLitroModelo', cp, errs);
       optDecimal(c, 'kmLitroVeiculo', cp, errs);
-    } else {
-      allHaveCadastro = false;
     }
   });
 
-  if (allHaveCadastro) {
-    if (automotorCount === 0) e(errs, path, 'Ao menos um veículo deve ser do tipo automotor (cadastro.tipo=1)');
-    if (automotorCount > 1) e(errs, path, 'Apenas um veículo deve ser do tipo automotor (cadastro.tipo=1)');
-  }
+  if (automotorCount === 0) e(errs, path, 'Ao menos um veículo deve ser do tipo automotor (cadastro.tipo=1)');
+  if (automotorCount > 1) e(errs, path, 'Apenas um veículo deve ser do tipo automotor (cadastro.tipo=1)');
 }
 
 function validateValores(raw: unknown, errs: Errors): void {
