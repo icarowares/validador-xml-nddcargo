@@ -1,0 +1,104 @@
+{
+  "ide": {
+    "cnpj": "12345678000195",
+    "tipoOperacao": 1,
+    "numero": "000010",
+    "serie": "001",
+    "ptEmissor": "Matriz SP",
+    "dtInicio": "2026-05-22",
+    "dtFim": "2026-05-23",
+    "altoDesempenho": false,
+    "retornoVazio": false,
+    "composicaoVeicular": false,
+    "gerPgtoFin": 5
+  },
+  "carga": {
+    "codigoSH": "4901",
+    "quantidade": 2000,
+    "CodigoTipoCarga": 1,
+    "distanciaPercorrida": 350,
+    "remetente": {
+      "cpfCnpj": "12345678000195",
+      "nome": "Empresa ABC Transportes Ltda",
+      "endereco": {
+        "UF": "SP",
+        "codigoMunicipio": "3550308",
+        "bairro": "Vila Olímpia",
+        "logradouro": "Av. das Nações Unidas",
+        "numero": "1000",
+        "CEP": "04578000"
+      }
+    },
+    "destinatario": {
+      "cpfCnpj": "98765432000199",
+      "nome": "Empresa Destino Comércio SA",
+      "endereco": {
+        "UF": "MG",
+        "codigoMunicipio": "3106200",
+        "bairro": "Savassi",
+        "logradouro": "Rua Pernambuco",
+        "numero": "200",
+        "CEP": "30130150"
+      }
+    }
+  },
+  "transp": {
+    "rntrc": "123456789",
+    "cpfCnpj": "12345678000195",
+    "cadastro": {
+      "nomeRazao": "Empresa ABC Transportes Ltda",
+      "telefone": "11999990000",
+      "email": "operacoes@abctransportes.com.br",
+      "tipo": 2,
+      "inscEstadual": "111222333444",
+      "atividadePrincipal": "49",
+      "formaConstituicao": "206-2",
+      "dataConstituicao": "2005-03-10",
+      "dadosPJ": [
+        {
+          "cpf": "12345678901",
+          "identidade": "MG-12345678",
+          "nomeCompleto": "Carlos Eduardo Souza",
+          "nomeMae": "Ana Paula Souza",
+          "dataNascimento": "1978-11-05",
+          "telefone": "31988776655",
+          "email": "carlos@abctransportes.com.br",
+          "endereco": {
+            "UF": "MG",
+            "cidade": "Belo Horizonte",
+            "bairro": "Savassi",
+            "logradouro": "Rua Antônio de Albuquerque",
+            "numero": "55"
+          }
+        }
+      ]
+    }
+  },
+  "veiculos": [
+    {
+      "placa": "ABC1D23",
+      "RNTRCTransportador": "123456789",
+      "eixos": 2,
+      "cadastro": {
+        "modelo": "Volkswagen Constellation 24.280",
+        "tipo": 1
+      }
+    }
+  ],
+  "valores": {
+    "vlrFrete": 3800.00,
+    "tipoRateio": 1
+  },
+  "ciotFrotaPropria": {
+    "CnpjCpfContratante": "55000111000187",
+    "RntrcContratante": "987654321",
+    "NomeContratante": "Indústria Nacional de Peças Ltda",
+    "endereco": {
+      "logradouro": "Rodovia Anhanguera",
+      "numero": "3500",
+      "bairro": "Distrito Industrial",
+      "cidade": "Campinas",
+      "uf": "SP"
+    }
+  }
+}

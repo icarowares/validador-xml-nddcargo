@@ -1,0 +1,112 @@
+{
+  "ide": {
+    "cnpj": "12345678000195",
+    "tipoOperacao": 1,
+    "numero": "000014",
+    "serie": "001",
+    "ptEmissor": "Matriz SP",
+    "dtInicio": "2026-05-22",
+    "dtFim": "2026-05-23",
+    "altoDesempenho": false,
+    "retornoVazio": false,
+    "composicaoVeicular": false,
+    "gerPgtoFin": 6
+  },
+  "carga": {
+    "codigoSH": "4901",
+    "quantidade": 2000,
+    "CodigoTipoCarga": 1,
+    "distanciaPercorrida": 350,
+    "remetente": {
+      "cpfCnpj": "12345678000195",
+      "nome": "Empresa ABC Transportes Ltda",
+      "endereco": {
+        "UF": "SP",
+        "codigoMunicipio": "3550308",
+        "bairro": "Vila Olímpia",
+        "logradouro": "Av. das Nações Unidas",
+        "numero": "1000",
+        "CEP": "04578000"
+      }
+    },
+    "destinatario": {
+      "cpfCnpj": "98765432000199",
+      "nome": "Empresa Destino Comércio SA",
+      "endereco": {
+        "UF": "MG",
+        "codigoMunicipio": "3106200",
+        "bairro": "Savassi",
+        "logradouro": "Rua Pernambuco",
+        "numero": "200",
+        "CEP": "30130150"
+      }
+    }
+  },
+  "transp": {
+    "rntrc": "987654321",
+    "cpfCnpj": "55566677788",
+    "cadastro": {
+      "nomeRazao": "Roberto Alves da Silva",
+      "telefone": "11977665544",
+      "tipo": 1,
+      "dadosPF": {
+        "identidade": "SP-9876543",
+        "nomeMae": "Lucia Alves",
+        "dataNascimento": "1982-07-14"
+      }
+    }
+  },
+  "condutores": [
+    {
+      "cpf": "55566677788",
+      "nomeCompleto": "Roberto Alves da Silva",
+      "cpfCnpjTransportador": "55566677788"
+    }
+  ],
+  "veiculos": [
+    {
+      "placa": "DEF2E34",
+      "RNTRCTransportador": "987654321",
+      "eixos": 2,
+      "cadastro": {
+        "modelo": "Mercedes-Benz Atego 2430",
+        "tipo": 1
+      }
+    }
+  ],
+  "valores": {
+    "vlrFrete": 3200.00,
+    "tipoRateio": 1,
+    "parcelamento": {
+      "informacoes": {
+        "parcelas": [
+          {
+            "nome": "Adiantamento",
+            "tipoPgto": 1,
+            "finalidadeParcela": 1,
+            "dataPrevisao": "2026-05-22",
+            "valorAplicado": 1200.00,
+            "transferenciaAutomatica": {
+              "cpfCondutor": "55566677788"
+            }
+          },
+          {
+            "nome": "Saldo",
+            "tipoPgto": 2,
+            "finalidadeParcela": 2,
+            "dataPrevisao": "2026-05-23",
+            "valorAplicado": 2000.00,
+            "transferenciaAutomatica": {
+              "cpfCondutor": "55566677788"
+            }
+          }
+        ]
+      }
+    },
+    "dadosBancarios": {
+      "tipoPagamento": 1,
+      "tipoChave": 1,
+      "chavepix": "55566677788"
+    }
+  }
+}
