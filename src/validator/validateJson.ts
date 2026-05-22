@@ -329,6 +329,11 @@ function validateTransp(raw: unknown, errs: Errors): void {
   reqDigits(raw, 'rntrc', path, 9, errs);
   reqCpfCnpj(raw, 'cpfCnpj', path, errs);
 
+  // Resolve comprimento do cpfCnpj para validações cruzadas com cadastro.tipo
+  const cpfCnpjVal = raw['cpfCnpj'];
+  const isCnpj = typeof cpfCnpjVal === 'string' && cpfCnpjVal.length === 14;
+  const isCpf  = typeof cpfCnpjVal === 'string' && cpfCnpjVal.length === 11;
+
   if (!isObj(raw['cadastro'])) { e(errs, `${path}.cadastro`, 'Campo obrigatório não informado'); return; }
   const c = raw['cadastro'] as Obj;
   const cp = `${path}.cadastro`;
@@ -338,6 +343,16 @@ function validateTransp(raw: unknown, errs: Errors): void {
   optStr(c, 'email', cp, 1, 255, errs);
   reqNum(c, 'tipo', cp, [1, 2, 3], errs, D_TIPO_TRANSP);
   const tipo = isNum(c['tipo']) ? (c['tipo'] as number) : null;
+
+  // Regra: CNPJ (14 dígitos) → cadastro.tipo deve ser 2 (ETC) ou 3 (CTC)
+  if (isCnpj && tipo === 1)
+    e(errs, `${cp}.tipo`,
+      'O "cpfCnpj" informado é um CNPJ (14 dígitos), portanto o tipo do transportador deve ser 2 (ETC) ou 3 (CTC), não 1 (TAC/Pessoa Física)');
+
+  // Regra: CPF (11 dígitos) → cadastro.tipo deve ser 1 (TAC)
+  if (isCpf && (tipo === 2 || tipo === 3))
+    e(errs, `${cp}.tipo`,
+      'O "cpfCnpj" informado é um CPF (11 dígitos), portanto o tipo do transportador deve ser 1 (TAC/Pessoa Física), não 2 (ETC) ou 3 (CTC)');
 
   if (tipo === 2 || tipo === 3) {
     reqStr(c, 'inscEstadual', cp, 1, 14, errs);
