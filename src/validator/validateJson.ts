@@ -67,6 +67,24 @@ function optStr(o: Obj, f: string, base: string, min: number, max: number, errs:
   if (typeof v !== 'string') { e(errs, p, 'Deve ser uma string'); return; }
   if (v.length < min || v.length > max) e(errs, p, `Deve ter entre ${min} e ${max} caractere(s) (possui ${v.length})`);
 }
+const ERR_NUMERO_END = 'Deve conter apenas caracteres numéricos. Caso o endereço não possua número, informe "0"';
+function reqNumeroEnd(o: Obj, f: string, base: string, min: number, max: number, errs: Errors): void {
+  const v = o[f]; const p = `${base}.${f}`;
+  if (v === undefined || v === null) { e(errs, p, 'Campo obrigatório não informado'); return; }
+  if (v === '') { e(errs, p, ERR_EMPTY_REQ); return; }
+  if (typeof v !== 'string') { e(errs, p, 'Deve ser uma string'); return; }
+  if (!isDigits(v)) { e(errs, p, ERR_NUMERO_END); return; }
+  if (v.length < min || v.length > max) e(errs, p, `Deve ter entre ${min} e ${max} caractere(s) (possui ${v.length})`);
+}
+function optNumeroEnd(o: Obj, f: string, base: string, min: number, max: number, errs: Errors): void {
+  const v = o[f];
+  if (v === undefined || v === null) return;
+  const p = `${base}.${f}`;
+  if (v === '') { e(errs, p, ERR_EMPTY); return; }
+  if (typeof v !== 'string') { e(errs, p, 'Deve ser uma string'); return; }
+  if (!isDigits(v)) { e(errs, p, ERR_NUMERO_END); return; }
+  if (v.length < min || v.length > max) e(errs, p, `Deve ter entre ${min} e ${max} caractere(s) (possui ${v.length})`);
+}
 function reqDigits(o: Obj, f: string, base: string, len: number, errs: Errors): void {
   const v = o[f]; const p = `${base}.${f}`;
   if (v === undefined || v === null) { e(errs, p, 'Campo obrigatório não informado'); return; }
@@ -161,7 +179,7 @@ function validateEnderecoMunicipio(raw: unknown, path: string, errs: Errors): vo
   reqDigits(raw, 'codigoMunicipio', path, 7, errs);
   reqStr(raw, 'bairro', path, 1, 255, errs);
   reqStr(raw, 'logradouro', path, 1, 255, errs);
-  reqStr(raw, 'numero', path, 1, 60, errs);
+  reqNumeroEnd(raw, 'numero', path, 1, 60, errs);
   reqDigits(raw, 'CEP', path, 8, errs);
   optStr(raw, 'complemento', path, 1, 255, errs);
   const lat = raw['latitude'], lon = raw['longitude'];
@@ -185,7 +203,7 @@ function validateEnderecoCidade(raw: unknown, path: string, errs: Errors): void 
   reqStr(raw, 'cidade', path, 1, 100, errs);
   reqStr(raw, 'bairro', path, 1, 255, errs);
   reqStr(raw, 'logradouro', path, 1, 255, errs);
-  optStr(raw, 'numero', path, 1, 8, errs);
+  optNumeroEnd(raw, 'numero', path, 1, 8, errs);
   const cep = raw['CEP'];
   if (cep !== undefined && cep !== null) {
     if (cep === '') e(errs, `${path}.CEP`, ERR_EMPTY);
@@ -381,7 +399,7 @@ function validateTransp(raw: unknown, errs: Errors): void {
   else {
     validateEnderecoCidade(c['endereco'], `${cp}.endereco`, errs);
     const end = c['endereco'] as Obj;
-    reqStr(end, 'numero', `${cp}.endereco`, 1, 8, errs);
+    reqNumeroEnd(end, 'numero', `${cp}.endereco`, 1, 8, errs);
     if (end['CEP'] === undefined || end['CEP'] === null)
       e(errs, `${cp}.endereco.CEP`, 'Campo obrigatório não informado');
   }
@@ -600,9 +618,7 @@ function validateCiotFrotaPropria(raw: unknown, errs: Errors): void {
   if (isObj(raw['endereco'])) {
     const end = raw['endereco'] as Obj; const ep = `${path}.endereco`;
     reqStr(end, 'logradouro', ep, 1, 255, errs);
-    const numEnd = end['numero'];
-    if (numEnd === undefined || numEnd === null) e(errs, `${ep}.numero`, 'Campo obrigatório não informado');
-    else if (numEnd === '') e(errs, `${ep}.numero`, ERR_EMPTY_REQ);
+    reqNumeroEnd(end, 'numero', ep, 1, 10, errs);
     reqStr(end, 'bairro', ep, 1, 255, errs);
     reqStr(end, 'cidade', ep, 1, 100, errs);
     const uf = end['uf'] ?? end['UF'];
