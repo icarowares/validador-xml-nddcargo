@@ -584,7 +584,7 @@ function validateValores(raw: unknown, errs: Errors): void {
 
   if (isObj(raw['dadosBancarios'])) {
     const db = raw['dadosBancarios'] as Obj; const dbp = `${path}.dadosBancarios`;
-    reqNum(db, 'tipoPagamento', dbp, [1, 2], errs, D_TIPO_PAGAMENTO);
+    optNum(db, 'tipoPagamento', dbp, [1, 2], errs, D_TIPO_PAGAMENTO);
     optStr(db, 'codigoInstituicaoFinanceira', dbp, 1, 10, errs);
     optStr(db, 'numeroAgencia', dbp, 1, 10, errs);
     optStr(db, 'digitoConta', dbp, 1, 5, errs);
@@ -664,6 +664,18 @@ function validateSingleOT(payload: Obj, errs: Errors): void {
       e(errs, 'condutores',
         `Condutores só podem ser informados quando gerPgtoFin = 1 (Módulo Financeiro NDD) ou 6 (Gestora de Cartão). ` +
         `Valor informado: "${gerPgto ?? 'não informado'}"`);
+  }
+
+  // Regra: tipoPagamento em dadosBancarios deve ser omitido quando gerPgtoFin = 2, 3, 4 ou 5
+  if (isObj(payload['ide']) && isObj(payload['valores'])) {
+    const gpf = (payload['ide'] as Obj)['gerPgtoFin'];
+    const valores = payload['valores'] as Obj;
+    if (isObj(valores['dadosBancarios'])) {
+      const db = valores['dadosBancarios'] as Obj;
+      if ([2, 3, 4, 5].includes(gpf as number) && db['tipoPagamento'] !== undefined && db['tipoPagamento'] !== null)
+        e(errs, 'valores.dadosBancarios.tipoPagamento',
+          `"tipoPagamento" não deve ser informado quando gerPgtoFin=${gpf} — o pagamento é gerenciado externamente ao NDD Cargo`);
+    }
   }
 
   // Regra: transportador deve ser Pessoa Física (CPF) em TACagregado

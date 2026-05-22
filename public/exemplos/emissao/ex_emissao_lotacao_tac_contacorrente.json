@@ -79,7 +79,6 @@
     "vlrFrete": 3200.0,
     "tipoRateio": 1,
     "dadosBancarios": {
-      "tipoPagamento": 2,
       "codigoInstituicaoFinanceira": "0341",
       "numeroAgencia": "1234",
       "numeroConta": "567890",

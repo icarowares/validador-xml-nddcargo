@@ -97,7 +97,6 @@
     "vlrFrete": 4500.0,
     "tipoRateio": 1,
     "dadosBancarios": {
-      "tipoPagamento": 2,
       "codigoInstituicaoFinanceira": "0033",
       "numeroAgencia": "4321",
       "numeroConta": "987654",
