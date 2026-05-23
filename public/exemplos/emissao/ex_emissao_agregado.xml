@@ -16,7 +16,7 @@
           <numero>4282</numero>
           <serie>42</serie>
           <ptEmissor>00000000000000</ptEmissor>
-          <dtFim>2020-06-01</dtFim>
+          <dtFim>2025-09-05</dtFim>
         </ide>
         <carga>
           <TACagregado>
@@ -110,7 +110,7 @@
             </veiculo>
           </veiculos>
           <valores>
-            <vlrFrete>440.00</vlrFrete>
+            <vlrFrete>6071.00</vlrFrete>
             <parcelamento>
               <informacoes>
                 <parcelas>

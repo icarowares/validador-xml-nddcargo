@@ -16,7 +16,7 @@
           <serie>42</serie>
           <ptEmissor>00000000000000</ptEmissor>
           <dtInicio>2025-08-29</dtInicio>
-          <dtFim>2020-06-01</dtFim>
+          <dtFim>2025-09-05</dtFim>
         </ide>
         <carga>
           <!-- alterado de "Padrão" para "Lotação" -->
@@ -133,7 +133,7 @@
             </veiculo>
           </veiculos>
           <valores>
-            <vlrFrete>440.00</vlrFrete>
+            <vlrFrete>6071.00</vlrFrete>
             <parcelamento>
               <informacoes>
                 <parcelas>
