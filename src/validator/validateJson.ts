@@ -167,15 +167,27 @@ function optTel(o: Obj, f: string, base: string, errs: Errors): void {
   if (!isTel(v)) e(errs, p, `Deve ter 10 ou 11 dígitos numéricos (recebido: "${v}")`);
 }
 
+// ─── UF válidas ───────────────────────────────────────────────────────────────
+
+const UFS_BR = new Set([
+  'AC','AL','AM','AP','BA','CE','DF','ES','GO',
+  'MA','MG','MS','MT','PA','PB','PE','PI','PR',
+  'RJ','RN','RO','RR','RS','SC','SE','SP','TO',
+]);
+
+function valUF(uf: unknown, path: string, errs: Errors): void {
+  if (uf === undefined || uf === null) { e(errs, path, 'Campo obrigatório não informado'); return; }
+  if (uf === '') { e(errs, path, ERR_EMPTY_REQ); return; }
+  if (typeof uf !== 'string' || !UFS_BR.has(uf))
+    e(errs, path, `UF inválida: "${uf}". Informe a sigla de um estado brasileiro válido (ex: SP, RJ, MG)`);
+}
+
 // ─── Address helpers ──────────────────────────────────────────────────────────
 
 // Endereço com codigoMunicipio + CEP (remetente/destinatário)
 function validateEnderecoMunicipio(raw: unknown, path: string, errs: Errors): void {
   if (!isObj(raw)) { e(errs, path, 'Deve ser um objeto'); return; }
-  const uf = raw['UF'];
-  if (uf === undefined || uf === null) e(errs, `${path}.UF`, 'Campo obrigatório não informado');
-  else if (uf === '') e(errs, `${path}.UF`, ERR_EMPTY_REQ);
-  else if (typeof uf !== 'string' || uf.length !== 2) e(errs, `${path}.UF`, `Deve ter exatamente 2 caracteres`);
+  valUF(raw['UF'], `${path}.UF`, errs);
   reqDigits(raw, 'codigoMunicipio', path, 7, errs);
   reqStr(raw, 'bairro', path, 1, 255, errs);
   reqStr(raw, 'logradouro', path, 1, 255, errs);
@@ -196,10 +208,7 @@ function validateEnderecoMunicipio(raw: unknown, path: string, errs: Errors): vo
 // Endereço com cidade (transportador/condutor/sócio)
 function validateEnderecoCidade(raw: unknown, path: string, errs: Errors): void {
   if (!isObj(raw)) { e(errs, path, 'Deve ser um objeto'); return; }
-  const uf = raw['UF'];
-  if (uf === undefined || uf === null) e(errs, `${path}.UF`, 'Campo obrigatório não informado');
-  else if (uf === '') e(errs, `${path}.UF`, ERR_EMPTY_REQ);
-  else if (typeof uf !== 'string' || uf.length !== 2) e(errs, `${path}.UF`, `Deve ter exatamente 2 caracteres`);
+  valUF(raw['UF'], `${path}.UF`, errs);
   reqStr(raw, 'cidade', path, 1, 100, errs);
   reqStr(raw, 'bairro', path, 1, 255, errs);
   reqStr(raw, 'logradouro', path, 1, 255, errs);
@@ -405,6 +414,8 @@ function validateTransp(raw: unknown, errs: Errors): void {
   }
 
   if (tipo === 1) {
+    if (c['dadosPJ'] !== undefined && c['dadosPJ'] !== null)
+      e(errs, `${cp}.dadosPJ`, 'Proibido para transportador TAC (tipo=1) — informe apenas dadosPF');
     if (!isObj(c['dadosPF'])) {
       e(errs, `${cp}.dadosPF`, 'Obrigatório para transportador TAC (tipo=1)');
     } else {
@@ -418,6 +429,8 @@ function validateTransp(raw: unknown, errs: Errors): void {
   }
 
   if (tipo === 2 || tipo === 3) {
+    if (c['dadosPF'] !== undefined && c['dadosPF'] !== null)
+      e(errs, `${cp}.dadosPF`, 'Proibido para transportador ETC/CTC (tipo=2 ou 3) — informe apenas dadosPJ');
     const pj = c['dadosPJ'];
     if (!Array.isArray(pj) || pj.length === 0) {
       e(errs, `${cp}.dadosPJ`, 'Obrigatório para transportador ETC/CTC (tipo=2 ou 3)');
@@ -513,6 +526,10 @@ function validateValores(raw: unknown, errs: Errors): void {
   const vlrFrete = raw['vlrFrete'];
   if (vlrFrete === undefined || vlrFrete === null) e(errs, `${path}.vlrFrete`, 'Campo obrigatório não informado');
   else if (!isNum(vlrFrete) || (vlrFrete as number) <= 0) e(errs, `${path}.vlrFrete`, 'Deve ser um número maior que zero');
+  else {
+    const frac = String(vlrFrete).split('.')[1];
+    if (frac && frac.length > 2) e(errs, `${path}.vlrFrete`, `Máximo de 2 casas decimais permitidas (recebido: "${vlrFrete}")`);
+  }
 
   optDecimal(raw, 'vlrCombustivel', path, errs);
   optDecimal(raw, 'vlrPedagio', path, errs);
@@ -618,10 +635,7 @@ function validateCiotFrotaPropria(raw: unknown, errs: Errors): void {
     reqNumeroEnd(end, 'numero', ep, 1, 10, errs);
     reqStr(end, 'bairro', ep, 1, 255, errs);
     reqStr(end, 'cidade', ep, 1, 100, errs);
-    const uf = end['uf'] ?? end['UF'];
-    if (uf === undefined || uf === null) e(errs, `${ep}.uf`, 'Campo obrigatório não informado');
-    else if (uf === '') e(errs, `${ep}.uf`, ERR_EMPTY_REQ);
-    else if (typeof uf !== 'string' || uf.length !== 2) e(errs, `${ep}.uf`, 'Deve ter exatamente 2 caracteres');
+    valUF(end['uf'] ?? end['UF'], `${ep}.uf`, errs);
   }
 }
 
