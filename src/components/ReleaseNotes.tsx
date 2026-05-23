@@ -47,6 +47,7 @@ const RELEASES: Release[] = [
       { type: 'feat', text: 'Validação JSON: dadosPF e dadosPJ são mutuamente exclusivos — tipo=1 exige dadosPF e proíbe dadosPJ; tipo=2/3 exige dadosPJ e proíbe dadosPF' },
       { type: 'feat', text: 'Validação JSON: vlrFrete aceita no máximo 2 casas decimais' },
       { type: 'feat', text: 'Validação JSON: campo UF de todos os endereços agora validado contra a lista de estados brasileiros' },
+      { type: 'feat', text: 'Validação JSON: campos de e-mail validados quanto ao formato (transp.cadastro.email e sócios)' },
       { type: 'fix', text: 'Validação JSON agora detecta payloads em lote (loteOT) e exibe mensagem clara orientando o envio de uma única OT por vez' },
       { type: 'fix', text: 'Campos string opcionais deixados em branco ("") agora são rejeitados com mensagem orientativa — use null ou omita o campo' },
       { type: 'feat', text: 'Campos carga e carga.remetente agora obrigatórios para todos os tipos de operação (incluindo TAC-Agregado)' },

@@ -33,6 +33,9 @@ function isObj(v: unknown): v is Obj {
 function isDigits(v: unknown): boolean {
   return typeof v === 'string' && /^\d+$/.test(v);
 }
+function isEmail(v: unknown): boolean {
+  return typeof v === 'string' && /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(v);
+}
 function isDate(v: unknown): boolean {
   return typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v);
 }
@@ -165,6 +168,13 @@ function optTel(o: Obj, f: string, base: string, errs: Errors): void {
   const p = `${base}.${f}`;
   if (v === '') { e(errs, p, ERR_EMPTY); return; }
   if (!isTel(v)) e(errs, p, `Deve ter 10 ou 11 dígitos numéricos (recebido: "${v}")`);
+}
+function optEmail(o: Obj, f: string, base: string, errs: Errors): void {
+  const v = o[f];
+  if (v === undefined || v === null) return;
+  const p = `${base}.${f}`;
+  if (v === '') { e(errs, p, ERR_EMPTY); return; }
+  if (!isEmail(v)) e(errs, p, `Endereço de e-mail inválido: "${v}"`);
 }
 
 // ─── UF válidas ───────────────────────────────────────────────────────────────
@@ -367,7 +377,7 @@ function validateTransp(raw: unknown, errs: Errors): void {
 
   reqStr(c, 'nomeRazao', cp, 1, 150, errs);
   reqTel(c, 'telefone', cp, errs);
-  optStr(c, 'email', cp, 1, 255, errs);
+  optEmail(c, 'email', cp, errs);
   reqNum(c, 'tipo', cp, [1, 2, 3], errs, D_TIPO_TRANSP);
   const tipo = isNum(c['tipo']) ? (c['tipo'] as number) : null;
 
@@ -445,7 +455,7 @@ function validateTransp(raw: unknown, errs: Errors): void {
         optStr(socio, 'nomePai', sp, 1, 150, errs);
         reqDate(socio, 'dataNascimento', sp, errs);
         reqTel(socio, 'telefone', sp, errs);
-        optStr(socio, 'email', sp, 1, 255, errs);
+        optEmail(socio, 'email', sp, errs);
         if (!isObj(socio['endereco'])) e(errs, `${sp}.endereco`, 'Campo obrigatório não informado');
         else validateEnderecoCidade(socio['endereco'], `${sp}.endereco`, errs);
       });
