@@ -13,6 +13,7 @@ function isDecimal(v: string): boolean { return /^\d+(\.\d+)?$/.test(v); }
 function isBit(v: string): boolean { return v === '0' || v === '1'; }
 function isCpfCnpj(v: string): boolean { return /^\d{11}$/.test(v) || /^\d{14}$/.test(v); }
 function isTel(v: string): boolean { return /^\d{10,11}$/.test(v); }
+function isEmailFmt(v: string): boolean { return /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(v); }
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 
@@ -453,7 +454,7 @@ function val4010(line: ParsedLine): ValidationError[] {
   if (!tel || tel.trim() === '') ctx.err('telefoneCelular é obrigatório', 'telefoneCelular');
   else reqTel(tel.trim(), 'telefoneCelular', ctx);
 
-  optField(email, v => reqLen(v, 1, 100, 'email', ctx));
+  optField(email, v => { reqLen(v, 1, 100, 'email', ctx); if (v.length > 0 && !isEmailFmt(v)) ctx.err(`"${v}" não está em formato de e-mail válido`, 'email'); });
   optField(idCartao, v => reqLen(v, 1, 20, 'idCartao', ctx));
 
   return ctx.errors;
@@ -505,7 +506,7 @@ function val4020(line: ParsedLine): ValidationError[] {
   if (!dtConst || dtConst.trim() === '') ctx.err('dataConstituicao é obrigatória', 'dataConstituicao');
   else reqDate(dtConst.trim(), 'dataConstituicao', ctx);
 
-  optField(email, v => reqLen(v, 1, 255, 'emailTransportador', ctx));
+  optField(email, v => { reqLen(v, 1, 255, 'emailTransportador', ctx); if (v.length > 0 && !isEmailFmt(v)) ctx.err(`"${v}" não está em formato de e-mail válido`, 'emailTransportador'); });
 
   if (!tel || tel.trim() === '') ctx.err('telefoneTransportador é obrigatório', 'telefoneTransportador');
   else reqTel(tel.trim(), 'telefoneTransportador', ctx);
@@ -538,7 +539,7 @@ function val4021(line: ParsedLine): ValidationError[] {
   if (!dtNasc || dtNasc.trim() === '') ctx.err('dataNascimento é obrigatória', 'dataNascimento');
   else reqDate(dtNasc.trim(), 'dataNascimento', ctx);
 
-  optField(email, v => reqLen(v, 1, 255, 'emailSocio', ctx));
+  optField(email, v => { reqLen(v, 1, 255, 'emailSocio', ctx); if (v.length > 0 && !isEmailFmt(v)) ctx.err(`"${v}" não está em formato de e-mail válido`, 'emailSocio'); });
 
   if (!tel || tel.trim() === '') ctx.err('telefoneSocio é obrigatório', 'telefoneSocio');
   else reqTel(tel.trim(), 'telefoneSocio', ctx);
@@ -653,7 +654,18 @@ function val4210(line: ParsedLine): ValidationError[] {
   else reqExact(rntrc.trim(), 9, 'RNTRCTransportador', ctx);
 
   if (!qtdEixos || qtdEixos.trim() === '') ctx.err('qtdEixos é obrigatório', 'qtdEixos');
-  else reqLen(qtdEixos.trim(), 1, 4, 'qtdEixos', ctx);
+  else {
+    reqLen(qtdEixos.trim(), 1, 4, 'qtdEixos', ctx);
+    // RN-21: eixos válidos por tipo de veículo
+    const tipoN  = parseInt(tipo?.trim()     ?? '', 10);
+    const eixosN = parseInt(qtdEixos.trim(), 10);
+    if (!isNaN(tipoN) && !isNaN(eixosN)) {
+      if (tipoN === 1 && ![2, 3, 4].includes(eixosN))
+        ctx.err(`[RN-21] Veículo de tração (tipo=1) deve ter 2, 3 ou 4 eixos (informado: ${eixosN})`, 'qtdEixos');
+      else if (tipoN === 2 && ![1, 2, 3, 4].includes(eixosN))
+        ctx.err(`[RN-21] Reboque (tipo=2) deve ter entre 1 e 4 eixos (informado: ${eixosN})`, 'qtdEixos');
+    }
+  }
 
   return ctx.errors;
 }
@@ -816,7 +828,10 @@ function val4620(line: ParsedLine): ValidationError[] {
   else reqLen(nome.trim(), 1, 50, 'nome', ctx);
 
   if (!email || email.trim() === '') ctx.err('email é obrigatório', 'email');
-  else reqLen(email.trim(), 1, 255, 'email', ctx);
+  else {
+    reqLen(email.trim(), 1, 255, 'email', ctx);
+    if (!isEmailFmt(email.trim())) ctx.err(`"${email.trim()}" não está em formato de e-mail válido`, 'email');
+  }
 
   return ctx.errors;
 }

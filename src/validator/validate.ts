@@ -112,6 +112,11 @@ function valTelefone(value: string, path: string, ctx: Ctx) {
     ctx.err(path, `Telefone inválido: "${value}". Deve conter 10 ou 11 dígitos numéricos`);
 }
 
+function valEmail(value: string, path: string, ctx: Ctx) {
+  if (value && !/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(value))
+    ctx.err(path, `Endereço de e-mail inválido: "${value}"`);
+}
+
 function valEnum(value: string, allowed: number[], path: string, ctx: Ctx) {
   const num = parseInt(value, 10);
   if (!allowed.includes(num))
@@ -689,7 +694,7 @@ function validateValores(el: Element, path: string, ctx: Ctx) {
     if (tipoChave) valEnum(txt(tipoChave), [1, 2, 3, 4, 5], `${dbp}.tipoChave`, ctx);
 
     const tipoPgto = child(db, 'tipoPagamento');
-    if (tipoPgto) valEnum(txt(tipoPgto), [2], `${dbp}.tipoPagamento`, ctx);
+    if (tipoPgto) valEnum(txt(tipoPgto), [1, 2], `${dbp}.tipoPagamento`, ctx);
   }
 
 }
@@ -780,7 +785,10 @@ function validateInfTransportador(el: Element, path: string, ctx: Ctx) {
   if (cartao) valStrLen(txt(cartao), 1, 15, `${path}.cartaoId`, ctx);
 
   const email = child(el, 'email');
-  if (email) valStrLen(txt(email), 1, 255, `${path}.email`, ctx);
+  if (email) {
+    valStrLen(txt(email), 1, 255, `${path}.email`, ctx);
+    valEmail(txt(email), `${path}.email`, ctx);
+  }
 }
 
 function validateTransp(el: Element, path: string, ctx: Ctx) {

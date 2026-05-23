@@ -183,9 +183,12 @@ export function applyBusinessRules(doc: Document): ValidationError[] {
       }
     }
 
-    // ── RN-32 ─────────────────────────────────────────────────────────────────
-    if (txt(child(dbEl, 'tipoPagamento')) === '1')
-      err(`${dbp}.tipoPagamento`, '[RN-32] Pagamento via TED (tipoPagamento=1) está descontinuado. Utilize PIX (tipoPagamento=2)');
+    // RN-32 removida — TED (tipoPagamento=1) volta a ser aceito
+
+    // tipoPagamento não deve ser informado quando gerPgtoFin ∈ {2,3,4,5}
+    if ([2, 3, 4, 5].includes(gpf) && dbEl && child(dbEl, 'tipoPagamento'))
+      err(`${dbp}.tipoPagamento`,
+        `"tipoPagamento" não deve ser informado quando gerPgtoFin=${gpf} — o pagamento é gerenciado externamente ao NDD Cargo`);
 
     // ── RN-35 ─────────────────────────────────────────────────────────────────
     if (valEl && parcelaList.length > 0) {

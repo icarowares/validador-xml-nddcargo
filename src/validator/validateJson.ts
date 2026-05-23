@@ -36,6 +36,33 @@ function isDigits(v: unknown): boolean {
 function isEmail(v: unknown): boolean {
   return typeof v === 'string' && /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(v);
 }
+
+// ─── CPF / CNPJ com dígito verificador ────────────────────────────────────────
+
+function validCPF(cpf: string): boolean {
+  if (!/^\d{11}$/.test(cpf) || /^(.)\1{10}$/.test(cpf)) return false;
+  const calc = (len: number) => {
+    let s = 0;
+    for (let i = 0; i < len; i++) s += +cpf[i] * (len + 1 - i);
+    const r = (s * 10) % 11;
+    return r >= 10 ? 0 : r;
+  };
+  return calc(9) === +cpf[9] && calc(10) === +cpf[10];
+}
+
+function validCNPJ(cnpj: string): boolean {
+  if (!/^\d{14}$/.test(cnpj) || /^(.)\1{13}$/.test(cnpj)) return false;
+  const calc = (len: number) => {
+    const w = len === 12
+      ? [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+      : [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    let s = 0;
+    for (let i = 0; i < len; i++) s += +cnpj[i] * w[i];
+    const r = s % 11;
+    return r < 2 ? 0 : 11 - r;
+  };
+  return calc(12) === +cnpj[12] && calc(13) === +cnpj[13];
+}
 function isDate(v: unknown): boolean {
   return typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v);
 }
@@ -320,8 +347,17 @@ function validateCarga(raw: unknown, tipo: number | null, errs: Errors): void {
     } else {
       frac.forEach((item, i) => {
         const fp = `${path}.ContratantesCargaFrac[${i}]`;
-        const cpf = isObj(item) ? item['cpfCnpj'] : item;
-        if (!isCpfCnpj(cpf)) e(errs, fp, `Deve ter 11 (CPF) ou 14 (CNPJ) dígitos`);
+        const cpfCnpj = isObj(item) ? item['cpfCnpj'] : item;
+        if (!isCpfCnpj(cpfCnpj)) {
+          e(errs, fp, `Deve ter 11 (CPF) ou 14 (CNPJ) dígitos`);
+        } else {
+          const s = String(cpfCnpj);
+          // RN-43: dígito verificador
+          if (s.length === 11 && !validCPF(s))
+            e(errs, fp, `[RN-43] CPF "${s}" possui dígito verificador inválido`);
+          else if (s.length === 14 && !validCNPJ(s))
+            e(errs, fp, `[RN-43] CNPJ "${s}" possui dígito verificador inválido`);
+        }
       });
     }
   }
@@ -520,6 +556,13 @@ function validateVeiculos(raw: unknown, errs: Errors): void {
       if (tipo === undefined || tipo === null) e(errs, `${cp}.tipo`, 'Campo obrigatório não informado');
       else if (!isNum(tipo) || ![1, 2].includes(tipo as number)) e(errs, `${cp}.tipo`, `Deve ser 1 (Tração) ou 2 (Reboque) (recebido: "${tipo}")`);
       if (isNum(tipo) && tipo === 1) automotorCount++;
+      // RN-21: eixos válidos por tipo de veículo
+      if (isNum(tipo) && isNum(eixos)) {
+        if ((tipo as number) === 1 && ![2, 3, 4].includes(eixos as number))
+          e(errs, `${vp}.eixos`, `[RN-21] Veículo de tração (tipo=1) deve ter 2, 3 ou 4 eixos (informado: ${eixos})`);
+        else if ((tipo as number) === 2 && ![1, 2, 3, 4].includes(eixos as number))
+          e(errs, `${vp}.eixos`, `[RN-21] Reboque (tipo=2) deve ter entre 1 e 4 eixos (informado: ${eixos})`);
+      }
       optDecimal(c, 'kmLitroModelo', cp, errs);
       optDecimal(c, 'kmLitroVeiculo', cp, errs);
     }
@@ -605,6 +648,18 @@ function validateValores(raw: unknown, errs: Errors): void {
             });
           }
         });
+        // RN-35: soma dos valorAplicado deve igualar vlrFrete
+        const vf = raw['vlrFrete'];
+        if (isNum(vf) && (vf as number) > 0) {
+          const soma = parcelas.reduce((s: number, parc: unknown) => {
+            if (!isObj(parc)) return s;
+            const v = (parc as Obj)['valorAplicado'];
+            return isNum(v) ? s + (v as number) : s;
+          }, 0);
+          if (Math.abs(soma - (vf as number)) > 0.005)
+            e(errs, `${path}.parcelamento`,
+              `[RN-35] Soma dos valorAplicado (${soma.toFixed(2)}) difere do vlrFrete (${(vf as number).toFixed(2)})`);
+        }
       }
     }
   }
@@ -764,6 +819,57 @@ function validateSingleOT(payload: Obj, errs: Errors): void {
       if ([2, 3, 4, 5].includes(gpf as number) && db['tipoPagamento'] !== undefined && db['tipoPagamento'] !== null)
         e(errs, 'valores.dadosBancarios.tipoPagamento',
           `"tipoPagamento" não deve ser informado quando gerPgtoFin=${gpf} — o pagamento é gerenciado externamente ao NDD Cargo`);
+    }
+  }
+
+  // RN-42: cpfCnpj de ContratantesCargaFrac não pode ser igual ao CNPJ da contratante principal
+  if (isObj(payload['ide']) && isObj(payload['carga'])) {
+    const ideCnpj = (payload['ide'] as Obj)['cnpj'];
+    const frac = (payload['carga'] as Obj)['ContratantesCargaFrac'];
+    if (typeof ideCnpj === 'string' && Array.isArray(frac)) {
+      frac.forEach((item, i) => {
+        const cpfCnpj = isObj(item) ? item['cpfCnpj'] : item;
+        if (cpfCnpj === ideCnpj)
+          e(errs, `carga.ContratantesCargaFrac[${i}]`,
+            `[RN-42] cpfCnpj "${ideCnpj}" não pode ser igual ao CNPJ da contratante principal (ide.cnpj)`);
+      });
+    }
+  }
+
+  // RN-30: chavePix e tipoChave — regras cruzadas com gerPgtoFin=6
+  if (isObj(payload['ide']) && isObj(payload['valores'])) {
+    const gpf30 = (payload['ide'] as Obj)['gerPgtoFin'];
+    const db30  = ((payload['valores'] as Obj)['dadosBancarios']);
+    if (isObj(db30)) {
+      const tipoChave = (db30 as Obj)['tipoChave'];
+      const chavePix  = (db30 as Obj)['chavepix'];
+      if (gpf30 === 6) {
+        if (isNum(tipoChave) && (tipoChave as number) === 5 && chavePix !== undefined && chavePix !== null)
+          e(errs, 'valores.dadosBancarios.chavepix',
+            '[RN-30] "chavepix" não deve ser informado quando tipoChave=5 (dados bancários)');
+        else if ((!isNum(tipoChave) || (tipoChave as number) !== 5) && (chavePix === undefined || chavePix === null))
+          e(errs, 'valores.dadosBancarios.chavepix',
+            '[RN-30] "chavepix" é obrigatória quando gerPgtoFin=6 e tipoChave ≠ 5');
+      }
+      if (gpf30 !== 6 && tipoChave !== undefined && tipoChave !== null)
+        e(errs, 'valores.dadosBancarios.tipoChave',
+          '[RN-30] "tipoChave" só deve ser informado quando gerPgtoFin=6');
+    }
+  }
+
+  // RN-31: dados bancários obrigatórios quando gerPgtoFin ∈ {2,3,4} ou tipoChave=5
+  if (isObj(payload['ide']) && isObj(payload['valores'])) {
+    const gpf31 = (payload['ide'] as Obj)['gerPgtoFin'];
+    const db31  = ((payload['valores'] as Obj)['dadosBancarios']);
+    if (isObj(db31)) {
+      const tipoChave = (db31 as Obj)['tipoChave'];
+      if ([2, 3, 4].includes(gpf31 as number) || (isNum(tipoChave) && (tipoChave as number) === 5)) {
+        for (const f of ['codigoInstituicaoFinanceira', 'numeroAgencia', 'cpfCnpjFavorecido']) {
+          if ((db31 as Obj)[f] === undefined || (db31 as Obj)[f] === null)
+            e(errs, `valores.dadosBancarios.${f}`,
+              `[RN-31] "${f}" é obrigatório quando gerPgtoFin ∈ {2,3,4} ou tipoChave=5`);
+        }
+      }
     }
   }
 

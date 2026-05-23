@@ -12,6 +12,20 @@ interface Release {
 
 const RELEASES: Release[] = [
   {
+    date: '23 mai 2026',
+    entries: [
+      { type: 'feat', text: 'RN-42 (JSON Emissão) — cpfCnpj de ContratantesCargaFrac não pode ser igual ao CNPJ da contratante principal (ide.cnpj)' },
+      { type: 'feat', text: 'RN-43 (JSON Emissão) — CPF e CNPJ dos contratantes fracionados passam a ter dígito verificador validado' },
+      { type: 'feat', text: 'RN-21 (JSON e TXT Emissão) — eixos validados por tipo: tração (tipo=1) deve ter 2–4 eixos; reboque (tipo=2) deve ter 1–4 eixos' },
+      { type: 'feat', text: 'RN-35 (JSON Emissão) — soma dos valorAplicado das parcelas deve ser igual ao vlrFrete' },
+      { type: 'feat', text: 'RN-30 (JSON Emissão) — regra de chavePix × tipoChave cruzada com gerPgtoFin=6: chavePix obrigatória quando tipoChave ≠ 5, proibida quando tipoChave=5; tipoChave só permitido quando gerPgtoFin=6' },
+      { type: 'feat', text: 'RN-31 (JSON Emissão) — codigoInstituicaoFinanceira, numeroAgencia e cpfCnpjFavorecido obrigatórios quando gerPgtoFin ∈ {2,3,4} ou tipoChave=5' },
+      { type: 'feat', text: 'XML Emissão — tipoPagamento proibido em dadosBancarios quando gerPgtoFin ∈ {2,3,4,5}' },
+      { type: 'feat', text: 'Email em formato válido validado em XML (infTransportador.email) e em todos os campos de e-mail do TXT (registros 4010, 4020, 4021 e 4620)' },
+      { type: 'fix',  text: 'RN-32 removida — TED (tipoPagamento=1) volta a ser aceito no XML; apenas PIX (2) era aceito anteriormente' },
+    ],
+  },
+  {
     date: '22 mai 2026',
     entries: [
       { type: 'fix', text: 'TXT Emissão — registro 4200 corrigido: qtdEixos removido (campo movido para o registro 4210); 4200 agora contém apenas placa (f[1])' },
