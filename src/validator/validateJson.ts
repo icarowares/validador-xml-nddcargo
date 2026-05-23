@@ -625,6 +625,70 @@ function validateCiotFrotaPropria(raw: unknown, errs: Errors): void {
   }
 }
 
+function validateRota(raw: unknown, errs: Errors): void {
+  if (raw === undefined || raw === null) return;
+  const path = 'rota';
+  if (!isObj(raw)) { e(errs, path, 'Deve ser um objeto'); return; }
+
+  const municipios = raw['municipios'];
+  const ceps       = raw['ceps'];
+  const latLong    = raw['latLong'];
+
+  const informed = [municipios, ceps, latLong].filter(v => v !== undefined && v !== null);
+  if (informed.length === 0) {
+    e(errs, path, 'Deve informar exatamente um dos arrays: "municipios", "ceps" ou "latLong"');
+    return;
+  }
+  if (informed.length > 1)
+    e(errs, path, 'Apenas um dos arrays deve ser informado: "municipios", "ceps" ou "latLong"');
+
+  // municipios
+  if (municipios !== undefined && municipios !== null) {
+    if (!Array.isArray(municipios) || municipios.length < 2) {
+      e(errs, `${path}.municipios`, 'Deve ser um array com pelo menos 2 itens (par origem–destino)');
+    } else {
+      municipios.forEach((m, i) => {
+        const mp = `${path}.municipios[${i}]`;
+        if (!isObj(m)) { e(errs, mp, 'Deve ser um objeto'); return; }
+        const cod = m['codigoIbge'];
+        if (cod === undefined || cod === null) e(errs, `${mp}.codigoIbge`, 'Campo obrigatório não informado');
+        else if (!isNum(cod) || !Number.isInteger(cod as number) || String(cod).length !== 7)
+          e(errs, `${mp}.codigoIbge`, `Deve ser um número inteiro de 7 dígitos (recebido: "${cod}")`);
+      });
+    }
+  }
+
+  // ceps
+  if (ceps !== undefined && ceps !== null) {
+    if (!Array.isArray(ceps) || ceps.length < 2) {
+      e(errs, `${path}.ceps`, 'Deve ser um array com pelo menos 2 itens (par origem–destino)');
+    } else {
+      ceps.forEach((c, i) => {
+        const cp = `${path}.ceps[${i}]`;
+        if (!isObj(c)) { e(errs, cp, 'Deve ser um objeto'); return; }
+        reqDigits(c, 'cep', cp, 8, errs);
+      });
+    }
+  }
+
+  // latLong
+  if (latLong !== undefined && latLong !== null) {
+    if (!Array.isArray(latLong) || latLong.length < 2) {
+      e(errs, `${path}.latLong`, 'Deve ser um array com pelo menos 2 itens (par origem–destino)');
+    } else {
+      latLong.forEach((ll, i) => {
+        const lp = `${path}.latLong[${i}]`;
+        if (!isObj(ll)) { e(errs, lp, 'Deve ser um objeto'); return; }
+        const lat = ll['latitude'], lon = ll['longitude'];
+        if (lat === undefined || lat === null) e(errs, `${lp}.latitude`, 'Campo obrigatório não informado');
+        else if (!isNum(lat)) e(errs, `${lp}.latitude`, 'Deve ser um número (Float)');
+        if (lon === undefined || lon === null) e(errs, `${lp}.longitude`, 'Campo obrigatório não informado');
+        else if (!isNum(lon)) e(errs, `${lp}.longitude`, 'Deve ser um número (Float)');
+      });
+    }
+  }
+}
+
 // ─── Single OT ────────────────────────────────────────────────────────────────
 
 function validateSingleOT(payload: Obj, errs: Errors): void {
@@ -636,6 +700,7 @@ function validateSingleOT(payload: Obj, errs: Errors): void {
   validateValores(payload['valores'], errs);
   validateAdicionais(payload['adicionais'], errs);
   validateCiotFrotaPropria(payload['ciotFrotaPropria'], errs);
+  validateRota(payload['rota'], errs);
 
   // ── Regras cruzadas ──────────────────────────────────────────────────────
 
