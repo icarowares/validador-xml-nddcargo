@@ -556,6 +556,11 @@ function validateVeiculos(raw: unknown, errs: Errors): void {
       if (tipo === undefined || tipo === null) e(errs, `${cp}.tipo`, 'Campo obrigatório não informado');
       else if (!isNum(tipo) || ![1, 2].includes(tipo as number)) e(errs, `${cp}.tipo`, `Deve ser 1 (Tração) ou 2 (Reboque) (recebido: "${tipo}")`);
       if (isNum(tipo) && tipo === 1) automotorCount++;
+      // Regra: 999999999 é placeholder para reboque sem RNTRC — proibido para tração
+      if (isNum(tipo) && (tipo as number) === 1 && veic['RNTRCTransportador'] === '999999999')
+        e(errs, `${vp}.RNTRCTransportador`,
+          'O valor "999999999" é reservado exclusivamente para reboques (tipo=2) sem RNTRC. ' +
+          'Veículos de tração (tipo=1) devem informar um RNTRC válido');
       // RN-21: eixos válidos por tipo de veículo
       if (isNum(tipo) && isNum(eixos)) {
         if ((tipo as number) === 1 && ![2, 3, 4].includes(eixos as number))
