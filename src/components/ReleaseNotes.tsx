@@ -23,6 +23,7 @@ const RELEASES: Release[] = [
       { type: 'feat', text: 'XML Emissão — tipoPagamento proibido em dadosBancarios quando gerPgtoFin ∈ {2,3,4,5}' },
       { type: 'feat', text: 'Email em formato válido validado em XML (infTransportador.email) e em todos os campos de e-mail do TXT (registros 4010, 4020, 4021 e 4620)' },
       { type: 'fix',  text: 'RN-32 removida — TED (tipoPagamento=1) volta a ser aceito no XML; apenas PIX (2) era aceito anteriormente' },
+      { type: 'feat', text: 'XML Emissão — RNTRCTransportador: valor "999999999" aceito para reboque (tipo=2) sem RNTRC; rejeitado para veículo de tração (tipo=1), que deve sempre informar um RNTRC válido' },
     ],
   },
   {

@@ -534,7 +534,15 @@ function validateVeiculos(el: Element, path: string, ctx: Ctx) {
     if (kmLitroVeiculo) valKmLitro4v2(txt(kmLitroVeiculo), `${ip}.kmLitroVeiculo`, ctx);
 
     const rntrc = requireChild(info, 'RNTRCTransportador', ip, ctx);
-    if (rntrc) valRNTRC(txt(rntrc), `${ip}.RNTRCTransportador`, ctx);
+    if (rntrc) {
+      valRNTRC(txt(rntrc), `${ip}.RNTRCTransportador`, ctx);
+      // Regra: 999999999 é placeholder válido apenas para Reboque (tipo=2) sem RNTRC
+      // Veículo de tração (tipo=1) deve sempre informar um RNTRC real
+      if (tipo && parseInt(txt(tipo), 10) === 1 && txt(rntrc) === '999999999')
+        ctx.err(`${ip}.RNTRCTransportador`,
+          'O valor "999999999" é reservado exclusivamente para reboques (tipo=2) sem RNTRC. ' +
+          'Veículos de tração (tipo=1) devem informar um RNTRC válido');
+    }
 
     const qtdEixos = requireChild(info, 'qtdEixos', ip, ctx);
     if (qtdEixos) {
