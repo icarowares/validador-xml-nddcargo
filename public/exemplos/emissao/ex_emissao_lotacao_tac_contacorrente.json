@@ -84,5 +84,11 @@
       "numeroConta": "567890",
       "cpfCnpjFavorecido": "55566677788"
     }
+  },
+  "rota": {
+    "ceps": [
+      { "cep": "04578000" },
+      { "cep": "30130150" }
+    ]
   }
 }

@@ -116,5 +116,12 @@
       "tipoChave": 1,
       "chavepix": "55566677788"
     }
+  },
+  "rota": {
+    "latLong": [
+      { "latitude": -23.5947, "longitude": -46.6910 },
+      { "latitude": -22.9068, "longitude": -47.0626 },
+      { "latitude": -19.9167, "longitude": -43.9345 }
+    ]
   }
 }

@@ -108,5 +108,13 @@
       "cidade": "Campinas",
       "uf": "SP"
     }
+  },
+  "rota": {
+    "municipios": [
+      { "codigoIbge": 3550308 },
+      { "codigoIbge": 3509502 },
+      { "codigoIbge": 3543402 },
+      { "codigoIbge": 3106200 }
+    ]
   }
 }
