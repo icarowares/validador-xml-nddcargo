@@ -93,20 +93,14 @@
             "tipoPgto": 1,
             "finalidadeParcela": 1,
             "dataPrevisao": "2026-05-22",
-            "valorAplicado": 1200.0,
-            "transferenciaAutomatica": {
-              "cpfCondutor": "55566677788"
-            }
+            "valorAplicado": 1200.0
           },
           {
             "nome": "Saldo",
             "tipoPgto": 2,
             "finalidadeParcela": 2,
             "dataPrevisao": "2026-05-23",
-            "valorAplicado": 2000.0,
-            "transferenciaAutomatica": {
-              "cpfCondutor": "55566677788"
-            }
+            "valorAplicado": 2000.0
           }
         ]
       }
