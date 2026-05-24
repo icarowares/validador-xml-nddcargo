@@ -43,7 +43,7 @@ export default function App() {
   const [result, setResult] = useState<ValidationResultType | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [integrationType, setIntegrationType] = useState<IntegrationType>('emissao');
-  const [examplesOpen, setExamplesOpen] = useState(true);
+  const [examplesOpen, setExamplesOpen] = useState(false);
   const [dark, setDark] = useState(() => {
     const stored = localStorage.getItem('theme');
     if (stored) return stored === 'dark';
