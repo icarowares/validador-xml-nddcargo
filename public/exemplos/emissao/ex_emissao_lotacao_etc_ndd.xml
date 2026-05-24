@@ -1,0 +1,187 @@
+<loteOT_envio
+  xmlns="http://www.nddigital.com.br/nddcargo"
+  versao="4.2.12.0"
+  token="123456789012345678901234"
+  tms="Nome TMS ou sistema"
+>
+  <operacoes>
+    <OT>
+      <infOT
+        ID="f7a8b9c0-d1e2-43f4-5a6b-7c8d9e0f1a2b"
+        gerPgtoFin="1"
+        impAuto="2"
+      >
+        <!-- gerPgtoFin=1: Módulo Financeiro NDD — condutores e parcelamento obrigatórios -->
+        <ide>
+          <cnpj>12345678000195</cnpj>
+          <numero>000027</numero>
+          <serie>001</serie>
+          <ptEmissor>Matriz SP</ptEmissor>
+          <dtInicio>2026-05-22</dtInicio>
+          <dtFim>2026-05-23</dtFim>
+        </ide>
+        <carga>
+          <lotacao>
+            <codigoSH>4901</codigoSH>
+            <codigoTipoCarga>1</codigoTipoCarga>
+            <quantidade>2000.00</quantidade>
+            <indAltoDesempenho>2</indAltoDesempenho>
+            <indRetornoVazio>2</indRetornoVazio>
+            <composicaoVeicular>2</composicaoVeicular>
+            <remetente>
+              <cnpj>12345678000195</cnpj>
+              <nome>EMPRESA ABC TRANSPORTES LTDA</nome>
+              <endereco>
+                <UF>SP</UF>
+                <codigoMunicipio>3550308</codigoMunicipio>
+                <bairro>VILA OLIMPIA</bairro>
+                <logradouro>AV DAS NACOES UNIDAS</logradouro>
+                <numero>1000</numero>
+                <CEP>04578000</CEP>
+              </endereco>
+            </remetente>
+            <destinatario>
+              <cnpj>98765432000199</cnpj>
+              <nome>EMPRESA DESTINO COMERCIO SA</nome>
+              <endereco>
+                <UF>MG</UF>
+                <codigoMunicipio>3106200</codigoMunicipio>
+                <bairro>SAVASSI</bairro>
+                <logradouro>RUA PERNAMBUCO</logradouro>
+                <numero>200</numero>
+                <CEP>30130150</CEP>
+              </endereco>
+            </destinatario>
+          </lotacao>
+          <proprietarioCarga>1</proprietarioCarga>
+        </carga>
+        <transp>
+          <rntrc>111222333</rntrc>
+          <!-- ETC/PJ: cnpjTransportador -->
+          <cnpjTransportador>44333222000181</cnpjTransportador>
+          <infTransportador>
+            <ide>
+              <etc>
+                <razaoSocial>TRANS RAPIDO CARGAS LTDA</razaoSocial>
+                <nomeFantasia>TRANS RAPIDO</nomeFantasia>
+                <inscEstadual>555666777888</inscEstadual>
+                <atividadePrincipal>49</atividadePrincipal>
+                <formaConstituicao>206-2</formaConstituicao>
+                <dataConstituicao>2012-08-20</dataConstituicao>
+                <socio>
+                  <nomeCompleto>MARCOS PEREIRA LIMA</nomeCompleto>
+                  <nomeMae>SANDRA PEREIRA</nomeMae>
+                  <dataNascimento>1970-04-30</dataNascimento>
+                  <cpf>99988877766</cpf>
+                  <identidade>RJ-5554443</identidade>
+                  <endereco>
+                    <UF>RJ</UF>
+                    <cidade>RIO DE JANEIRO</cidade>
+                    <bairro>BARRA DA TIJUCA</bairro>
+                    <logradouro>AV DAS AMERICAS</logradouro>
+                    <numero>800</numero>
+                    <CEP>22631000</CEP>
+                  </endereco>
+                  <telefone>21988776655</telefone>
+                </socio>
+              </etc>
+            </ide>
+            <endereco>
+              <UF>RJ</UF>
+              <cidade>RIO DE JANEIRO</cidade>
+              <bairro>BARRA DA TIJUCA</bairro>
+              <logradouro>AV DAS AMERICAS</logradouro>
+              <numero>800</numero>
+              <CEP>22631000</CEP>
+            </endereco>
+            <telefone>11933221100</telefone>
+          </infTransportador>
+          <!-- gerPgtoFin=1: condutores obrigatórios (RN-05) -->
+          <condutores>
+            <condutor>
+              <cpf>77788899900</cpf>
+              <informacoes>
+                <nomeCompleto>FERNANDO COSTA DIAS</nomeCompleto>
+                <nomeMae>MARIA COSTA DIAS</nomeMae>
+                <dataNascimento>1985-03-15</dataNascimento>
+                <identidade>SP-7654321</identidade>
+                <RNTRCTransportador>111222333</RNTRCTransportador>
+                <endereco>
+                  <UF>RJ</UF>
+                  <cidade>RIO DE JANEIRO</cidade>
+                  <bairro>BARRA DA TIJUCA</bairro>
+                  <logradouro>AV DAS AMERICAS</logradouro>
+                  <numero>800</numero>
+                  <CEP>22631000</CEP>
+                </endereco>
+                <CNH>98765432100</CNH>
+                <telefone>21988776655</telefone>
+              </informacoes>
+            </condutor>
+          </condutores>
+          <veiculos>
+            <veiculo>
+              <placa>GHI3F45</placa>
+              <informacoes>
+                <modelo>SCANIA R 450</modelo>
+                <tipo>1</tipo>
+                <RNTRCTransportador>111222333</RNTRCTransportador>
+                <qtdEixos>3</qtdEixos>
+              </informacoes>
+            </veiculo>
+          </veiculos>
+          <!-- gerPgtoFin=1: parcelamento obrigatório, sem dadosBancarios -->
+          <valores>
+            <vlrFrete>4500.00</vlrFrete>
+            <parcelamento>
+              <informacoes>
+                <parcelas>
+                  <parcela>
+                    <nome>Adiantamento</nome>
+                    <tipoPgto>
+                      <manual>
+                        <dataPrevisao>2026-05-22</dataPrevisao>
+                      </manual>
+                    </tipoPgto>
+                    <valorAplicado>1500.00</valorAplicado>
+                  </parcela>
+                  <parcela>
+                    <nome>Saldo</nome>
+                    <tipoPgto>
+                      <manual>
+                        <dataPrevisao>2026-05-23</dataPrevisao>
+                      </manual>
+                    </tipoPgto>
+                    <valorAplicado>3000.00</valorAplicado>
+                  </parcela>
+                </parcelas>
+              </informacoes>
+            </parcelamento>
+            <tipoRateio>1</tipoRateio>
+          </valores>
+          <categoriaPedagio>0</categoriaPedagio>
+        </transp>
+      </infOT>
+      <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <SignedInfo>
+          <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+          <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+          <Reference URI="">
+            <Transforms>
+              <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+              <Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+            </Transforms>
+            <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <DigestValue/>
+          </Reference>
+        </SignedInfo>
+        <SignatureValue/>
+        <KeyInfo>
+          <X509Data>
+            <X509Certificate/>
+          </X509Data>
+        </KeyInfo>
+      </Signature>
+    </OT>
+  </operacoes>
+</loteOT_envio>

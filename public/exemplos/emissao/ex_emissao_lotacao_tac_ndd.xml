@@ -1,0 +1,169 @@
+<loteOT_envio
+  xmlns="http://www.nddigital.com.br/nddcargo"
+  versao="4.2.12.0"
+  token="123456789012345678901234"
+  tms="Nome TMS ou sistema"
+>
+  <operacoes>
+    <OT>
+      <infOT
+        ID="e6f7a8b9-c0d1-42e3-4f5a-6b7c8d9e0f1a"
+        gerPgtoFin="1"
+        impAuto="2"
+      >
+        <!-- gerPgtoFin=1: Módulo Financeiro NDD — condutores e parcelamento obrigatórios -->
+        <ide>
+          <cnpj>12345678000195</cnpj>
+          <numero>000026</numero>
+          <serie>001</serie>
+          <ptEmissor>Matriz SP</ptEmissor>
+          <dtInicio>2026-05-22</dtInicio>
+          <dtFim>2026-05-23</dtFim>
+        </ide>
+        <carga>
+          <lotacao>
+            <codigoSH>4901</codigoSH>
+            <codigoTipoCarga>1</codigoTipoCarga>
+            <quantidade>2000.00</quantidade>
+            <indAltoDesempenho>2</indAltoDesempenho>
+            <indRetornoVazio>2</indRetornoVazio>
+            <composicaoVeicular>2</composicaoVeicular>
+            <remetente>
+              <cnpj>12345678000195</cnpj>
+              <nome>EMPRESA ABC TRANSPORTES LTDA</nome>
+              <endereco>
+                <UF>SP</UF>
+                <codigoMunicipio>3550308</codigoMunicipio>
+                <bairro>VILA OLIMPIA</bairro>
+                <logradouro>AV DAS NACOES UNIDAS</logradouro>
+                <numero>1000</numero>
+                <CEP>04578000</CEP>
+              </endereco>
+            </remetente>
+            <destinatario>
+              <cnpj>98765432000199</cnpj>
+              <nome>EMPRESA DESTINO COMERCIO SA</nome>
+              <endereco>
+                <UF>MG</UF>
+                <codigoMunicipio>3106200</codigoMunicipio>
+                <bairro>SAVASSI</bairro>
+                <logradouro>RUA PERNAMBUCO</logradouro>
+                <numero>200</numero>
+                <CEP>30130150</CEP>
+              </endereco>
+            </destinatario>
+          </lotacao>
+          <proprietarioCarga>1</proprietarioCarga>
+        </carga>
+        <transp>
+          <rntrc>987654321</rntrc>
+          <!-- TAC/PF: cpfTransportador -->
+          <cpfTransportador>55566677788</cpfTransportador>
+          <infTransportador>
+            <ide>
+              <tac>
+                <nomeCompleto>ROBERTO ALVES DA SILVA</nomeCompleto>
+                <nomeMae>LUCIA ALVES</nomeMae>
+                <dataNascimento>1982-07-14</dataNascimento>
+                <identidade>SP-9876543</identidade>
+              </tac>
+            </ide>
+            <endereco>
+              <UF>SP</UF>
+              <cidade>GUARULHOS</cidade>
+              <bairro>CENTRO</bairro>
+              <logradouro>RUA DAS PALMEIRAS</logradouro>
+              <numero>123</numero>
+              <CEP>07010100</CEP>
+            </endereco>
+            <telefone>11977665544</telefone>
+          </infTransportador>
+          <!-- gerPgtoFin=1: condutores obrigatórios (RN-05) -->
+          <condutores>
+            <condutor>
+              <cpf>55566677788</cpf>
+              <informacoes>
+                <nomeCompleto>ROBERTO ALVES DA SILVA</nomeCompleto>
+                <nomeMae>LUCIA ALVES</nomeMae>
+                <dataNascimento>1982-07-14</dataNascimento>
+                <identidade>SP-9876543</identidade>
+                <RNTRCTransportador>987654321</RNTRCTransportador>
+                <endereco>
+                  <UF>SP</UF>
+                  <cidade>GUARULHOS</cidade>
+                  <bairro>CENTRO</bairro>
+                  <logradouro>RUA DAS PALMEIRAS</logradouro>
+                  <numero>123</numero>
+                  <CEP>07010100</CEP>
+                </endereco>
+                <CNH>12345678901</CNH>
+                <telefone>11977665544</telefone>
+              </informacoes>
+            </condutor>
+          </condutores>
+          <veiculos>
+            <veiculo>
+              <placa>DEF2E34</placa>
+              <informacoes>
+                <modelo>MERCEDES-BENZ ATEGO 2430</modelo>
+                <tipo>1</tipo>
+                <RNTRCTransportador>987654321</RNTRCTransportador>
+                <qtdEixos>2</qtdEixos>
+              </informacoes>
+            </veiculo>
+          </veiculos>
+          <!-- gerPgtoFin=1: parcelamento obrigatório, sem dadosBancarios -->
+          <valores>
+            <vlrFrete>3200.00</vlrFrete>
+            <parcelamento>
+              <informacoes>
+                <parcelas>
+                  <parcela>
+                    <nome>Adiantamento</nome>
+                    <tipoPgto>
+                      <manual>
+                        <dataPrevisao>2026-05-22</dataPrevisao>
+                      </manual>
+                    </tipoPgto>
+                    <valorAplicado>1200.00</valorAplicado>
+                  </parcela>
+                  <parcela>
+                    <nome>Saldo</nome>
+                    <tipoPgto>
+                      <manual>
+                        <dataPrevisao>2026-05-23</dataPrevisao>
+                      </manual>
+                    </tipoPgto>
+                    <valorAplicado>2000.00</valorAplicado>
+                  </parcela>
+                </parcelas>
+              </informacoes>
+            </parcelamento>
+            <tipoRateio>1</tipoRateio>
+          </valores>
+          <categoriaPedagio>0</categoriaPedagio>
+        </transp>
+      </infOT>
+      <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <SignedInfo>
+          <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+          <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+          <Reference URI="">
+            <Transforms>
+              <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+              <Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+            </Transforms>
+            <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <DigestValue/>
+          </Reference>
+        </SignedInfo>
+        <SignatureValue/>
+        <KeyInfo>
+          <X509Data>
+            <X509Certificate/>
+          </X509Data>
+        </KeyInfo>
+      </Signature>
+    </OT>
+  </operacoes>
+</loteOT_envio>

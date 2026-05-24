@@ -1,0 +1,160 @@
+<loteOT_envio
+  xmlns="http://www.nddigital.com.br/nddcargo"
+  versao="4.2.12.0"
+  token="123456789012345678901234"
+  tms="Nome TMS ou sistema"
+>
+  <operacoes>
+    <OT>
+      <infOT
+        ID="a8b9c0d1-e2f3-44a5-6b7c-8d9e0f1a2b3c"
+        gerPgtoFin="5"
+        impAuto="2"
+      >
+        <!-- gerPgtoFin=5: Outros (externo) — sem parcelamento, sem condutores, sem dadosBancarios -->
+        <!-- Frota própria: transportador = emitente; contratante informado em adicionais (CIOT) -->
+        <ide>
+          <cnpj>12345678000195</cnpj>
+          <numero>000028</numero>
+          <serie>001</serie>
+          <ptEmissor>Matriz SP</ptEmissor>
+          <dtInicio>2026-05-22</dtInicio>
+          <dtFim>2026-05-23</dtFim>
+        </ide>
+        <carga>
+          <lotacao>
+            <codigoSH>4901</codigoSH>
+            <codigoTipoCarga>1</codigoTipoCarga>
+            <quantidade>2000.00</quantidade>
+            <indAltoDesempenho>2</indAltoDesempenho>
+            <indRetornoVazio>2</indRetornoVazio>
+            <composicaoVeicular>2</composicaoVeicular>
+            <remetente>
+              <cnpj>12345678000195</cnpj>
+              <nome>EMPRESA ABC TRANSPORTES LTDA</nome>
+              <endereco>
+                <UF>SP</UF>
+                <codigoMunicipio>3550308</codigoMunicipio>
+                <bairro>VILA OLIMPIA</bairro>
+                <logradouro>AV DAS NACOES UNIDAS</logradouro>
+                <numero>1000</numero>
+                <CEP>04578000</CEP>
+              </endereco>
+            </remetente>
+            <destinatario>
+              <cnpj>98765432000199</cnpj>
+              <nome>EMPRESA DESTINO COMERCIO SA</nome>
+              <endereco>
+                <UF>MG</UF>
+                <codigoMunicipio>3106200</codigoMunicipio>
+                <bairro>SAVASSI</bairro>
+                <logradouro>RUA PERNAMBUCO</logradouro>
+                <numero>200</numero>
+                <CEP>30130150</CEP>
+              </endereco>
+            </destinatario>
+          </lotacao>
+          <proprietarioCarga>1</proprietarioCarga>
+        </carga>
+        <transp>
+          <!-- Frota própria: RNTRC e CNPJ do próprio emitente -->
+          <rntrc>123456789</rntrc>
+          <cnpjTransportador>12345678000195</cnpjTransportador>
+          <infTransportador>
+            <ide>
+              <etc>
+                <razaoSocial>EMPRESA ABC TRANSPORTES LTDA</razaoSocial>
+                <inscEstadual>111222333444</inscEstadual>
+                <atividadePrincipal>49</atividadePrincipal>
+                <formaConstituicao>206-2</formaConstituicao>
+                <dataConstituicao>2005-03-10</dataConstituicao>
+                <socio>
+                  <nomeCompleto>CARLOS EDUARDO SOUZA</nomeCompleto>
+                  <nomeMae>ANA PAULA SOUZA</nomeMae>
+                  <dataNascimento>1978-11-05</dataNascimento>
+                  <cpf>12345678901</cpf>
+                  <identidade>MG-12345678</identidade>
+                  <endereco>
+                    <UF>MG</UF>
+                    <cidade>BELO HORIZONTE</cidade>
+                    <bairro>SAVASSI</bairro>
+                    <logradouro>RUA ANTONIO DE ALBUQUERQUE</logradouro>
+                    <numero>55</numero>
+                  </endereco>
+                  <telefone>31988776655</telefone>
+                </socio>
+              </etc>
+            </ide>
+            <endereco>
+              <UF>SP</UF>
+              <cidade>SAO PAULO</cidade>
+              <bairro>VILA LEOPOLDINA</bairro>
+              <logradouro>RUA CATIGUA</logradouro>
+              <numero>50</numero>
+              <CEP>05307000</CEP>
+            </endereco>
+            <telefone>11999990000</telefone>
+          </infTransportador>
+          <!-- gerPgtoFin=5: sem condutores -->
+          <veiculos>
+            <veiculo>
+              <placa>ABC1D23</placa>
+              <informacoes>
+                <modelo>VOLKSWAGEN CONSTELLATION 24.280</modelo>
+                <tipo>1</tipo>
+                <RNTRCTransportador>123456789</RNTRCTransportador>
+                <qtdEixos>2</qtdEixos>
+              </informacoes>
+            </veiculo>
+          </veiculos>
+          <!-- gerPgtoFin=5: sem parcelamento e sem dadosBancarios -->
+          <valores>
+            <vlrFrete>3800.00</vlrFrete>
+            <tipoRateio>1</tipoRateio>
+          </valores>
+          <categoriaPedagio>0</categoriaPedagio>
+        </transp>
+        <!-- Frota própria: contratante (CIOT) informado em adicionais -->
+        <adicionais>
+          <campo>
+            <nome>CnpjCpfContratante</nome>
+            <valor>55000111000187</valor>
+          </campo>
+          <campo>
+            <nome>RntrcContratante</nome>
+            <valor>987654321</valor>
+          </campo>
+          <campo>
+            <nome>NomeContratante</nome>
+            <valor>INDUSTRIA NACIONAL DE PECAS LTDA</valor>
+          </campo>
+          <!-- Endereço separado por pipe: logradouro|numero|bairro|cidade|UF -->
+          <campo>
+            <nome>EnderecoContratante</nome>
+            <valor>RODOVIA ANHANGUERA|3500|DISTRITO INDUSTRIAL|CAMPINAS|SP</valor>
+          </campo>
+        </adicionais>
+      </infOT>
+      <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <SignedInfo>
+          <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+          <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+          <Reference URI="">
+            <Transforms>
+              <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+              <Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+            </Transforms>
+            <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <DigestValue/>
+          </Reference>
+        </SignedInfo>
+        <SignatureValue/>
+        <KeyInfo>
+          <X509Data>
+            <X509Certificate/>
+          </X509Data>
+        </KeyInfo>
+      </Signature>
+    </OT>
+  </operacoes>
+</loteOT_envio>
