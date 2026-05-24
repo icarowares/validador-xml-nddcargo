@@ -963,6 +963,34 @@ function validateRoot(doc: Document, ctx: Ctx): number {
   return ots.length;
 }
 
+// ─── Verificação de espaços extras nos valores dos campos ─────────────────────
+
+/**
+ * Caminha por todos os elementos-folha do documento e reporta aqueles cujo
+ * textContent bruto tem espaço no início ou no fim (o valor enviado ao servidor
+ * carregaria os espaços mesmo que a validação os ignore via trim).
+ */
+function checkXmlWhitespace(doc: Document, ctx: Ctx) {
+  function xmlPath(el: Element): string {
+    const parts: string[] = [];
+    let node: Element | null = el;
+    while (node) { parts.unshift(node.localName); node = node.parentElement; }
+    return parts.join('.');
+  }
+
+  function walk(el: Element) {
+    if (el.children.length === 0) {
+      const raw = el.textContent ?? '';
+      if (raw !== raw.trim() && raw.trim() !== '')
+        ctx.err(xmlPath(el), `Valor contém espaço no início ou no fim: "${raw}"`);
+    } else {
+      for (const child of Array.from(el.children)) walk(child);
+    }
+  }
+
+  walk(doc.documentElement);
+}
+
 // ─── Entry point ──────────────────────────────────────────────────────────────
 
 export function validate(xmlString: string): ValidationResult {
@@ -985,6 +1013,7 @@ export function validate(xmlString: string): ValidationResult {
   }
 
   const ctx = createCtx();
+  checkXmlWhitespace(doc, ctx);
   const otCount = validateRoot(doc, ctx);
   const businessResult = applyBusinessRules(doc);
   const allErrors: ValidationError[] = [...ctx.errors, ...businessResult.errors];

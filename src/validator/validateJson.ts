@@ -903,6 +903,26 @@ function validateSingleOT(payload: Obj, errs: Errors): void {
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 
+// ─── Verificação de espaços extras nos valores string ─────────────────────────
+
+/**
+ * Caminha recursivamente pelo objeto JSON e reporta toda string que tenha
+ * espaço no início ou no fim (o valor seria enviado ao servidor com os espaços).
+ */
+function checkJsonWhitespace(value: unknown, path: string, errs: Errors): void {
+  if (typeof value === 'string') {
+    if (value !== value.trim() && value.trim() !== '')
+      e(errs, path, `Valor contém espaço no início ou no fim: "${value}"`);
+  } else if (Array.isArray(value)) {
+    value.forEach((item, i) => checkJsonWhitespace(item, `${path}[${i}]`, errs));
+  } else if (isObj(value)) {
+    for (const [key, val] of Object.entries(value))
+      checkJsonWhitespace(val, path ? `${path}.${key}` : key, errs);
+  }
+}
+
+// ─── Entry point ──────────────────────────────────────────────────────────────
+
 export function validateJson(content: string): ValidationResult {
   if (!content.trim())
     return { valid: false, errors: [], parseError: 'O conteúdo JSON está vazio', otCount: 0 };
@@ -928,6 +948,7 @@ export function validateJson(content: string): ValidationResult {
   }
 
   const warnings: string[] = [];
+  checkJsonWhitespace(parsed, '', errors);
   validateSingleOT(parsed, errors);
 
   // Warning: codigoSH 0001 (Diversos) pode ser rejeitado ocasionalmente pela ANTT

@@ -1304,6 +1304,29 @@ function parentErr(line: ParsedLine, parentCode: string): ValidationError {
 
 // ─── Main entry point ─────────────────────────────────────────────────────────
 
+// ─── Verificação de espaços extras nos campos ─────────────────────────────────
+
+/**
+ * Verifica se algum campo da linha (exceto o código de registro) contém espaço
+ * no início ou no fim. Campos vazios são ignorados.
+ */
+function checkTxtLineWhitespace(line: ParsedLine): ValidationError[] {
+  const errs: ValidationError[] = [];
+  for (let i = 1; i < line.fields.length; i++) {
+    const v = line.fields[i];
+    if (v !== v.trim() && v.trim() !== '') {
+      errs.push({
+        path: `Linha ${line.lineNumber} · Reg. ${line.code} · Campo ${i}`,
+        message: `Valor contém espaço no início ou no fim: "${v}"`,
+        lineNumber: line.lineNumber,
+      });
+    }
+  }
+  return errs;
+}
+
+// ─── Entry point ──────────────────────────────────────────────────────────────
+
 export function validateTxt(content: string): ValidationResult {
   if (!content.trim())
     return { valid: false, errors: [], parseError: 'O conteúdo do arquivo TXT está vazio', otCount: 0 };
@@ -1324,6 +1347,9 @@ export function validateTxt(content: string): ValidationResult {
 
   const errors: ValidationError[] = [];
   const warnings: string[] = [];
+
+  // Verificação global de espaços antes/depois em todos os campos
+  for (const line of lines) errors.push(...checkTxtLineWhitespace(line));
 
   // 0000 must be the first record
   const firstLine = lines[0];

@@ -23,6 +23,117 @@ const dropInterceptor = EditorView.domEventHandlers({
   drop: () => true,
 });
 
+// ── XML formatter ────────────────────────────────────────────────────────────
+function escapeXmlAttr(v: string) {
+  return v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+function escapeXmlText(v: string) {
+  return v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function serializeXmlNode(node: Node, depth: number): string {
+  const pad = '  '.repeat(depth);
+
+  if (node.nodeType === Node.TEXT_NODE) {
+    const t = node.textContent?.trim() ?? '';
+    return t ? `${pad}${escapeXmlText(t)}` : '';
+  }
+  if (node.nodeType === Node.COMMENT_NODE) {
+    return `${pad}<!--${node.textContent}-->`;
+  }
+  if (node.nodeType === Node.CDATA_SECTION_NODE) {
+    return `${pad}<![CDATA[${node.textContent}]]>`;
+  }
+  if (node.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
+    const pi = node as ProcessingInstruction;
+    return `${pad}<?${pi.target} ${pi.data}?>`;
+  }
+  if (node.nodeType !== Node.ELEMENT_NODE) return '';
+
+  const el = node as Element;
+  const attrs = Array.from(el.attributes)
+    .map(a => ` ${a.name}="${escapeXmlAttr(a.value)}"`)
+    .join('');
+
+  // significant children (ignore whitespace-only text nodes)
+  const children = Array.from(el.childNodes).filter(
+    n => n.nodeType !== Node.TEXT_NODE || (n.textContent?.trim() ?? '') !== '',
+  );
+
+  if (children.length === 0) return `${pad}<${el.tagName}${attrs}/>`;
+
+  if (
+    children.length === 1 &&
+    children[0].nodeType === Node.TEXT_NODE
+  ) {
+    const text = escapeXmlText(children[0].textContent?.trim() ?? '');
+    return `${pad}<${el.tagName}${attrs}>${text}</${el.tagName}>`;
+  }
+
+  const inner = children.map(c => serializeXmlNode(c, depth + 1)).filter(Boolean).join('\n');
+  return `${pad}<${el.tagName}${attrs}>\n${inner}\n${pad}</${el.tagName}>`;
+}
+
+function formatXml(raw: string): string {
+  const trimmed = raw.trim();
+  const doc = new DOMParser().parseFromString(trimmed, 'application/xml');
+  if (doc.querySelector('parseerror')) throw new Error('invalid xml');
+
+  const declMatch = trimmed.match(/^<\?xml[^?]*\?>/i);
+  const decl = declMatch ? declMatch[0] + '\n' : '';
+
+  const bodyLines = Array.from(doc.childNodes)
+    .filter(n => !(n.nodeType === Node.PROCESSING_INSTRUCTION_NODE && (n as ProcessingInstruction).target === 'xml'))
+    .map(n => serializeXmlNode(n, 0))
+    .filter(Boolean)
+    .join('\n');
+
+  return decl + bodyLines;
+}
+
+// When pasting into a JSON editor, auto-format valid JSON with 2-space indentation.
+const jsonPasteFormatter = EditorView.domEventHandlers({
+  paste(e, view) {
+    const text = e.clipboardData?.getData('text');
+    if (!text) return false;
+    try {
+      const parsed = JSON.parse(text);
+      const formatted = JSON.stringify(parsed, null, 2);
+      if (formatted === text) return false; // already formatted, let default paste run
+      e.preventDefault();
+      const { from, to } = view.state.selection.main;
+      view.dispatch({
+        changes: { from, to, insert: formatted },
+        selection: { anchor: from + formatted.length },
+      });
+      return true;
+    } catch {
+      return false; // not valid JSON — let default paste run
+    }
+  },
+});
+
+// When pasting into an XML editor, auto-format valid XML with 2-space indentation.
+const xmlPasteFormatter = EditorView.domEventHandlers({
+  paste(e, view) {
+    const text = e.clipboardData?.getData('text');
+    if (!text) return false;
+    try {
+      const formatted = formatXml(text);
+      if (formatted === text) return false; // already formatted, let default paste run
+      e.preventDefault();
+      const { from, to } = view.state.selection.main;
+      view.dispatch({
+        changes: { from, to, insert: formatted },
+        selection: { anchor: from + formatted.length },
+      });
+      return true;
+    } catch {
+      return false; // not valid XML — let default paste run
+    }
+  },
+});
+
 // Base editor styles: monospace font + size matching the previous textarea
 const editorTheme = EditorView.theme({
   '&': { height: '100%' },
@@ -125,7 +236,7 @@ export const XmlInput = forwardRef<XmlInputHandle, Props>(
     const charCount = value.length;
 
     const extensions = [
-      ...(isXml ? [xml()] : isJson ? [json()] : [nddTxt]),
+      ...(isXml ? [xml(), xmlPasteFormatter] : isJson ? [json(), jsonPasteFormatter] : [nddTxt]),
       placeholder(
         isXml
           ? 'Cole ou arraste um XML aqui...'

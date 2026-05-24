@@ -14,6 +14,8 @@ const RELEASES: Release[] = [
   {
     date: '24 mai 2026',
     entries: [
+      { type: 'feat', text: 'Editor XML e JSON — auto-indentação ao colar: XML e JSON válidos são formatados automaticamente com 2 espaços ao colar no editor; conteúdo inválido é inserido sem alteração' },
+      { type: 'feat', text: 'Validação global de espaços extras (XML, JSON e TXT) — campos com espaço no início ou no fim do valor são apontados como erro em todos os tipos de arquivo' },
       { type: 'feat', text: 'gerPgtoFin=5 (Outros) proibido para transportador TAC (Pessoa Física) — regra implementada nos validadores XML, JSON e TXT Emissão' },
       { type: 'feat', text: 'Exemplos XML de emissão reorganizados em 3 grupos: Sem pagamento (Conta Corrente), Com pagamento (NDD Cargo e PIX) e Frota Própria — 10 novos arquivos disponíveis para download' },
       { type: 'feat', text: 'Exemplo JSON Emissão TAC-Agregado · gerPgtoFin=2 (Conta Corrente) · TAC/PF adicionado' },
