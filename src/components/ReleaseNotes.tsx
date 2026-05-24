@@ -12,6 +12,20 @@ interface Release {
 
 const RELEASES: Release[] = [
   {
+    date: '24 mai 2026',
+    entries: [
+      { type: 'feat', text: 'gerPgtoFin=5 (Outros) proibido para transportador TAC (Pessoa Física) — regra implementada nos validadores XML, JSON e TXT Emissão' },
+      { type: 'feat', text: 'Exemplos XML de emissão reorganizados em 3 grupos: Sem pagamento (Conta Corrente), Com pagamento (NDD Cargo e PIX) e Frota Própria — 10 novos arquivos disponíveis para download' },
+      { type: 'feat', text: 'Exemplo JSON Emissão TAC-Agregado · gerPgtoFin=2 (Conta Corrente) · TAC/PF adicionado' },
+      { type: 'feat', text: 'Seção de arquivos de exemplo passa a ser colapsável — padrão recolhida ao carregar a página' },
+      { type: 'fix',  text: 'Auditoria Notion — tipoPagamento: valores corrigidos para 1=TED (descontinuado) e 2=PIX; exemplos PIX (XML e JSON) atualizados de tipoPagamento=1 para tipoPagamento=2' },
+      { type: 'fix',  text: 'Auditoria Notion — campos booleanos nos exemplos XML (indAltoDesempenho, indRetornoVazio, composicaoVeicular): valor "2" corrigido para "0" (false=0, true=1 conforme XSD e Notion)' },
+      { type: 'fix',  text: 'XSD — nomes IndAltoDesempenho e IndRetornoVazio corrigidos para camelCase (indAltoDesempenho, indRetornoVazio); composicaoVeicular movida para o bloco lotacao com nome em camelCase' },
+      { type: 'feat', text: 'XSD e RN-54 — despesas torna-se obrigatório em valores (vlrDespesas=0.00 e descricao="NAO INFORMADO" quando não aplicável); todos os 15 exemplos XML atualizados' },
+      { type: 'feat', text: 'XSD e RN-55 — tarifas adicionado como obrigatório em valores (quantidadeTotal + valorTotal); ausente do XSD anterior; todos os 15 exemplos XML atualizados' },
+    ],
+  },
+  {
     date: '23 mai 2026',
     entries: [
       { type: 'feat', text: 'RN-42 (JSON Emissão) — cpfCnpj de ContratantesCargaFrac não pode ser igual ao CNPJ da contratante principal (ide.cnpj)' },

@@ -116,7 +116,15 @@
           <!-- gerPgtoFin=5: sem parcelamento e sem dadosBancarios -->
           <valores>
             <vlrFrete>3800.00</vlrFrete>
+            <despesas>
+              <vlrDespesas>0.00</vlrDespesas>
+              <descricao>NAO INFORMADO</descricao>
+            </despesas>
             <tipoRateio>1</tipoRateio>
+            <tarifas>
+              <quantidadeTotal>0</quantidadeTotal>
+              <valorTotal>0.00</valorTotal>
+            </tarifas>
           </valores>
           <categoriaPedagio>0</categoriaPedagio>
         </transp>

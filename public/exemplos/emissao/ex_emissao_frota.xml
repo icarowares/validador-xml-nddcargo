@@ -136,6 +136,10 @@
           </veiculos>
           <valores>
             <vlrFrete>6071.00</vlrFrete>
+            <despesas>
+              <vlrDespesas>0.00</vlrDespesas>
+              <descricao>NAO INFORMADO</descricao>
+            </despesas>
             <!-- O campo "Parcelamento" DEVE ser enviado mesmo que o CIOT não seja pago via NDD Cargo -->
             <parcelamento>
               <informacoes>
@@ -160,6 +164,10 @@
               <sestsenat>0.00</sestsenat>
             </retencoes>
             <tipoRateio>3</tipoRateio>
+            <tarifas>
+              <quantidadeTotal>0</quantidadeTotal>
+              <valorTotal>0.00</valorTotal>
+            </tarifas>
           </valores>
           <categoriaPedagio>0</categoriaPedagio>
         </transp>

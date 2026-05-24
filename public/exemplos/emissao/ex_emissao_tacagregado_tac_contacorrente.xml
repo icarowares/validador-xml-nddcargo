@@ -75,7 +75,15 @@
           <!-- gerPgtoFin=2: sem parcelamento, com dadosBancarios sem tipoPagamento -->
           <valores>
             <vlrFrete>2800.00</vlrFrete>
+            <despesas>
+              <vlrDespesas>0.00</vlrDespesas>
+              <descricao>NAO INFORMADO</descricao>
+            </despesas>
             <tipoRateio>1</tipoRateio>
+            <tarifas>
+              <quantidadeTotal>0</quantidadeTotal>
+              <valorTotal>0.00</valorTotal>
+            </tarifas>
             <dadosBancarios>
               <codigoInstituicaoFinanceira>341</codigoInstituicaoFinanceira>
               <numeroAgencia>1234</numeroAgencia>

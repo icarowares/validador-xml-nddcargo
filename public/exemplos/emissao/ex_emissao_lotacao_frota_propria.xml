@@ -26,9 +26,9 @@
             <codigoSH>4901</codigoSH>
             <codigoTipoCarga>1</codigoTipoCarga>
             <quantidade>2000.00</quantidade>
-            <indAltoDesempenho>2</indAltoDesempenho>
-            <indRetornoVazio>2</indRetornoVazio>
-            <composicaoVeicular>2</composicaoVeicular>
+            <indAltoDesempenho>0</indAltoDesempenho>
+            <indRetornoVazio>0</indRetornoVazio>
+            <composicaoVeicular>0</composicaoVeicular>
             <remetente>
               <cnpj>12345678000195</cnpj>
               <nome>EMPRESA ABC TRANSPORTES LTDA</nome>
@@ -110,7 +110,15 @@
           <!-- gerPgtoFin=5: sem parcelamento e sem dadosBancarios -->
           <valores>
             <vlrFrete>3800.00</vlrFrete>
+            <despesas>
+              <vlrDespesas>0.00</vlrDespesas>
+              <descricao>NAO INFORMADO</descricao>
+            </despesas>
             <tipoRateio>1</tipoRateio>
+            <tarifas>
+              <quantidadeTotal>0</quantidadeTotal>
+              <valorTotal>0.00</valorTotal>
+            </tarifas>
           </valores>
           <categoriaPedagio>0</categoriaPedagio>
         </transp>

@@ -118,6 +118,15 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <!-- Valor monetário tarifas/valorTotal: até 10 dígitos + 2 decimais -->
+  <xs:simpleType name="TValor10v2">
+    <xs:restriction base="xs:decimal">
+      <xs:totalDigits value="12"/>
+      <xs:fractionDigits value="2"/>
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <!-- Peso lotacao/fracionado: 7 inteiros + 2 decimais -->
   <xs:simpleType name="TPeso7v2">
     <xs:restriction base="xs:decimal">
@@ -161,7 +170,7 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <!-- Indicador booleano: "0" (false) ou "1" (true) — IndAltoDesempenho, IndRetornoVazio, ComposicaoVeicular -->
+  <!-- Indicador booleano: "0" (false) ou "1" (true) — indAltoDesempenho, indRetornoVazio, composicaoVeicular -->
   <xs:simpleType name="TBoolStr">
     <xs:restriction base="xs:string">
       <xs:enumeration value="0"/>
@@ -572,10 +581,12 @@
                                         </xs:element>
                                         <!-- E: quantidade, N, 1, 9,2 -->
                                         <xs:element name="quantidade" type="TQtd9v2"/>
-                                        <!-- E: IndAltoDesempenho, B, 0-1 -->
-                                        <xs:element name="IndAltoDesempenho" type="TBoolStr" minOccurs="0"/>
-                                        <!-- E: IndRetornoVazio, B, 0-1 -->
-                                        <xs:element name="IndRetornoVazio" type="TBoolStr" minOccurs="0"/>
+                                        <!-- E: indAltoDesempenho, B, 0-1 (0=false, 1=true) -->
+                                        <xs:element name="indAltoDesempenho" type="TBoolStr" minOccurs="0"/>
+                                        <!-- E: indRetornoVazio, B, 0-1 (0=false, 1=true) -->
+                                        <xs:element name="indRetornoVazio" type="TBoolStr" minOccurs="0"/>
+                                        <!-- E: composicaoVeicular, B, 0-1 (0=false, 1=true) -->
+                                        <xs:element name="composicaoVeicular" type="TBoolStr" minOccurs="0"/>
                                         <!-- Raiz: remetente (1) -->
                                         <xs:element name="remetente" type="TPessoa"/>
                                         <!-- Raiz: destinatario (1) -->
@@ -945,8 +956,6 @@
                                                   <xs:element name="qtdEixos">
                                                     <xs:simpleType><xs:restriction base="xs:integer"><xs:minInclusive value="1"/><xs:maxInclusive value="4"/></xs:restriction></xs:simpleType>
                                                   </xs:element>
-                                                  <!-- E: ComposicaoVeicular, B, 0-1 [NOVO] (pai=veiculo no dicionário) -->
-                                                  <xs:element name="ComposicaoVeicular" type="TBoolStr" minOccurs="0"/>
                                                 </xs:sequence>
                                               </xs:complexType>
                                             </xs:element>
@@ -967,8 +976,8 @@
                                       <!-- E: vlrFrete, N, 1, 15,2 -->
                                       <xs:element name="vlrFrete" type="TValor15v2"/>
 
-                                      <!-- Raiz: despesas (0-1) -->
-                                      <xs:element name="despesas" minOccurs="0">
+                                      <!-- Raiz: despesas (1) — vlrDespesas=0.00 e descricao="NAO INFORMADO" quando não aplicável -->
+                                      <xs:element name="despesas">
                                         <xs:complexType>
                                           <xs:sequence>
                                             <!-- E: vlrDespesas, N, 1, 15,2 -->
@@ -1188,6 +1197,20 @@
                                           </xs:complexType>
                                         </xs:element>
                                       </xs:choice>
+
+                                      <!-- Raiz: tarifas (1) -->
+                                      <xs:element name="tarifas">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <!-- E: quantidadeTotal, N, 1, 1-7 — quantidade total de tarifas -->
+                                            <xs:element name="quantidadeTotal">
+                                              <xs:simpleType><xs:restriction base="xs:integer"><xs:minInclusive value="0"/><xs:totalDigits value="7"/></xs:restriction></xs:simpleType>
+                                            </xs:element>
+                                            <!-- E: valorTotal, N, 1, 1-10,2 — valor total de tarifas -->
+                                            <xs:element name="valorTotal" type="TValor10v2"/>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element><!-- fim Raiz: tarifas -->
 
                                       <!-- Raiz: dadosBancarios (0-1) -->
                                       <xs:element name="dadosBancarios" minOccurs="0">

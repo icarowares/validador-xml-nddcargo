@@ -95,6 +95,10 @@
           </veiculos>
           <valores>
             <vlrFrete>2800.00</vlrFrete>
+            <despesas>
+              <vlrDespesas>0.00</vlrDespesas>
+              <descricao>NAO INFORMADO</descricao>
+            </despesas>
             <!-- Parcela única de remuneração fixa a prazo 30 dias -->
             <parcelamento>
               <informacoes>
@@ -112,6 +116,10 @@
               </informacoes>
             </parcelamento>
             <tipoRateio>1</tipoRateio>
+            <tarifas>
+              <quantidadeTotal>0</quantidadeTotal>
+              <valorTotal>0.00</valorTotal>
+            </tarifas>
           </valores>
           <categoriaPedagio>0</categoriaPedagio>
         </transp>

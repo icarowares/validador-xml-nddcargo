@@ -15,7 +15,7 @@ const D_TIPO_TRANSP   = '1 – TAC (Autônomo / Pessoa Física), 2 – ETC (Empr
 const D_TIPO_RATEIO   = '1 – Primeira, 2 – Última, 3 – Todas, 4 – Não reter, 5 – Todas com proporção de impostos';
 const D_TIPO_PGTO     = '1 – À vista, 2 – A prazo, 3 – Outros';
 const D_FINALIDADE    = '1 – Adiantamento, 2 – Saldo';
-const D_TIPO_PAGAMENTO = '1 – PIX, 2 – TED ou outros tipos de transferência';
+const D_TIPO_PAGAMENTO = '1 – TED (descontinuado), 2 – PIX';
 const D_TIPO_CHAVE    = '1 – CPF/CNPJ, 2 – Celular, 3 – E-mail, 4 – Chave aleatória, 5 – Outro';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
