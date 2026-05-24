@@ -43,6 +43,7 @@ export default function App() {
   const [result, setResult] = useState<ValidationResultType | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [integrationType, setIntegrationType] = useState<IntegrationType>('emissao');
+  const [examplesOpen, setExamplesOpen] = useState(true);
   const [dark, setDark] = useState(() => {
     const stored = localStorage.getItem('theme');
     if (stored) return stored === 'dark';
@@ -326,10 +327,15 @@ export default function App() {
                   </a>
                 </div>
                 <div className="flex flex-col gap-3">
-                  <p className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-                    Exemplos de arquivo
-                  </p>
-                  {([
+                  <button onClick={() => setExamplesOpen(o => !o)} className="flex items-center gap-1.5 w-full text-left">
+                    <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                      Exemplos de arquivo
+                    </span>
+                    <svg className={`w-3 h-3 text-gray-400 dark:text-gray-500 transition-transform duration-150 ${examplesOpen ? '' : '-rotate-90'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {examplesOpen && ([
                     {
                       group: 'Sem pagamento',
                       items: [
@@ -401,30 +407,37 @@ export default function App() {
                   </a>
                 </div>
                 <div>
-                  <p className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
-                    Exemplos de arquivo
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {[
-                      { label: 'Fracionado',      file: 'ex_retif_fracionado.xml'    },
-                      { label: 'TAC-Agregado',    file: 'ex_retif_agregado.xml'      },
-                      { label: 'Com pagamento',   file: 'ex_retif_pagamento.xml'     },
-                      { label: 'Sem pagamento',   file: 'ex_retif_semPagamento.xml'  },
-                    ].map(({ label, file }) => (
-                      <a
-                        key={file}
-                        href={`/exemplos/retificacao/${file}`}
-                        download={file}
-                        onClick={() => track('download_example', { file, fileType: 'xml' })}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
-                      >
-                        <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                        {label}
-                      </a>
-                    ))}
-                  </div>
+                  <button onClick={() => setExamplesOpen(o => !o)} className="flex items-center gap-1.5 w-full text-left mb-2">
+                    <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                      Exemplos de arquivo
+                    </span>
+                    <svg className={`w-3 h-3 text-gray-400 dark:text-gray-500 transition-transform duration-150 ${examplesOpen ? '' : '-rotate-90'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {examplesOpen && (
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { label: 'Fracionado',      file: 'ex_retif_fracionado.xml'    },
+                        { label: 'TAC-Agregado',    file: 'ex_retif_agregado.xml'      },
+                        { label: 'Com pagamento',   file: 'ex_retif_pagamento.xml'     },
+                        { label: 'Sem pagamento',   file: 'ex_retif_semPagamento.xml'  },
+                      ].map(({ label, file }) => (
+                        <a
+                          key={file}
+                          href={`/exemplos/retificacao/${file}`}
+                          download={file}
+                          onClick={() => track('download_example', { file, fileType: 'xml' })}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
+                        >
+                          <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                          {label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -447,22 +460,29 @@ export default function App() {
                   </a>
                 </div>
                 <div>
-                  <p className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
-                    Exemplos de arquivo
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <a
-                      href="/exemplos/cancelamento/ex_cancelamento.xml"
-                      download="ex_cancelamento.xml"
-                      onClick={() => track('download_example', { file: 'ex_cancelamento.xml', fileType: 'xml' })}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
-                    >
-                      <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                      </svg>
-                      Cancelamento
-                    </a>
-                  </div>
+                  <button onClick={() => setExamplesOpen(o => !o)} className="flex items-center gap-1.5 w-full text-left mb-2">
+                    <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                      Exemplos de arquivo
+                    </span>
+                    <svg className={`w-3 h-3 text-gray-400 dark:text-gray-500 transition-transform duration-150 ${examplesOpen ? '' : '-rotate-90'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {examplesOpen && (
+                    <div className="flex flex-wrap gap-2">
+                      <a
+                        href="/exemplos/cancelamento/ex_cancelamento.xml"
+                        download="ex_cancelamento.xml"
+                        onClick={() => track('download_example', { file: 'ex_cancelamento.xml', fileType: 'xml' })}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
+                      >
+                        <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Cancelamento
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -485,21 +505,63 @@ export default function App() {
                   </a>
                 </div>
                 <div>
-                  <p className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                  <button onClick={() => setExamplesOpen(o => !o)} className="flex items-center gap-1.5 w-full text-left mb-2">
+                    <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                      Exemplos de arquivo
+                    </span>
+                    <svg className={`w-3 h-3 text-gray-400 dark:text-gray-500 transition-transform duration-150 ${examplesOpen ? '' : '-rotate-90'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {examplesOpen && (
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { label: 'Carga Lotação',  file: 'ex_encerra_lotacao.xml'   },
+                        { label: 'Fracionado',     file: 'ex_encerra_fracionado.xml' },
+                        { label: 'TAC-Agregado',   file: 'ex_encerra_agregado.xml'  },
+                      ].map(({ label, file }) => (
+                        <a
+                          key={file}
+                          href={`/exemplos/encerramento/${file}`}
+                          download={file}
+                          onClick={() => track('download_example', { file, fileType: 'xml' })}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
+                        >
+                          <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                          {label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            {fileType === 'txt' && integrationType === 'emissao' && (
+              <div className="mb-4 shrink-0">
+                <button onClick={() => setExamplesOpen(o => !o)} className="flex items-center gap-1.5 w-full text-left mb-2">
+                  <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                     Exemplos de arquivo
-                  </p>
+                  </span>
+                  <svg className={`w-3 h-3 text-gray-400 dark:text-gray-500 transition-transform duration-150 ${examplesOpen ? '' : '-rotate-90'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {examplesOpen && (
                   <div className="flex flex-wrap gap-2">
                     {[
-                      { label: 'Carga Lotação',  file: 'ex_encerra_lotacao.xml'   },
-                      { label: 'Fracionado',     file: 'ex_encerra_fracionado.xml' },
-                      { label: 'TAC-Agregado',   file: 'ex_encerra_agregado.xml'  },
+                      { label: 'Carga Fracionada', file: 'ex_emissao_fracionado.txt' },
+                      { label: 'TAC-Agregado',     file: 'ex_emissao_agregado.txt'   },
+                      { label: 'Carga Lotação',    file: 'ex_emissao_lotacao.txt'    },
+                      { label: 'Frota',            file: 'ex_emissao_frota.txt'      },
                     ].map(({ label, file }) => (
                       <a
                         key={file}
-                        href={`/exemplos/encerramento/${file}`}
+                        href={`/exemplos/emissao/${file}`}
                         download={file}
-                        onClick={() => track('download_example', { file, fileType: 'xml' })}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-200 dark:border-blue-800 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
+                        onClick={() => track('download_example', { file, fileType: 'txt' })}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-violet-200 dark:border-violet-800 text-xs text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40 hover:bg-violet-100 dark:hover:bg-violet-900/40 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
                       >
                         <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -508,43 +570,20 @@ export default function App() {
                       </a>
                     ))}
                   </div>
-                </div>
-              </div>
-            )}
-            {fileType === 'txt' && integrationType === 'emissao' && (
-              <div className="mb-4 shrink-0">
-                <p className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
-                  Exemplos de arquivo
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { label: 'Carga Fracionada', file: 'ex_emissao_fracionado.txt' },
-                    { label: 'TAC-Agregado',     file: 'ex_emissao_agregado.txt'   },
-                    { label: 'Carga Lotação',    file: 'ex_emissao_lotacao.txt'    },
-                    { label: 'Frota',            file: 'ex_emissao_frota.txt'      },
-                  ].map(({ label, file }) => (
-                    <a
-                      key={file}
-                      href={`/exemplos/emissao/${file}`}
-                      download={file}
-                      onClick={() => track('download_example', { file, fileType: 'txt' })}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-violet-200 dark:border-violet-800 text-xs text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40 hover:bg-violet-100 dark:hover:bg-violet-900/40 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
-                    >
-                      <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                      </svg>
-                      {label}
-                    </a>
-                  ))}
-                </div>
+                )}
               </div>
             )}
             {fileType === 'json' && integrationType === 'emissao' && (
               <div className="mb-4 shrink-0 flex flex-col gap-3">
-                <p className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-                  Exemplos de payload
-                </p>
-                {([
+                <button onClick={() => setExamplesOpen(o => !o)} className="flex items-center gap-1.5 w-full text-left">
+                  <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                    Exemplos de payload
+                  </span>
+                  <svg className={`w-3 h-3 text-gray-400 dark:text-gray-500 transition-transform duration-150 ${examplesOpen ? '' : '-rotate-90'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {examplesOpen && ([
                   {
                     group: 'Sem pagamento',
                     items: [
