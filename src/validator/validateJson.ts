@@ -805,6 +805,18 @@ function validateSingleOT(payload: Obj, errs: Errors): void {
     }
   }
 
+  // Regra: gerPgtoFin=5 não pode ser usado com transportador TAC (Pessoa Física)
+  if (isObj(payload['ide']) && isObj(payload['transp'])) {
+    const gpf  = (payload['ide'] as Obj)['gerPgtoFin'];
+    const transp = payload['transp'] as Obj;
+    const cadastro = transp['cadastro'];
+    const tipoTransp = isObj(cadastro) ? (cadastro as Obj)['tipo'] : undefined;
+    if (gpf === 5 && tipoTransp === 1)
+      e(errs, 'ide.gerPgtoFin',
+        'gerPgtoFin=5 (Outros) não é permitido para transportador TAC (Pessoa Física). ' +
+        'Apenas transportadores ETC ou CTC (Pessoa Jurídica) podem utilizar pagamento externo ao NDD Cargo.');
+  }
+
   // Regra: condutores só podem ser informados quando gerPgtoFin = 1 ou 6
   if (isObj(payload['ide'])) {
     const gerPgto = (payload['ide'] as Obj)['gerPgtoFin'];

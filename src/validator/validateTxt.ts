@@ -1177,6 +1177,7 @@ interface OTState {
   // campos para regras de negócio cruzadas
   dtInicio: string | null;
   dtFim: string | null;
+  gerPgtoFin: number | null;
   tracaoCount: number;
   seenPlacas: Set<string>;
 }
@@ -1196,7 +1197,7 @@ function newOTState(line1000: number): OTState {
     has9800: false, has5000: false, has5100: false, has5110: false,
     has9300: false, has9310: false,
     line1000,
-    dtInicio: null, dtFim: null, tracaoCount: 0, seenPlacas: new Set(),
+    dtInicio: null, dtFim: null, gerPgtoFin: null, tracaoCount: 0, seenPlacas: new Set(),
   };
 }
 
@@ -1264,6 +1265,11 @@ function finishOT(ot: OTState, otIndex: number, errors: ValidationError[]): void
   // TODO: regra desativada — possível erro de interpretação da legislação; revisar antes de reativar
   // if (ot.tipo === 3 && !ot.has4010 && (ot.has4020 || ot.has4030))
   //   ref('O transportador informado deve ser do tipo Pessoa Física (TAC — registro 4010) para operações TAC-Agregado (tipo=3)');
+
+  // Regra: gerPgtoFin=5 não pode ser usado com transportador TAC (Pessoa Física)
+  if (ot.gerPgtoFin === 5 && ot.has4010)
+    ref('gerPgtoFin=5 (Outros) não é permitido para transportador TAC (Pessoa Física). ' +
+      'Apenas transportadores ETC ou CTC (Pessoa Jurídica) podem utilizar pagamento externo ao NDD Cargo.');
 
   // Regra: dtFim >= dtInicio (quando ambas informadas e válidas)
   if (ot.dtInicio && ot.dtFim && isDate(ot.dtInicio) && isDate(ot.dtFim)) {
@@ -1364,8 +1370,10 @@ export function validateTxt(content: string): ValidationResult {
       currentOT = newOTState(line.lineNumber);
       // Capturar datas para regras de negócio cruzadas
       const fi = line.fields;
-      currentOT.dtInicio = (fi[5]?.trim()) || null;
-      currentOT.dtFim    = (fi[6]?.trim()) || null;
+      currentOT.dtInicio    = (fi[5]?.trim()) || null;
+      currentOT.dtFim       = (fi[6]?.trim()) || null;
+      const _gpf = parseInt(fi[8]?.trim() ?? '', 10);
+      currentOT.gerPgtoFin  = isNaN(_gpf) ? null : _gpf;
       errors.push(...val1000(line));
       continue;
     }

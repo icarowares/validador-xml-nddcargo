@@ -102,6 +102,12 @@ export function applyBusinessRules(doc: Document): { errors: ValidationError[]; 
     if (isLotFrac && transp && !child(transp, 'rota'))
       err(`${tp}.rota`, '[RN-04] "rota" é obrigatória para operações de lotação ou fracionado');
 
+    // Regra: gerPgtoFin=5 não pode ser usado com transportador TAC (Pessoa Física)
+    if (gpf === 5 && transp && child(transp, 'cpfTransportador'))
+      err(`${ip}.infOT`,
+        'gerPgtoFin=5 (Outros) não é permitido para transportador TAC (Pessoa Física). ' +
+        'Apenas transportadores ETC ou CTC (Pessoa Jurídica) podem utilizar pagamento externo ao NDD Cargo.');
+
     // ── RN-05 ─────────────────────────────────────────────────────────────────
     if ([1, 6].includes(gpf) && transp && !child(transp, 'condutores'))
       err(`${tp}.condutores`, '[RN-05] "condutores" é obrigatório quando gerPgtoFin indica movimentação financeira via NDD Cargo (1 ou 6)');
