@@ -113,7 +113,7 @@
             <vlrFrete>4500.00</vlrFrete>
             <tipoRateio>1</tipoRateio>
             <dadosBancarios>
-              <codigoInstituicaoFinanceira>0033</codigoInstituicaoFinanceira>
+              <codigoInstituicaoFinanceira>033</codigoInstituicaoFinanceira>
               <numeroAgencia>4321</numeroAgencia>
               <numeroConta>987654</numeroConta>
               <cpfCnpjFavorecido>44333222000181</cpfCnpjFavorecido>
