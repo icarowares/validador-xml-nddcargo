@@ -59,7 +59,7 @@ export function applyBusinessRules(doc: Document): { errors: ValidationError[]; 
   const err = (path: string, msg: string) => errors.push({ path, message: msg });
 
   const operacoes = child(doc.documentElement, 'operacoes');
-  if (!operacoes) return errors;
+  if (!operacoes) return { errors, warnings };
 
   children(operacoes, 'OT').forEach((ot, i) => {
     const idx = i + 1;
