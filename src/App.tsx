@@ -335,7 +335,7 @@ export default function App() {
                       items: [
                         { label: 'TAC · Conta Corrente',       file: 'ex_emissao_lotacao_tac_contacorrente.xml'      },
                         { label: 'ETC · Conta Corrente',       file: 'ex_emissao_lotacao_etc_contacorrente.xml'      },
-                        { label: 'TAC-Agr. · Conta Corrente', file: 'ex_emissao_tacagregado_tac_contacorrente.xml'  },
+                        { label: 'TAC-Agr. C.Corr. TAC',      file: 'ex_emissao_tacagregado_tac_contacorrente.xml'  },
                         { label: 'TAC-Agr. · ETC · Outros',   file: 'ex_emissao_tacagregado_etc_outros.xml'         },
                       ],
                     },
