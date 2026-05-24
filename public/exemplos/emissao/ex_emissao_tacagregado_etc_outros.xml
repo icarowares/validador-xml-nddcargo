@@ -11,7 +11,8 @@
         gerPgtoFin="5"
         impAuto="2"
       >
-        <!-- TACagregado: sem dtInicio (RN-03) -->
+        <!-- TACagregado: sem dtInicio/dtFim (RN-03) -->
+        <!-- gerPgtoFin=5: Outros — sem parcelamento, sem condutores, sem dadosBancarios -->
         <ide>
           <cnpj>12345678000195</cnpj>
           <numero>000019</numero>
@@ -38,8 +39,7 @@
         </carga>
         <transp>
           <rntrc>111222333</rntrc>
-          <!-- ATENÇÃO: cnpjTransportador em TACagregado viola RN-50.
-               Em operações TACagregado o transportador deve ser PF (cpfTransportador). -->
+          <!-- ETC/PJ: cnpjTransportador -->
           <cnpjTransportador>44333222000181</cnpjTransportador>
           <infTransportador>
             <ide>
@@ -78,7 +78,7 @@
             </endereco>
             <telefone>11933221100</telefone>
           </infTransportador>
-          <!-- gerPgtoFin=5: condutores não obrigatório (RN-05 não se aplica) -->
+          <!-- gerPgtoFin=5: sem condutores -->
           <veiculos>
             <veiculo>
               <placa>GHI3F45</placa>
