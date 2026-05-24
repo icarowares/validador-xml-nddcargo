@@ -53,8 +53,9 @@ const VALID_CODIGO_TIPO_CARGA = new Set(CODIGOS_TIPO_CARGA.map(e => e.codigo));
 
 // ─── Entry point ──────────────────────────────────────────────────────────────
 
-export function applyBusinessRules(doc: Document): ValidationError[] {
+export function applyBusinessRules(doc: Document): { errors: ValidationError[]; warnings: string[] } {
   const errors: ValidationError[] = [];
+  const warnings: string[] = [];
   const err = (path: string, msg: string) => errors.push({ path, message: msg });
 
   const operacoes = child(doc.documentElement, 'operacoes');
@@ -375,6 +376,11 @@ export function applyBusinessRules(doc: Document): ValidationError[] {
             message: `[RN-52] O código da natureza da carga "${sh}" não existe na tabela de codigoSH`,
             link: { url: '/#/codigos-sh', label: 'Consultar tabela de codigoSH' },
           });
+        else if (sh === '0001')
+          warnings.push(
+            'codigoSH "0001" (Diversos) é um código genérico que pode ser ocasionalmente rejeitado pela ANTT. ' +
+            'Recomenda-se utilizar o código SH específico da mercadoria.',
+          );
       }
     }
 
@@ -394,5 +400,5 @@ export function applyBusinessRules(doc: Document): ValidationError[] {
     }
   });
 
-  return errors;
+  return { errors, warnings };
 }

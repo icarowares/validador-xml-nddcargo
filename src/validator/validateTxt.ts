@@ -1317,6 +1317,7 @@ export function validateTxt(content: string): ValidationResult {
     return { valid: false, errors: [], parseError: 'O arquivo não contém registros válidos', otCount: 0 };
 
   const errors: ValidationError[] = [];
+  const warnings: string[] = [];
 
   // 0000 must be the first record
   const firstLine = lines[0];
@@ -1400,6 +1401,11 @@ export function validateTxt(content: string): ValidationResult {
         }
         currentOT.has2100 = true;
         errors.push(...val2100(line, currentOT.tipo));
+        if (line.fields[1]?.trim() === '0001')
+          warnings.push(
+            'codigoSH "0001" (Diversos) é um código genérico que pode ser ocasionalmente rejeitado pela ANTT. ' +
+            'Recomenda-se utilizar o código SH específico da mercadoria.',
+          );
         break;
 
       case '2110':
@@ -1571,5 +1577,10 @@ export function validateTxt(content: string): ValidationResult {
     });
   }
 
-  return { valid: errors.length === 0, errors, otCount };
+  return {
+    valid: errors.length === 0,
+    errors,
+    ...(warnings.length > 0 ? { warnings } : {}),
+    otCount,
+  };
 }

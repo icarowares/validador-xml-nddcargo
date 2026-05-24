@@ -915,6 +915,23 @@ export function validateJson(content: string): ValidationResult {
     return { valid: false, errors, otCount: 0 };
   }
 
+  const warnings: string[] = [];
   validateSingleOT(parsed, errors);
-  return { valid: errors.length === 0, errors, otCount: 1 };
+
+  // Warning: codigoSH 0001 (Diversos) pode ser rejeitado ocasionalmente pela ANTT
+  if (isObj(parsed['carga'])) {
+    const sh = (parsed['carga'] as Record<string, unknown>)['codigoSH'];
+    if (typeof sh === 'string' && sh === '0001')
+      warnings.push(
+        'codigoSH "0001" (Diversos) é um código genérico que pode ser ocasionalmente rejeitado pela ANTT. ' +
+        'Recomenda-se utilizar o código SH específico da mercadoria.',
+      );
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+    ...(warnings.length > 0 ? { warnings } : {}),
+    otCount: 1,
+  };
 }

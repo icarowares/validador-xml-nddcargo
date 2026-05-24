@@ -117,7 +117,7 @@ export function CodigoSHPage() {
                 {cap.numero === '00'
                   ? <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Código especial</span>
                   : <span className="text-xs text-gray-400 dark:text-gray-500">
-                      {cap.entradas.length} posição{cap.entradas.length !== 1 ? 'ões' : ''}
+                      {cap.entradas.length !== 1 ? `${cap.entradas.length} posições` : '1 posição'}
                     </span>
                 }
                 <div className="flex-1 h-px bg-gray-100 dark:bg-gray-800" />

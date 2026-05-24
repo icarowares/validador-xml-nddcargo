@@ -986,8 +986,13 @@ export function validate(xmlString: string): ValidationResult {
 
   const ctx = createCtx();
   const otCount = validateRoot(doc, ctx);
-  const businessErrors = applyBusinessRules(doc);
-  const allErrors: ValidationError[] = [...ctx.errors, ...businessErrors];
+  const businessResult = applyBusinessRules(doc);
+  const allErrors: ValidationError[] = [...ctx.errors, ...businessResult.errors];
 
-  return { valid: allErrors.length === 0, errors: allErrors, otCount };
+  return {
+    valid: allErrors.length === 0,
+    errors: allErrors,
+    ...(businessResult.warnings.length > 0 ? { warnings: businessResult.warnings } : {}),
+    otCount,
+  };
 }
