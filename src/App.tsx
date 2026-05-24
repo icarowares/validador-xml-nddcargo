@@ -521,8 +521,9 @@ export default function App() {
                   {
                     group: 'Sem pagamento',
                     items: [
-                      { label: 'TAC · Conta Corrente', file: 'ex_emissao_lotacao_tac_contacorrente.json' },
-                      { label: 'ETC · Conta Corrente', file: 'ex_emissao_lotacao_etc_contacorrente.json' },
+                      { label: 'TAC · Conta Corrente',       file: 'ex_emissao_lotacao_tac_contacorrente.json'       },
+                      { label: 'ETC · Conta Corrente',       file: 'ex_emissao_lotacao_etc_contacorrente.json'       },
+                      { label: 'TAC-Agr. · Conta Corrente', file: 'ex_emissao_tacagregado_tac_contacorrente.json'   },
                     ],
                   },
                   {
