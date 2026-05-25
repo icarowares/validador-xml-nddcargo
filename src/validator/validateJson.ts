@@ -400,13 +400,18 @@ function validateCarga(raw: unknown, tipo: number | null, errs: Errors): void {
 
   // documentosOriginarios (optional)
   const docs = raw['documentosOriginarios'];
-  if (Array.isArray(docs)) {
-    docs.forEach((doc, i) => {
-      const dp = `${path}.documentosOriginarios[${i}]`;
-      if (!isObj(doc)) { e(errs, dp, 'Deve ser um objeto'); return; }
-      reqStr(doc, 'tipo', dp, 1, 40, errs);
-      reqStr(doc, 'numero', dp, 1, 44, errs);
-    });
+  if (docs !== undefined && docs !== null) {
+    if (!Array.isArray(docs) || docs.length === 0) {
+      e(errs, `${path}.documentosOriginarios`,
+        'Array vazio não é permitido — omita o campo ou use null quando não houver documentos');
+    } else {
+      docs.forEach((doc, i) => {
+        const dp = `${path}.documentosOriginarios[${i}]`;
+        if (!isObj(doc)) { e(errs, dp, 'Deve ser um objeto'); return; }
+        reqStr(doc, 'tipo', dp, 1, 40, errs);
+        reqStr(doc, 'numero', dp, 1, 44, errs);
+      });
+    }
   }
 }
 
