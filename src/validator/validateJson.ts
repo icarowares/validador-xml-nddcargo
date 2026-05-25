@@ -16,7 +16,7 @@ const D_TIPO_RATEIO   = '1 – Primeira, 2 – Última, 3 – Todas, 4 – Não 
 const D_TIPO_PGTO     = '1 – À vista, 2 – A prazo, 3 – Outros';
 const D_FINALIDADE    = '1 – Adiantamento, 2 – Saldo';
 const D_TIPO_PAGAMENTO = '1 – TED (descontinuado), 2 – PIX';
-const D_TIPO_CHAVE    = '1 – CPF/CNPJ, 2 – Celular, 3 – E-mail, 4 – Chave aleatória, 5 – Outro';
+const D_TIPO_CHAVE    = '1 – E-mail, 2 – CPF/CNPJ, 3 – Telefone, 4 – Chave aleatória, 5 – Dados bancários (sem chave PIX)';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -596,6 +596,46 @@ function validateVeiculos(raw: unknown, errs: Errors): void {
   if (automotorCount > 1) e(errs, path, 'Apenas um veículo deve ser do tipo automotor (cadastro.tipo=1)');
 }
 
+// ─── Validação de formato de chavePix por tipoChave ──────────────────────────
+
+function validateChavePixFormat(chavePix: unknown, tipoChave: unknown, basePath: string, errs: Errors): void {
+  // Só valida quando tipoChave e chavePix estiverem presentes e tipoChave for 1–4
+  if (!isNum(tipoChave) || chavePix === undefined || chavePix === null) return;
+  if (typeof chavePix !== 'string') return; // formato da string já validado pelo optStr
+
+  const tipo  = tipoChave as number;
+  const chave = chavePix as string;
+  const p     = `${basePath}.chavePix`;
+
+  if (tipo === 1) {
+    // 1 – E-mail
+    if (!isEmail(chave))
+      e(errs, p,
+        `[tipoChave=1] A chave PIX deve ser um e-mail válido (recebido: "${chave}")`);
+
+  } else if (tipo === 2) {
+    // 2 – CPF/CNPJ alfanumérico — 11 (CPF) ou 14 (CNPJ) chars, sem pontos/hífens/especiais
+    if (!/^[a-zA-Z0-9]{11}$/.test(chave) && !/^[a-zA-Z0-9]{14}$/.test(chave))
+      e(errs, p,
+        `[tipoChave=2] A chave PIX CPF/CNPJ deve ter exatamente 11 (CPF) ou 14 (CNPJ) caracteres alfanuméricos, ` +
+        `sem pontos, hífens ou caracteres especiais (recebido: "${chave}")`);
+
+  } else if (tipo === 3) {
+    // 3 – Telefone: +<código do país><DDD><número>, ex: +5549912345678
+    if (!/^\+[1-9]\d{6,14}$/.test(chave))
+      e(errs, p,
+        `[tipoChave=3] A chave PIX telefone deve iniciar com "+" seguido do código do país, DDD e número completo ` +
+        `(ex: +5549912345678) (recebido: "${chave}")`);
+
+  } else if (tipo === 4) {
+    // 4 – Chave aleatória: UUID no formato 8-4-4-4-12 (32 hex chars separados por traços)
+    if (!/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(chave))
+      e(errs, p,
+        `[tipoChave=4] A chave PIX aleatória deve ser uma UUID no formato 8-4-4-4-12 com 32 dígitos hexadecimais ` +
+        `(ex: 123e4567-e12b-12d3-a456-426614174000) (recebido: "${chave}")`);
+  }
+}
+
 function validateValores(raw: unknown, errs: Errors): void {
   const path = 'valores';
   if (!isObj(raw)) { e(errs, path, 'Campo obrigatório não informado'); return; }
@@ -697,6 +737,8 @@ function validateValores(raw: unknown, errs: Errors): void {
     optStr(db, 'chavePix', dbp, 1, 77, errs);
     optCpfCnpj(db, 'cpfCnpjFavorecido', dbp, errs);
     optNum(db, 'tipoChave', dbp, [1, 2, 3, 4, 5], errs, D_TIPO_CHAVE);
+    // Valida o formato da chavePix de acordo com o tipoChave informado
+    validateChavePixFormat(db['chavePix'], db['tipoChave'], dbp, errs);
   }
 }
 
@@ -869,6 +911,34 @@ function validateSingleOT(payload: Obj, errs: Errors): void {
           e(errs, `carga.ContratantesCargaFrac[${i}]`,
             `[RN-42] cpfCnpj "${ideCnpj}" não pode ser igual ao CNPJ da contratante principal (ide.cnpj)`);
       });
+    }
+  }
+
+  // ── Regras cruzadas: ciotFrotaPropria ────────────────────────────────────────
+  if (isObj(payload['ciotFrotaPropria'])) {
+    const cfp              = payload['ciotFrotaPropria'] as Obj;
+    const cnpjCpfContrat   = cfp['CnpjCpfContratante'];
+    const ideCnpj          = isObj(payload['ide'])   ? (payload['ide']   as Obj)['cnpj']      : undefined;
+    const transpCpfCnpj    = isObj(payload['transp']) ? (payload['transp'] as Obj)['cpfCnpj']  : undefined;
+
+    // Regra: CnpjCpfContratante ≠ ide.cnpj
+    if (typeof cnpjCpfContrat === 'string' && typeof ideCnpj === 'string' && cnpjCpfContrat === ideCnpj)
+      e(errs, 'ciotFrotaPropria.CnpjCpfContratante',
+        `"CnpjCpfContratante" não pode ser igual ao CNPJ da emitente (ide.cnpj = "${ideCnpj}")`);
+
+    // Regra: CnpjCpfContratante ≠ transp.cpfCnpj
+    if (typeof cnpjCpfContrat === 'string' && typeof transpCpfCnpj === 'string' && cnpjCpfContrat === transpCpfCnpj)
+      e(errs, 'ciotFrotaPropria.CnpjCpfContratante',
+        `"CnpjCpfContratante" não pode ser igual ao CPF/CNPJ do transportador (transp.cpfCnpj = "${transpCpfCnpj}")`);
+
+    // Regra: ide.cnpj e transp.cpfCnpj devem pertencer à mesma empresa
+    // (CNPJ raiz = 8 primeiros dígitos iguais; só validado quando transp.cpfCnpj for CNPJ de 14 dígitos)
+    if (typeof ideCnpj === 'string' && typeof transpCpfCnpj === 'string' && transpCpfCnpj.length === 14) {
+      if (ideCnpj.slice(0, 8) !== transpCpfCnpj.slice(0, 8))
+        e(errs, 'ciotFrotaPropria',
+          `Quando ciotFrotaPropria é utilizado, "ide.cnpj" e "transp.cpfCnpj" devem pertencer à mesma empresa ` +
+          `(os 8 primeiros dígitos do CNPJ raiz devem ser iguais). ` +
+          `ide.cnpj="${ideCnpj}" vs transp.cpfCnpj="${transpCpfCnpj}"`);
     }
   }
 

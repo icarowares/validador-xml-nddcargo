@@ -14,6 +14,9 @@ const RELEASES: Release[] = [
   {
     date: '25 mai 2026',
     entries: [
+      { type: 'fix',  text: 'JSON Emissão — tipoChave corrigido: 1=E-mail, 2=CPF/CNPJ, 3=Telefone, 4=Chave aleatória, 5=Dados bancários (sem chave PIX); valores anteriores estavam mapeados incorretamente' },
+      { type: 'feat', text: 'JSON Emissão — validação de formato de chavePix por tipoChave: e-mail (tipo=1), CPF/CNPJ 11 ou 14 dígitos (tipo=2), telefone com prefixo +<país><DDD><número> (tipo=3) e UUID 8-4-4-4-12 (tipo=4)' },
+      { type: 'feat', text: 'JSON Emissão — regras cruzadas de ciotFrotaPropria: CnpjCpfContratante não pode ser igual ao ide.cnpj nem ao transp.cpfCnpj; ide.cnpj e transp.cpfCnpj devem pertencer ao mesmo CNPJ raiz (8 primeiros dígitos)' },
       { type: 'feat', text: 'Validação de TXT Retificação (EnvAlte) — layout completo com registros 0000/1000/1100/2000/2200/2300/4000–4900/5000–5600/9000–9400; aba Retificação habilitada para arquivos TXT' },
       { type: 'feat', text: 'Regras de negócio TXT Retificação: RN-R01 (2200 e 2300 proibidos para Lotação), RN-R02 (4100/4200/4900 mutuamente exclusivos por 4000), RN-R03 (5100–5600 mutuamente exclusivos por 5000); validação de parentesco para todos os registros filhos' },
       { type: 'feat', text: 'Três exemplos TXT Retificação disponíveis para download: Carga Lotação (nova parcela automática + adição de valor), Fracionado (prorrogação + ajuste de carga + desconto), TAC-Agregado (parcela manual + desconto + impostos)' },
