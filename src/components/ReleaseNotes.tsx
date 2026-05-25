@@ -12,6 +12,14 @@ interface Release {
 
 const RELEASES: Release[] = [
   {
+    date: '25 mai 2026',
+    entries: [
+      { type: 'feat', text: 'Validação de TXT Encerramento (EnvEnce) — layout completo com registros 0000/1000/1100/2000/2400/3000/3100/3110/4000/4100/4110/4120; aba Encerramento habilitada para arquivos TXT' },
+      { type: 'feat', text: 'Regras de negócio TXT Encerramento: RN-E01 (exclusividade Lotação/Fracionado/TAC-Agregado), RN-E02 (encerrar=1), RN-E03 (codigoIBGE ou CEP ou lat+lon), RN-E04 (mín. 2 pontos de parada por 3100), RN-E05 (4110 XOR 4120)' },
+      { type: 'feat', text: 'Três exemplos TXT Encerramento disponíveis para download: Carga Lotação, Carga Fracionada e TAC-Agregado (com duas viagens, rotas e pontos de parada por codigoIBGE)' },
+    ],
+  },
+  {
     date: '24 mai 2026',
     entries: [
       { type: 'feat', text: 'Editor XML e JSON — auto-indentação ao colar: XML e JSON válidos são formatados automaticamente com 2 espaços ao colar no editor; conteúdo inválido é inserido sem alteração' },
