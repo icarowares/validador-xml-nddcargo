@@ -78,6 +78,22 @@
             </endereco>
             <telefone>11977665544</telefone>
           </infTransportador>
+          <rota>
+            <rotaERP>ROTA-SP-BH</rotaERP>
+            <informacoes>
+              <nome>São Paulo › Belo Horizonte</nome>
+              <tipoRotaPadrao>1</tipoRotaPadrao>
+              <pontosParada>
+                <pontoParada>
+                  <codigoIBGE>3550308</codigoIBGE>
+                </pontoParada>
+                <pontoParada>
+                  <codigoIBGE>3106200</codigoIBGE>
+                </pontoParada>
+              </pontosParada>
+              <totalKm>590</totalKm>
+            </informacoes>
+          </rota>
           <!-- gerPgtoFin=1: condutores obrigatórios (RN-05) -->
           <condutores>
             <condutor>
