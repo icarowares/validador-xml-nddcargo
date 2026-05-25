@@ -1,0 +1,10 @@
+0000;ABCDE12345FGHIJ67890KLMN;1.00.00
+1000;12345678000195;Prorrogacao do prazo de entrega e ajuste de dados da carga fracionada
+1100;000000000002;ABCD
+9000;1280.00;0.00;
+9100;0.00;0.00;0.00
+2000;2
+2200;2026-08-31
+2300;8716;3200.00;5
+5000;Parcela Frete
+5400;Desconto Fidelidade;80.00;;1;1280.00

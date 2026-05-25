@@ -14,6 +14,9 @@ const RELEASES: Release[] = [
   {
     date: '25 mai 2026',
     entries: [
+      { type: 'feat', text: 'Validação de TXT Retificação (EnvAlte) — layout completo com registros 0000/1000/1100/2000/2200/2300/4000–4900/5000–5600/9000–9400; aba Retificação habilitada para arquivos TXT' },
+      { type: 'feat', text: 'Regras de negócio TXT Retificação: RN-R01 (2200 e 2300 proibidos para Lotação), RN-R02 (4100/4200/4900 mutuamente exclusivos por 4000), RN-R03 (5100–5600 mutuamente exclusivos por 5000); validação de parentesco para todos os registros filhos' },
+      { type: 'feat', text: 'Três exemplos TXT Retificação disponíveis para download: Carga Lotação (nova parcela automática + adição de valor), Fracionado (prorrogação + ajuste de carga + desconto), TAC-Agregado (parcela manual + desconto + impostos)' },
       { type: 'feat', text: 'Validação de TXT Encerramento (EnvEnce) — layout completo com registros 0000/1000/1100/2000/2400/3000/3100/3110/4000/4100/4110/4120; aba Encerramento habilitada para arquivos TXT' },
       { type: 'feat', text: 'Regras de negócio TXT Encerramento: RN-E01 (exclusividade Lotação/Fracionado/TAC-Agregado), RN-E02 (encerrar=1), RN-E03 (codigoIBGE ou CEP ou lat+lon), RN-E04 (mín. 2 pontos de parada por 3100), RN-E05 (4110 XOR 4120)' },
       { type: 'feat', text: 'Três exemplos TXT Encerramento disponíveis para download: Carga Lotação, Carga Fracionada e TAC-Agregado (com duas viagens, rotas e pontos de parada por codigoIBGE)' },

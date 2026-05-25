@@ -9,6 +9,7 @@ import { FormaConstituicaoPage } from './components/FormaConstituicaoPage';
 import { ComoUsarPage } from './components/ComoUsarPage';
 import { validate } from './validator/validate';
 import { validateRetificacao } from './validator/validateRetificacao';
+import { validateRetificacaoTxt } from './validator/validateRetificacaoTxt';
 import { validateCancelamento } from './validator/validateCancelamento';
 import { validateEncerramento } from './validator/validateEncerramento';
 import { validateEncerramentoTxt } from './validator/validateEncerramentoTxt';
@@ -22,7 +23,7 @@ type IntegrationType = 'emissao' | 'retificacao' | 'cancelamento' | 'encerrament
 
 const INTEGRATION_TYPES: { id: IntegrationType; label: string; activeFor: FileType[] }[] = [
   { id: 'emissao',      label: 'Emissão',      activeFor: ['xml', 'txt', 'json'] },
-  { id: 'retificacao',  label: 'Retificação',  activeFor: ['xml']                },
+  { id: 'retificacao',  label: 'Retificação',  activeFor: ['xml', 'txt']         },
   { id: 'cancelamento', label: 'Cancelamento', activeFor: ['xml']                },
   { id: 'encerramento', label: 'Encerramento', activeFor: ['xml', 'txt']         },
 ];
@@ -76,7 +77,11 @@ export default function App() {
     setIsValidating(true);
     setTimeout(() => {
       const res = fileType === 'txt'
-        ? (integrationType === 'encerramento' ? validateEncerramentoTxt(content) : validateTxt(content))
+        ? (integrationType === 'encerramento'
+            ? validateEncerramentoTxt(content)
+            : integrationType === 'retificacao'
+              ? validateRetificacaoTxt(content)
+              : validateTxt(content))
         : fileType === 'json'
           ? validateJson(content)
           : integrationType === 'retificacao'
@@ -560,6 +565,40 @@ export default function App() {
                       <a
                         key={file}
                         href={`/exemplos/emissao/${file}`}
+                        download={file}
+                        onClick={() => track('download_example', { file, fileType: 'txt' })}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-violet-200 dark:border-violet-800 text-xs text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40 hover:bg-violet-100 dark:hover:bg-violet-900/40 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
+                      >
+                        <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        {label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+            {fileType === 'txt' && integrationType === 'retificacao' && (
+              <div className="mb-4 shrink-0">
+                <button onClick={() => setExamplesOpen(o => !o)} className="flex items-center gap-1.5 w-full text-left mb-2">
+                  <span className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                    Exemplos de arquivo
+                  </span>
+                  <svg className={`w-3 h-3 text-gray-400 dark:text-gray-500 transition-transform duration-150 ${examplesOpen ? '' : '-rotate-90'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {examplesOpen && (
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: 'Carga Lotação',  file: 'ex_retif_lotacao.txt'    },
+                      { label: 'Fracionado',     file: 'ex_retif_fracionado.txt' },
+                      { label: 'TAC-Agregado',   file: 'ex_retif_agregado.txt'   },
+                    ].map(({ label, file }) => (
+                      <a
+                        key={file}
+                        href={`/exemplos/retificacao/${file}`}
                         download={file}
                         onClick={() => track('download_example', { file, fileType: 'txt' })}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-violet-200 dark:border-violet-800 text-xs text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40 hover:bg-violet-100 dark:hover:bg-violet-900/40 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
