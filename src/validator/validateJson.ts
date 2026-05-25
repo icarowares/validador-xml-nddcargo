@@ -362,6 +362,11 @@ function validateCarga(raw: unknown, tipo: number | null, errs: Errors): void {
     }
   }
 
+  // utilizarRoteirizador (opcional)
+  const utilizarRot = raw['utilizarRoteirizador'];
+  if (utilizarRot !== undefined && utilizarRot !== null && typeof utilizarRot !== 'boolean')
+    e(errs, `${path}.utilizarRoteirizador`, 'Deve ser um booleano (true ou false)');
+
   // remetente
   if (!isObj(raw['remetente'])) {
     e(errs, `${path}.remetente`, 'Campo obrigatório não informado');
