@@ -108,7 +108,7 @@
     "dadosBancarios": {
       "tipoPagamento": 2,
       "tipoChave": 1,
-      "chavepix": "55566677788"
+      "chavePix": "55566677788"
     }
   },
   "rota": {

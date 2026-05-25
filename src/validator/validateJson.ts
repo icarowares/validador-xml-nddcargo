@@ -689,7 +689,7 @@ function validateValores(raw: unknown, errs: Errors): void {
     optStr(db, 'codigoInstituicaoFinanceira', dbp, 1, 10, errs);
     optStr(db, 'numeroAgencia', dbp, 1, 10, errs);
     optStr(db, 'digitoConta', dbp, 1, 5, errs);
-    optStr(db, 'chavepix', dbp, 1, 77, errs);
+    optStr(db, 'chavePix', dbp, 1, 77, errs);
     optCpfCnpj(db, 'cpfCnpjFavorecido', dbp, errs);
     optNum(db, 'tipoChave', dbp, [1, 2, 3, 4, 5], errs, D_TIPO_CHAVE);
   }
@@ -873,14 +873,14 @@ function validateSingleOT(payload: Obj, errs: Errors): void {
     const db30  = ((payload['valores'] as Obj)['dadosBancarios']);
     if (isObj(db30)) {
       const tipoChave = (db30 as Obj)['tipoChave'];
-      const chavePix  = (db30 as Obj)['chavepix'];
+      const chavePix  = (db30 as Obj)['chavePix'];
       if (gpf30 === 6) {
         if (isNum(tipoChave) && (tipoChave as number) === 5 && chavePix !== undefined && chavePix !== null)
-          e(errs, 'valores.dadosBancarios.chavepix',
-            '[RN-30] "chavepix" não deve ser informado quando tipoChave=5 (dados bancários)');
+          e(errs, 'valores.dadosBancarios.chavePix',
+            '[RN-30] "chavePix" não deve ser informado quando tipoChave=5 (dados bancários)');
         else if ((!isNum(tipoChave) || (tipoChave as number) !== 5) && (chavePix === undefined || chavePix === null))
-          e(errs, 'valores.dadosBancarios.chavepix',
-            '[RN-30] "chavepix" é obrigatória quando gerPgtoFin=6 e tipoChave ≠ 5');
+          e(errs, 'valores.dadosBancarios.chavePix',
+            '[RN-30] "chavePix" é obrigatória quando gerPgtoFin=6 e tipoChave ≠ 5');
       }
       if (gpf30 !== 6 && tipoChave !== undefined && tipoChave !== null)
         e(errs, 'valores.dadosBancarios.tipoChave',

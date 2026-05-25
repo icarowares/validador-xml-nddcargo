@@ -126,7 +126,7 @@
     "dadosBancarios": {
       "tipoPagamento": 2,
       "tipoChave": 1,
-      "chavepix": "44333222000181"
+      "chavePix": "44333222000181"
     }
   }
 }
