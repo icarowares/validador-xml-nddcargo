@@ -336,8 +336,17 @@ function validateCarga(raw: unknown, tipo: number | null, errs: Errors): void {
         `O código de tipo de carga "${tipoCarga}" é inválido. Valores aceitos: ${TIPO_CARGA_LISTA}`);
 
     const dist = raw['distanciaPercorrida'];
-    if (dist === undefined || dist === null) e(errs, `${path}.distanciaPercorrida`, 'Campo obrigatório para tipoOperacao 1 ou 2');
-    else if (!isNum(dist) || (dist as number) <= 0) e(errs, `${path}.distanciaPercorrida`, 'Deve ser um número maior que zero');
+    const utilizarRot = raw['utilizarRoteirizador'];
+    const distObrig = utilizarRot === false;
+    if (distObrig && (dist === undefined || dist === null))
+      e(errs, `${path}.distanciaPercorrida`,
+        'Campo obrigatório quando utilizarRoteirizador = false e tipoOperacao = 1 ou 2');
+    else if (dist !== undefined && dist !== null) {
+      if (!isNum(dist) || (dist as number) <= 0)
+        e(errs, `${path}.distanciaPercorrida`, 'Deve ser um número maior que zero');
+      else if ((dist as number) > 99_999_999)
+        e(errs, `${path}.distanciaPercorrida`, 'Deve ter no máximo 8 dígitos');
+    }
   }
 
   if (tipo === 2) {
