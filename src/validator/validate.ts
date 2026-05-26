@@ -651,7 +651,7 @@ function validateValores(el: Element, path: string, ctx: Ctx) {
     }
   }
 
-  const retencoes = child(el, 'retencoes');
+  const retencoes = requireChild(el, 'retencoes', path, ctx);
   if (retencoes) {
     const rp = `${path}.retencoes`;
     checkOrder(retencoes, rp, ['irrf', 'inss', 'sestsenat'], ctx);

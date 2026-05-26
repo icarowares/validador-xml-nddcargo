@@ -177,6 +177,11 @@
                 </parcelas>
               </informacoes>
             </parcelamento>
+            <retencoes>
+              <irrf>0.00</irrf>
+              <inss>0.00</inss>
+              <sestsenat>0.00</sestsenat>
+            </retencoes>
             <tipoRateio>1</tipoRateio>
             <vlrPedagio>0.00</vlrPedagio>
             <tarifas>

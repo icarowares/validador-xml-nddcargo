@@ -999,8 +999,8 @@
                                       <!-- E: vlrFrete, N, 1, 15,2 -->
                                       <xs:element name="vlrFrete" type="TValor15v2"/>
 
-                                      <!-- Raiz: despesas (1) — vlrDespesas=0.00 e descricao="NAO INFORMADO" quando não aplicável -->
-                                      <xs:element name="despesas">
+                                      <!-- Raiz: despesas (0-1) — opcional conforme layout oficial NDD -->
+                                      <xs:element name="despesas" minOccurs="0">
                                         <xs:complexType>
                                           <xs:sequence>
                                             <!-- E: vlrDespesas, N, 1, 15,2 -->
@@ -1151,8 +1151,8 @@
                                         </xs:complexType>
                                       </xs:element><!-- fim Raiz: parcelamento -->
 
-                                      <!-- Raiz: retencoes (0-1) — IRRF + INSS + SEST/SENAT -->
-                                      <xs:element name="retencoes" minOccurs="0">
+                                      <!-- Raiz: retencoes (1) — IRRF + INSS + SEST/SENAT — obrigatório conforme layout oficial NDD -->
+                                      <xs:element name="retencoes">
                                         <xs:complexType>
                                           <xs:sequence>
                                             <!-- irrf, inss, sestsenat: N, 1, 15,2 -->
