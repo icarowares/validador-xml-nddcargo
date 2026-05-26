@@ -405,21 +405,6 @@ export function applyBusinessRules(doc: Document): { errors: ValidationError[]; 
       }
     }
 
-    // ── RN-54: despesas obrigatório em valores ─────────────────────────────────
-    if (valEl) {
-      const despEl = child(valEl, 'despesas');
-      if (!despEl) {
-        err(`${vp}.despesas`,
-          '[RN-54] "despesas" é obrigatório em valores. ' +
-          'Informe vlrDespesas=0.00 e descricao="NAO INFORMADO" quando não houver despesas.');
-      } else {
-        if (!child(despEl, 'vlrDespesas'))
-          err(`${vp}.despesas.vlrDespesas`, '[RN-54] "vlrDespesas" é obrigatório dentro de despesas');
-        if (!child(despEl, 'descricao'))
-          err(`${vp}.despesas.descricao`, '[RN-54] "descricao" é obrigatório dentro de despesas');
-      }
-    }
-
     // ── RN-55: tarifas obrigatório em valores ──────────────────────────────────
     if (valEl) {
       const tarifEl = child(valEl, 'tarifas');
