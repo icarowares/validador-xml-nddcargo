@@ -64,6 +64,7 @@
             <ide>
               <etc>
                 <razaoSocial>EMPRESA ABC TRANSPORTES LTDA</razaoSocial>
+                <nomeFantasia>EMPRESA ABC TRANSPORTES</nomeFantasia>
                 <inscEstadual>111222333444</inscEstadual>
                 <atividadePrincipal>49</atividadePrincipal>
                 <formaConstituicao>206-2</formaConstituicao>
@@ -115,6 +116,7 @@
               <descricao>NAO INFORMADO</descricao>
             </despesas>
             <tipoRateio>1</tipoRateio>
+            <vlrPedagio>0.00</vlrPedagio>
             <tarifas>
               <quantidadeTotal>0</quantidadeTotal>
               <valorTotal>0.00</valorTotal>

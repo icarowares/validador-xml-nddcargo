@@ -12,6 +12,14 @@ interface Release {
 
 const RELEASES: Release[] = [
   {
+    date: '26 mai 2026',
+    entries: [
+      { type: 'feat', text: 'XSD Emissão — conformidade completa com o layout oficial NDD v4.2.12.0: token exatamente 24 caracteres; tms sem limite de tamanho; tipo base TString (anti-espaço puro) aplicado em 78 campos; TValor15v2 e TTotalKm8v2 como xs:string com pattern; TData e TDataHora com validação de calendário; lotacao: codigoTipoCarga, indAltoDesempenho, indRetornoVazio e composicaoVeicular tornados obrigatórios; vlrPedagio obrigatório e direcionamentosPedagio removido; tipoChave expandido para 0–5; codigoInstituicaoFinanceira alterado para xs:integer 0–999; tipoPagamento restringe-se ao valor 2 (PIX); atributo ID com padrão GUID; atributo tms sem restrição de tamanho' },
+      { type: 'feat', text: 'Validador XML Emissão — alinhado ao novo XSD: token agora exige exatamente 24 caracteres; tms sem limite de tamanho; codigoTipoCarga, indAltoDesempenho, indRetornoVazio e composicaoVeicular tornados obrigatórios em lotacao (nomes corrigidos para camelCase); vlrPedagio obrigatório e bloco direcionamentosPedagio removido; tipoChave aceita 0–5; tipoPagamento aceita apenas 2; codigoInstituicaoFinanceira validado como inteiro 0–999' },
+      { type: 'fix',  text: '15 exemplos XML de emissão atualizados: vlrPedagio=0.00 adicionado em todos os arquivos; nomeFantasia adicionado nos dois exemplos de frota própria; ordem dos campos em dadosBancarios corrigida nos exemplos PIX (chavePix → cpfCnpjFavorecido → tipoChave → tipoPagamento); caractere "›" (fora do range Latin-1) substituído por "-" no campo nome em 6 arquivos' },
+    ],
+  },
+  {
     date: '25 mai 2026',
     entries: [
       { type: 'fix',  text: 'JSON Emissão — tipoChave corrigido: 1=E-mail, 2=CPF/CNPJ, 3=Telefone, 4=Chave aleatória, 5=Dados bancários (sem chave PIX); valores anteriores estavam mapeados incorretamente' },

@@ -99,7 +99,7 @@
           <rota>
             <rotaERP>ROTA-SP-BH</rotaERP>
             <informacoes>
-              <nome>São Paulo › Belo Horizonte</nome>
+              <nome>São Paulo - Belo Horizonte</nome>
               <tipoRotaPadrao>1</tipoRotaPadrao>
               <pontosParada>
                 <pontoParada>
@@ -178,6 +178,7 @@
               </informacoes>
             </parcelamento>
             <tipoRateio>1</tipoRateio>
+            <vlrPedagio>0.00</vlrPedagio>
             <tarifas>
               <quantidadeTotal>0</quantidadeTotal>
               <valorTotal>0.00</valorTotal>

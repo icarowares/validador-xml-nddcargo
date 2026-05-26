@@ -235,12 +235,12 @@ function validatePessoa(el: Element, path: string, ctx: Ctx) {
 // ─── Carga ────────────────────────────────────────────────────────────────────
 
 function validateLotacao(el: Element, path: string, ctx: Ctx) {
-  checkOrder(el, path, ['codigoSH', 'codigoTipoCarga', 'quantidade', 'IndAltoDesempenho', 'IndRetornoVazio', 'remetente', 'destinatario'], ctx);
+  checkOrder(el, path, ['codigoSH', 'codigoTipoCarga', 'quantidade', 'indAltoDesempenho', 'indRetornoVazio', 'composicaoVeicular', 'remetente', 'destinatario'], ctx);
   const sh = requireChild(el, 'codigoSH', path, ctx);
   if (sh && !/^[0-9]{4}$/.test(txt(sh)))
     ctx.err(`${path}.codigoSH`, `Código SH inválido: "${txt(sh)}". Deve conter exatamente 4 dígitos numéricos`);
 
-  const ctc = child(el, 'codigoTipoCarga');
+  const ctc = requireChild(el, 'codigoTipoCarga', path, ctx);
   if (ctc) {
     const v = parseInt(txt(ctc), 10);
     if (v < 1 || v > 12)
@@ -250,11 +250,14 @@ function validateLotacao(el: Element, path: string, ctx: Ctx) {
   const qtd = requireChild(el, 'quantidade', path, ctx);
   if (qtd) valQtd9v2(txt(qtd), `${path}.quantidade`, ctx);
 
-  const indAD = child(el, 'IndAltoDesempenho');
-  if (indAD) valEnum(txt(indAD), [0, 1], `${path}.IndAltoDesempenho`, ctx);
+  const indAD = requireChild(el, 'indAltoDesempenho', path, ctx);
+  if (indAD) valEnum(txt(indAD), [0, 1], `${path}.indAltoDesempenho`, ctx);
 
-  const indRV = child(el, 'IndRetornoVazio');
-  if (indRV) valEnum(txt(indRV), [0, 1], `${path}.IndRetornoVazio`, ctx);
+  const indRV = requireChild(el, 'indRetornoVazio', path, ctx);
+  if (indRV) valEnum(txt(indRV), [0, 1], `${path}.indRetornoVazio`, ctx);
+
+  const compVeic = requireChild(el, 'composicaoVeicular', path, ctx);
+  if (compVeic) valEnum(txt(compVeic), [0, 1], `${path}.composicaoVeicular`, ctx);
 
   const rem = requireChild(el, 'remetente', path, ctx);
   if (rem) validatePessoa(rem, `${path}.remetente`, ctx);
@@ -608,7 +611,7 @@ function validateParcela(el: Element, path: string, ctx: Ctx) {
 }
 
 function validateValores(el: Element, path: string, ctx: Ctx) {
-  checkOrder(el, path, ['vlrFrete', 'despesas', 'parcelamento', 'retencoes', 'tipoRateio', 'descontos', 'vlrCombustivel', 'vlrPedagio', 'direcionamentosPedagio', 'dadosBancarios'], ctx);
+  checkOrder(el, path, ['vlrFrete', 'despesas', 'parcelamento', 'retencoes', 'tipoRateio', 'descontos', 'vlrCombustivel', 'vlrPedagio', 'tarifas', 'dadosBancarios'], ctx);
   const vlrFrete = requireChild(el, 'vlrFrete', path, ctx);
   if (vlrFrete) valValor(txt(vlrFrete), `${path}.vlrFrete`, ctx);
 
@@ -666,22 +669,18 @@ function validateValores(el: Element, path: string, ctx: Ctx) {
   const vlrComb = child(el, 'vlrCombustivel');
   if (vlrComb) valValor(txt(vlrComb), `${path}.vlrCombustivel`, ctx);
 
-  const vlrPedagio = child(el, 'vlrPedagio');
-  const dirPedagio = child(el, 'direcionamentosPedagio');
-  if (vlrPedagio && dirPedagio)
-    ctx.err(path, 'Informe apenas "vlrPedagio" ou "direcionamentosPedagio", não ambos');
+  const vlrPedagio = requireChild(el, 'vlrPedagio', path, ctx);
   if (vlrPedagio) valValor(txt(vlrPedagio), `${path}.vlrPedagio`, ctx);
-  if (dirPedagio) {
-    const dp = `${path}.direcionamentosPedagio`;
-    const catPedagio = requireChild(dirPedagio, 'categoriaPedagio', dp, ctx);
-    if (catPedagio) valStrLen(txt(catPedagio), 1, 2, `${dp}.categoriaPedagio`, ctx);
-  }
 
   const db = child(el, 'dadosBancarios');
   if (db) {
     const dbp = `${path}.dadosBancarios`;
     const codigoIF = child(db, 'codigoInstituicaoFinanceira');
-    if (codigoIF) valStrLen(txt(codigoIF), 1, 3, `${dbp}.codigoInstituicaoFinanceira`, ctx);
+    if (codigoIF) {
+      const cifVal = parseInt(txt(codigoIF), 10);
+      if (!/^[0-9]+$/.test(txt(codigoIF).trim()) || cifVal < 0 || cifVal > 999)
+        ctx.err(`${dbp}.codigoInstituicaoFinanceira`, `Valor inválido: "${txt(codigoIF)}". Deve ser um inteiro entre 0 e 999`);
+    }
 
     const agencia = child(db, 'numeroAgencia');
     if (agencia) valStrLen(txt(agencia), 1, 6, `${dbp}.numeroAgencia`, ctx);
@@ -699,10 +698,10 @@ function validateValores(el: Element, path: string, ctx: Ctx) {
     if (cpfCnpjFav) valCpfCnpj(txt(cpfCnpjFav), `${dbp}.cpfCnpjFavorecido`, ctx);
 
     const tipoChave = child(db, 'tipoChave');
-    if (tipoChave) valEnum(txt(tipoChave), [1, 2, 3, 4, 5], `${dbp}.tipoChave`, ctx);
+    if (tipoChave) valEnum(txt(tipoChave), [0, 1, 2, 3, 4, 5], `${dbp}.tipoChave`, ctx);
 
     const tipoPgto = child(db, 'tipoPagamento');
-    if (tipoPgto) valEnum(txt(tipoPgto), [1, 2], `${dbp}.tipoPagamento`, ctx);
+    if (tipoPgto) valEnum(txt(tipoPgto), [2], `${dbp}.tipoPagamento`, ctx);
   }
 
 }
@@ -939,15 +938,13 @@ function validateRoot(doc: Document, ctx: Ctx): number {
   if (tms !== null) {
     if (tms.length === 0)
       ctx.err('loteOT_envio@tms', `Atributo "tms" não pode estar vazio quando informado`);
-    else if (tms.length > 20)
-      ctx.err('loteOT_envio@tms', `Atributo "tms" excede o limite de 20 caracteres`);
   }
 
   const token = root.getAttribute('token');
   if (!token) {
     ctx.err('loteOT_envio', 'Atributo obrigatório "token" não encontrado');
-  } else if (token.length === 0 || token.length > 24) {
-    ctx.err('loteOT_envio@token', `Token inválido. Deve ter entre 1 e 24 caracteres`);
+  } else if (token.length !== 24) {
+    ctx.err('loteOT_envio@token', `Token inválido: "${token}". Deve ter exatamente 24 caracteres`);
   }
 
   const operacoes = requireChild(root, 'operacoes', 'loteOT_envio', ctx);

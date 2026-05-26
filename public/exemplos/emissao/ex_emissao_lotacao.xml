@@ -160,6 +160,7 @@
               <sestsenat>0.00</sestsenat>
             </retencoes>
             <tipoRateio>3</tipoRateio>
+            <vlrPedagio>0.00</vlrPedagio>
             <tarifas>
               <quantidadeTotal>0</quantidadeTotal>
               <valorTotal>0.00</valorTotal>
