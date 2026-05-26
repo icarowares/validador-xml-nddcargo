@@ -96,6 +96,25 @@
             </endereco>
             <telefone>11999990000</telefone>
           </infTransportador>
+          <rota>
+            <rotaERP>ROTA-SP-BH</rotaERP>
+            <informacoes>
+              <nome>Sao Paulo - Belo Horizonte</nome>
+              <tipoRotaPadrao>1</tipoRotaPadrao>
+              <pontosParada>
+                <pontoParada>
+                  <codigoIBGE>3550308</codigoIBGE>
+                  <tipoRotaEspecifico>1</tipoRotaEspecifico>
+                </pontoParada>
+                <pontoParada>
+                  <codigoIBGE>3106200</codigoIBGE>
+                  <tipoRotaEspecifico>1</tipoRotaEspecifico>
+                </pontoParada>
+              </pontosParada>
+              <!-- Campo obrigatório para carga lotação -->
+              <totalKm>590</totalKm>
+            </informacoes>
+          </rota>
           <!-- gerPgtoFin=5: sem condutores -->
           <veiculos>
             <veiculo>
