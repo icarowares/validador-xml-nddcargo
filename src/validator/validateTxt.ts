@@ -1125,6 +1125,201 @@ const KNOWN_CODES = new Set([
   '9000', '9100', '9200', '9300', '9310', '9400', '9500', '9600', '9700', '9800',
 ]);
 
+// ─── Ordering validation ─────────────────────────────────────────────────────
+
+/**
+ * Section rank for each record code.
+ * Records within the same section can repeat but sections must appear in order.
+ * Sections: 2=Dados OT · 3=Embarcador · 4=Transporte · 5=CIOT · 6=Personalizados · 7=ANTT · 8=ERP · 9=Financeiro
+ */
+const SECTION_RANK: Record<string, number> = {
+  '2000': 2, '2100': 2, '2110': 2, '2200': 2, '2210': 2,
+  '2300': 2, '2310': 2, '2400': 2, '2500': 2, '2510': 2,
+  '3000': 3,
+  '4000': 4, '4010': 4, '4011': 4, '4020': 4, '4021': 4,
+  '4022': 4, '4023': 4, '4030': 4, '4031': 4, '4032': 4,
+  '4033': 4, '4100': 4, '4110': 4, '4111': 4,
+  '4200': 4, '4210': 4, '4300': 4, '4310': 4, '4320': 4, '4330': 4,
+  '4400': 4, '4410': 4, '4500': 4, '4600': 4, '4610': 4,
+  '4620': 4, '4630': 4, '4700': 4, '4710': 4, '4720': 4, '4721': 4,
+  '5000': 5, '5100': 5, '5110': 5,
+  '6000': 6,
+  '7000': 7,
+  '8000': 8,
+  '9000': 9, '9100': 9, '9200': 9, '9300': 9, '9310': 9,
+  '9400': 9, '9500': 9, '9600': 9, '9700': 9, '9800': 9,
+};
+
+const SECTION_LABEL: Record<number, string> = {
+  2: 'seção 2xxx (Dados da OT)',
+  3: 'seção 3xxx (Embarcador)',
+  4: 'seção 4xxx (Transporte)',
+  5: 'seção 5xxx (CIOT)',
+  6: 'seção 6xxx (Campos personalizados)',
+  7: 'seção 7xxx (ANTT)',
+  8: 'seção 8xxx (Código ERP)',
+  9: 'seção 9xxx (Operação financeira)',
+};
+
+/**
+ * Sub-section ranks within section 2.
+ * 2000 → 2100/2110 (Carga) → 2200/2210 (Remetente) → 2300/2310 (Destinatário)
+ *      → 2400 (Documentos) → 2500/2510 (Consignatário)
+ */
+const SUBSEC2_RANK: Record<string, number> = {
+  '2000': 0,
+  '2100': 1, '2110': 1,
+  '2200': 2, '2210': 2,
+  '2300': 3, '2310': 3,
+  '2400': 4,
+  '2500': 5, '2510': 5,
+};
+
+const SUBSEC2_LABEL: Record<number, string> = {
+  0: '2000 (Tipo da OT)',
+  1: '2100/2110 (Carga)',
+  2: '2200/2210 (Remetente)',
+  3: '2300/2310 (Destinatário)',
+  4: '2400 (Documentos fiscais)',
+  5: '2500/2510 (Consignatário)',
+};
+
+/**
+ * Sub-section ranks within section 4.
+ * Sub-seção 3 (4200/4210 – Veículos) é um grupo repetível: múltiplos blocos
+ * veículo são permitidos, mas após 4300+ não é possível voltar a 4200.
+ *
+ * 4000 → 4010–4033 (Transportador) → 4100–4111 (Condutor) → 4200/4210 (Veículos)
+ *      → 4300–4330 (Valores) → 4400/4410 (Subcontratado) → 4500 (Rota)
+ *      → 4600–4630 (Roteiro) → 4700–4721 (Direcionamento)
+ */
+const SUBSEC4_RANK: Record<string, number> = {
+  '4000': 0,
+  '4010': 1, '4011': 1, '4020': 1, '4021': 1, '4022': 1, '4023': 1,
+  '4030': 1, '4031': 1, '4032': 1, '4033': 1,
+  '4100': 2, '4110': 2, '4111': 2,
+  '4200': 3, '4210': 3,
+  '4300': 4, '4310': 4, '4320': 4, '4330': 4,
+  '4400': 5, '4410': 5,
+  '4500': 6,
+  '4600': 7, '4610': 7, '4620': 7, '4630': 7,
+  '4700': 8, '4710': 8, '4720': 8, '4721': 8,
+};
+
+const SUBSEC4_LABEL: Record<number, string> = {
+  0: '4000 (Transportador base)',
+  1: '4010–4033 (Tipo do transportador)',
+  2: '4100–4111 (Condutor)',
+  3: '4200–4210 (Veículos)',
+  4: '4300–4330 (Valores)',
+  5: '4400–4410 (Subcontratado)',
+  6: '4500 (Rota)',
+  7: '4600–4630 (Roteiro)',
+  8: '4700–4721 (Direcionamento de pedágio)',
+};
+
+/**
+ * Sub-section ranks within section 9.
+ * 9000 → 9100/9200 (Datas) → 9300/9310 (Tipo adicional) → 9400 (Descontos)
+ *      → 9500 (Restrições) → 9600 (Entrega) → 9700 (Condutor) → 9800 (Indicador)
+ */
+const SUBSEC9_RANK: Record<string, number> = {
+  '9000': 0,
+  '9100': 1, '9200': 1,
+  '9300': 2, '9310': 2,
+  '9400': 3,
+  '9500': 4,
+  '9600': 5,
+  '9700': 6,
+  '9800': 7,
+};
+
+const SUBSEC9_LABEL: Record<number, string> = {
+  0: '9000 (Operação financeira)',
+  1: '9100/9200 (Datas)',
+  2: '9300/9310 (Tipo adicional)',
+  3: '9400 (Descontos)',
+  4: '9500 (Restrições)',
+  5: '9600 (Entrega)',
+  6: '9700 (Condutor)',
+  7: '9800 (Indicador de pagamento)',
+};
+
+/**
+ * Verifica se o registro viola a ordenação esperada dentro da OT.
+ * Retorna um ValidationError se houver violação, ou null caso contrário.
+ * Atualiza os contadores de ordenação em `ot` como efeito colateral.
+ */
+function checkRecordOrdering(line: ParsedLine, ot: OTState): ValidationError | null {
+  const code = line.code;
+  const secRank = SECTION_RANK[code];
+  if (secRank === undefined) return null;
+
+  // ── Verificação entre seções ───────────────────────────────────────────────
+  if (secRank < ot.maxSectionRank) {
+    const cur  = SECTION_LABEL[secRank]         ?? `seção ${secRank}`;
+    const prev = SECTION_LABEL[ot.maxSectionRank] ?? `seção ${ot.maxSectionRank}`;
+    return {
+      path: `Linha ${line.lineNumber} · Reg. ${code}`,
+      message: `Registro fora de ordem: ${cur} deve aparecer antes de ${prev}. ` +
+        `Verifique se os registros estão na sequência correta: ` +
+        `2xxx → 3xxx → 4xxx → 5xxx → 6xxx → 7xxx → 8xxx/9xxx`,
+      lineNumber: line.lineNumber,
+    };
+  }
+  if (secRank > ot.maxSectionRank) ot.maxSectionRank = secRank;
+
+  // ── Verificação dentro da seção 2 ─────────────────────────────────────────
+  if (secRank === 2) {
+    const sub = SUBSEC2_RANK[code] ?? -1;
+    if (sub < ot.maxSubsec2Rank) {
+      const cur  = SUBSEC2_LABEL[sub]              ?? `sub-seção ${sub}`;
+      const prev = SUBSEC2_LABEL[ot.maxSubsec2Rank] ?? `sub-seção ${ot.maxSubsec2Rank}`;
+      return {
+        path: `Linha ${line.lineNumber} · Reg. ${code}`,
+        message: `Registro ${code} fora de ordem na seção 2xxx: ${cur} deve aparecer antes de ${prev}. ` +
+          `Ordem esperada: 2000 → 2100/2110 → 2200/2210 → 2300/2310 → 2400 → 2500/2510`,
+        lineNumber: line.lineNumber,
+      };
+    }
+    if (sub > ot.maxSubsec2Rank) ot.maxSubsec2Rank = sub;
+  }
+
+  // ── Verificação dentro da seção 4 ─────────────────────────────────────────
+  if (secRank === 4) {
+    const sub = SUBSEC4_RANK[code] ?? -1;
+    if (sub < ot.maxSubsec4Rank) {
+      const cur  = SUBSEC4_LABEL[sub]              ?? `sub-seção ${sub}`;
+      const prev = SUBSEC4_LABEL[ot.maxSubsec4Rank] ?? `sub-seção ${ot.maxSubsec4Rank}`;
+      return {
+        path: `Linha ${line.lineNumber} · Reg. ${code}`,
+        message: `Registro ${code} fora de ordem na seção 4xxx: ${cur} deve aparecer antes de ${prev}. ` +
+          `Ordem esperada: 4000 → 4010–4033 → 4100–4111 → 4200/4210 → 4300–4330 → 4400/4410 → 4500 → 4600–4630 → 4700–4721`,
+        lineNumber: line.lineNumber,
+      };
+    }
+    if (sub > ot.maxSubsec4Rank) ot.maxSubsec4Rank = sub;
+  }
+
+  // ── Verificação dentro da seção 9 ─────────────────────────────────────────
+  if (secRank === 9) {
+    const sub = SUBSEC9_RANK[code] ?? -1;
+    if (sub < ot.maxSubsec9Rank) {
+      const cur  = SUBSEC9_LABEL[sub]              ?? `sub-seção ${sub}`;
+      const prev = SUBSEC9_LABEL[ot.maxSubsec9Rank] ?? `sub-seção ${ot.maxSubsec9Rank}`;
+      return {
+        path: `Linha ${line.lineNumber} · Reg. ${code}`,
+        message: `Registro ${code} fora de ordem na seção 9xxx: ${cur} deve aparecer antes de ${prev}. ` +
+          `Ordem esperada: 9000 → 9100/9200 → 9300/9310 → 9400 → 9500 → 9600 → 9700 → 9800`,
+        lineNumber: line.lineNumber,
+      };
+    }
+    if (sub > ot.maxSubsec9Rank) ot.maxSubsec9Rank = sub;
+  }
+
+  return null;
+}
+
 // ─── OT state tracker ────────────────────────────────────────────────────────
 
 interface OTState {
@@ -1180,6 +1375,11 @@ interface OTState {
   gerPgtoFin: number | null;
   tracaoCount: number;
   seenPlacas: Set<string>;
+  // ordenação de registros
+  maxSectionRank: number;
+  maxSubsec2Rank: number;
+  maxSubsec4Rank: number;
+  maxSubsec9Rank: number;
 }
 
 function newOTState(line1000: number): OTState {
@@ -1198,6 +1398,7 @@ function newOTState(line1000: number): OTState {
     has9300: false, has9310: false,
     line1000,
     dtInicio: null, dtFim: null, gerPgtoFin: null, tracaoCount: 0, seenPlacas: new Set(),
+    maxSectionRank: 0, maxSubsec2Rank: -1, maxSubsec4Rank: -1, maxSubsec9Rank: -1,
   };
 }
 
@@ -1413,6 +1614,10 @@ export function validateTxt(content: string): ValidationResult {
       });
       continue;
     }
+
+    // ── Verificação de ordenação de registros ─────────────────────────────────
+    const orderErr = checkRecordOrdering(line, currentOT);
+    if (orderErr) errors.push(orderErr);
 
     switch (code) {
       case '2000':
