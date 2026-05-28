@@ -63,12 +63,23 @@ function validCNPJ(cnpj: string): boolean {
   };
   return calc(12) === +cnpj[12] && calc(13) === +cnpj[13];
 }
+function isValidDateParts(y: number, m: number, d: number): boolean {
+  if (y < 1000) return false;
+  const dt = new Date(y, m - 1, d);
+  return dt.getFullYear() === y && dt.getMonth() + 1 === m && dt.getDate() === d;
+}
 function isDate(v: unknown): boolean {
-  return typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v);
+  if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+  const [y, m, d] = v.split('-').map(Number);
+  return isValidDateParts(y, m, d);
 }
 function isDateOrDatetime(v: unknown): boolean {
-  return typeof v === 'string' &&
-    (/^\d{4}-\d{2}-\d{2}$/.test(v) || /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(v));
+  if (typeof v !== 'string') return false;
+  const isDateFmt = /^\d{4}-\d{2}-\d{2}$/.test(v);
+  const isDatetimeFmt = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(v);
+  if (!isDateFmt && !isDatetimeFmt) return false;
+  const [y, m, d] = v.substring(0, 10).split('-').map(Number);
+  return isValidDateParts(y, m, d);
 }
 function isNum(v: unknown): v is number { return typeof v === 'number' && isFinite(v); }
 function isCpfCnpj(v: unknown): boolean {
