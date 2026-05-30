@@ -12,6 +12,12 @@ interface Release {
 
 const RELEASES: Release[] = [
   {
+    date: '30 mai 2026',
+    entries: [
+      { type: 'fix', text: 'JSON Emissão — ciotFrotaPropria.RntrcContratante torna-se opcional: campo deixa de ser exigido quando o bloco ciotFrotaPropria é informado; se presente, continua exigindo exatamente 9 dígitos' },
+    ],
+  },
+  {
     date: '27 mai 2026',
     entries: [
       { type: 'feat', text: 'TXT Emissão — validação de ordenação de registros: detecta registros fora de ordem entre seções (2xxx → 3xxx → 4xxx → 5xxx → 6xxx → 7xxx → 8xxx/9xxx) e dentro das seções 2, 4 e 9 (ex.: 4200 após 4300, 2300 antes de 2200, 9400 antes de 9000); mensagem de erro indica as sub-seções envolvidas e a sequência esperada; grupos repetíveis como veículos (4200/4210) continuam sendo aceitos sem falso positivo' },

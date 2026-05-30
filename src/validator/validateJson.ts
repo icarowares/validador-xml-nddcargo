@@ -769,7 +769,7 @@ function validateCiotFrotaPropria(raw: unknown, errs: Errors): void {
   const path = 'ciotFrotaPropria';
   if (!isObj(raw)) { e(errs, path, 'Deve ser um objeto'); return; }
   reqCpfCnpj(raw, 'CnpjCpfContratante', path, errs);
-  reqDigits(raw, 'RntrcContratante', path, 9, errs);
+  optDigits(raw, 'RntrcContratante', path, 9, errs);
   reqStr(raw, 'NomeContratante', path, 1, 255, errs);
   if (isObj(raw['endereco'])) {
     const end = raw['endereco'] as Obj; const ep = `${path}.endereco`;
