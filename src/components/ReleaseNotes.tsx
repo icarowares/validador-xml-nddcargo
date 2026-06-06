@@ -12,6 +12,12 @@ interface Release {
 
 const RELEASES: Release[] = [
   {
+    date: '06 jun 2026',
+    entries: [
+      { type: 'fix', text: 'XML Emissão — detecta elemento "cpfCnpj" duplicado dentro de contratanteF: o validador aceitava silenciosamente dois <cpfCnpj> no mesmo contratanteF pois usava requireChild (retorna apenas o primeiro); agora usa children() e emite erro "Elemento cpfCnpj duplicado — deve conter exatamente um"' },
+    ],
+  },
+  {
     date: '30 mai 2026',
     entries: [
       { type: 'fix', text: 'JSON Emissão — ciotFrotaPropria.RntrcContratante torna-se opcional: campo deixa de ser exigido quando o bloco ciotFrotaPropria é informado; se presente, continua exigindo exatamente 9 dígitos' },

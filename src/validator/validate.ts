@@ -287,8 +287,12 @@ function validateFracionado(el: Element, path: string, ctx: Ctx) {
       ctx.err(`${path}.contratantesCargaFrac`, 'Deve haver pelo menos um "contratanteF"');
     cfs.forEach((cf, i) => {
       const p = `${path}.contratantesCargaFrac.contratanteF[${i + 1}]`;
-      const cpfcnpj = requireChild(cf, 'cpfCnpj', p, ctx);
-      if (cpfcnpj) valCpfCnpj(txt(cpfcnpj), `${p}.cpfCnpj`, ctx);
+      const cpfcnpjList = children(cf, 'cpfCnpj');
+      if (cpfcnpjList.length > 1)
+        ctx.err(`${p}.cpfCnpj`, `Elemento "cpfCnpj" duplicado — deve conter exatamente um`);
+      const cpfcnpj = cpfcnpjList[0];
+      if (!cpfcnpj) ctx.err(p, 'Campo obrigatório "cpfCnpj" não encontrado');
+      else valCpfCnpj(txt(cpfcnpj), `${p}.cpfCnpj`, ctx);
     });
   }
 
