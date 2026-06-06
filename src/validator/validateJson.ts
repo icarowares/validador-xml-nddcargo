@@ -824,6 +824,10 @@ function validateRota(raw: unknown, errs: Errors): void {
         if (!isObj(c)) { e(errs, cp, 'Deve ser um objeto'); return; }
         reqDigits(c, 'cep', cp, 8, errs);
       });
+      const cepValues = ceps.filter(isObj).map(c => c['cep']).filter(v => v !== undefined && v !== null);
+      if (cepValues.length === ceps.length && new Set(cepValues).size === 1)
+        e(errs, `${path}.ceps`,
+          `[RN-56] Todos os pontos de parada possuem o mesmo CEP ("${cepValues[0]}") — os pontos devem representar localidades distintas`);
     }
   }
 
@@ -841,6 +845,12 @@ function validateRota(raw: unknown, errs: Errors): void {
         if (lon === undefined || lon === null) e(errs, `${lp}.longitude`, 'Campo obrigatório não informado');
         else if (!isNum(lon)) e(errs, `${lp}.longitude`, 'Deve ser um número (Float)');
       });
+      const llValues = latLong.filter(isObj).map(ll => `${ll['latitude']}|${ll['longitude']}`);
+      if (llValues.length === latLong.length && new Set(llValues).size === 1) {
+        const [lat, lon] = llValues[0].split('|');
+        e(errs, `${path}.latLong`,
+          `[RN-56] Todos os pontos de parada possuem as mesmas coordenadas (lat: ${lat}, lon: ${lon}) — os pontos devem representar localidades distintas`);
+      }
     }
   }
 }
