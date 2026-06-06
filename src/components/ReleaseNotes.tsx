@@ -14,6 +14,7 @@ const RELEASES: Release[] = [
   {
     date: '06 jun 2026',
     entries: [
+      { type: 'fix', text: 'XML Emissão — RN-56: rota com todos os pontos de parada idênticos é rejeitada; se todos os pontos usam CEP e todos os CEPs são iguais, ou se todos usam latitude/longitude e todas as coordenadas são iguais, o validador emite erro indicando o valor repetido e exige localidades distintas' },
       { type: 'fix', text: 'XML Emissão — detecta elemento "cpfCnpj" duplicado dentro de contratanteF: o validador aceitava silenciosamente dois <cpfCnpj> no mesmo contratanteF pois usava requireChild (retorna apenas o primeiro); agora usa children() e emite erro "Elemento cpfCnpj duplicado — deve conter exatamente um"' },
     ],
   },

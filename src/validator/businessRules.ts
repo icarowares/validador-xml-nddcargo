@@ -299,6 +299,25 @@ export function applyBusinessRules(doc: Document): { errors: ValidationError[]; 
           if (hasLon && !hasLat)
             err(`${pPath}.latitude`, '[RN-46] "latitude" é obrigatória quando "longitude" é informada');
         });
+
+        // ── RN-56: pontos de parada não podem ter todos os localizadores iguais ──
+        if (pontos.length >= 2) {
+          const ceps = pontos.map(pp => txt(child(pp, 'cep'))).filter(Boolean);
+          if (ceps.length === pontos.length && new Set(ceps).size === 1)
+            err(`${tp}.rota.informacoes.pontosParada`,
+              `[RN-56] Todos os pontos de parada possuem o mesmo CEP ("${ceps[0]}") — os pontos devem representar localidades distintas`);
+
+          const latLons = pontos.map(pp => {
+            const lat = txt(child(pp, 'latitude'));
+            const lon = txt(child(pp, 'longitude'));
+            return lat && lon ? `${lat}|${lon}` : '';
+          }).filter(Boolean);
+          if (latLons.length === pontos.length && new Set(latLons).size === 1) {
+            const [lat, lon] = latLons[0].split('|');
+            err(`${tp}.rota.informacoes.pontosParada`,
+              `[RN-56] Todos os pontos de parada possuem as mesmas coordenadas (lat: ${lat}, lon: ${lon}) — os pontos devem representar localidades distintas`);
+          }
+        }
       }
     }
 
