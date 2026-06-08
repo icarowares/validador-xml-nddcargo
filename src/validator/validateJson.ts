@@ -868,6 +868,21 @@ function validateSingleOT(payload: Obj, errs: Errors): void {
   validateCiotFrotaPropria(payload['ciotFrotaPropria'], errs);
   validateRota(payload['rota'], errs);
 
+  // ── Campos fora do lugar ─────────────────────────────────────────────────
+  const TOP_LEVEL_KEYS = new Set([
+    'ide', 'carga', 'transp', 'valores', 'veiculos', 'condutores',
+    'rota', 'ciotFrotaPropria', 'adicionais',
+  ]);
+  for (const section of ['ide', 'carga', 'transp', 'valores'] as const) {
+    if (isObj(payload[section])) {
+      for (const key of Object.keys(payload[section] as Obj)) {
+        if (TOP_LEVEL_KEYS.has(key) && key !== section)
+          e(errs, `${section}.${key}`,
+            `Campo "${key}" está no local errado — deve ser informado no nível raiz do payload, não dentro de "${section}"`);
+      }
+    }
+  }
+
   // ── Regras cruzadas ──────────────────────────────────────────────────────
 
   // Regra: intervalo máximo de 90 dias (tipoOperacao 1 ou 2)

@@ -12,6 +12,12 @@ interface Release {
 
 const RELEASES: Release[] = [
   {
+    date: '08 jun 2026',
+    entries: [
+      { type: 'fix', text: 'JSON Emissão — detecta campos no local errado: objetos ou atributos pertencentes ao nível raiz do payload (ex.: "rota", "ciotFrotaPropria") que sejam informados dentro de uma sub-seção (ex.: "valores.rota") são apontados como erro indicando o local correto' },
+    ],
+  },
+  {
     date: '06 jun 2026',
     entries: [
       { type: 'fix', text: 'XML e JSON Emissão — RN-56: rota com todos os pontos de parada idênticos é rejeitada; se todos os pontos usam CEP e todos os CEPs são iguais, ou se todos usam latitude/longitude e todas as coordenadas são iguais, o validador emite erro indicando o valor repetido e exige localidades distintas' },
